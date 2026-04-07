@@ -1,0 +1,16 @@
+# OpenAI (required for process-audio-note):
+#   supabase secrets set OPENAI_API_KEY=sk-... --project-ref <your-project-ref>
+# Or: Supabase Dashboard → Project Settings → Edge Functions → Secrets.
+#
+# Deploy this function:
+#   supabase functions deploy process-audio-note --project-ref <your-project-ref>
+#
+# Local: `supabase link` then `supabase secrets set OPENAI_API_KEY=...` and
+# `supabase functions serve process-audio-note`
+
+# Gateway JWT check can return 401 for projects on new JWT signing keys (ES256) while
+# the legacy verify_jwt path still expects old tokens. This function already validates
+# Authorization with supabase.auth.getUser(jwt) — safe to skip gateway verification.
+# Redeploy after change: supabase functions deploy process-audio-note
+[functions.process-audio-note]
+verify_jwt = false
