@@ -45,3 +45,10 @@ app.*.map.json
 
 # Local env (copy from .env.example)
 assets/env/.env
+assets/env/.env.development
+assets/env/.env.production
+
+# Play Store signing (see https://docs.flutter.dev/deployment/android#signing-the-app)
+/android/key.properties
+*.jks
+*.keystore

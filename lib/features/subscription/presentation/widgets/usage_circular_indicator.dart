@@ -12,6 +12,8 @@ class UsageCircularIndicator extends StatelessWidget {
 
   final UsageInfo usageInfo;
 
+  static const double _ringSize = 76;
+
   @override
   Widget build(BuildContext context) {
     final t = context.obsidian;
@@ -19,74 +21,116 @@ class UsageCircularIndicator extends StatelessWidget {
     final ringColor = _ringColor(t);
 
     return Padding(
-      padding: const EdgeInsets.symmetric(
-        horizontal: AppSpacing.lg,
-        vertical: AppSpacing.md,
+      padding: const EdgeInsets.fromLTRB(
+        AppSpacing.lg,
+        AppSpacing.md,
+        AppSpacing.lg,
+        AppSpacing.md,
       ),
-      child: Row(
-        children: [
-          SizedBox(
-            width: 64,
-            height: 64,
-            child: CustomPaint(
-              painter: _RingPainter(
-                ratio: usageInfo.usageRatio,
-                trackColor: t.outlineVariant.withValues(alpha: 0.15),
-                progressColor: ringColor,
-              ),
-              child: Center(
-                child: Text(
-                  '${usageInfo.remainingMinutes}',
-                  style: theme.textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.w700,
-                    color: ringColor,
+      child: Container(
+        padding: const EdgeInsets.all(AppSpacing.base),
+        decoration: BoxDecoration(
+          color: t.surfaceContainerHigh.withValues(alpha: 0.35),
+          borderRadius: BorderRadius.circular(ObsidianUiTokens.radiusMd),
+          border: Border.all(
+            color: t.outlineVariant.withValues(alpha: 0.08),
+          ),
+        ),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            SizedBox(
+              width: _ringSize,
+              height: _ringSize,
+              child: CustomPaint(
+                painter: _RingPainter(
+                  ratio: usageInfo.usageRatio,
+                  trackColor: t.outlineVariant.withValues(alpha: 0.18),
+                  progressColor: ringColor,
+                ),
+                child: Center(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        '${usageInfo.remainingMinutes}',
+                        style: theme.textTheme.titleLarge?.copyWith(
+                          fontWeight: FontWeight.w800,
+                          height: 1,
+                          color: ringColor,
+                        ),
+                      ),
+                      const SizedBox(height: 2),
+                      Text(
+                        'min left',
+                        style: theme.textTheme.labelSmall?.copyWith(
+                          color: t.onSurfaceVariant,
+                          fontWeight: FontWeight.w600,
+                          letterSpacing: 0.2,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ),
             ),
-          ),
-          const SizedBox(width: AppSpacing.base),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  '${usageInfo.usedMinutes} / ${usageInfo.limitMinutes} min used',
-                  style: theme.textTheme.titleSmall?.copyWith(
-                    fontWeight: FontWeight.w600,
+            const SizedBox(width: AppSpacing.base),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Usage',
+                    style: theme.textTheme.labelSmall?.copyWith(
+                      letterSpacing: 0.6,
+                      color: t.onSurfaceVariant,
+                      fontWeight: FontWeight.w700,
+                    ),
                   ),
-                ),
-                const SizedBox(height: 2),
-                Text(
-                  _subtitleText,
-                  style: theme.textTheme.bodySmall?.copyWith(
-                    color: t.onSurfaceVariant,
+                  const SizedBox(height: 4),
+                  Text(
+                    '${usageInfo.usedMinutes} of ${usageInfo.limitMinutes} min',
+                    style: theme.textTheme.titleSmall?.copyWith(
+                      fontWeight: FontWeight.w700,
+                    ),
                   ),
-                ),
-              ],
+                  const SizedBox(height: 6),
+                  Text(
+                    _subtitleText,
+                    style: theme.textTheme.bodySmall?.copyWith(
+                      color: t.onSurfaceVariant,
+                      height: 1.35,
+                    ),
+                  ),
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
 
   String get _subtitleText {
     if (usageInfo.isExhausted) {
-      return 'Limit reached — upgrade for more';
+      return 'Quota used for this period — upgrade for more recording time.';
     }
     final tierLabel = switch (usageInfo.tier) {
-      SubscriptionTier.free => 'Free plan',
-      SubscriptionTier.basic => 'Basic plan',
-      SubscriptionTier.pro => 'Pro plan',
+      SubscriptionTier.free => 'Free',
+      SubscriptionTier.basic => 'Basic',
+      SubscriptionTier.pro => 'Pro',
     };
-    return '$tierLabel · ${usageInfo.remainingMinutes} min remaining';
+    final remain = usageInfo.remainingMinutes;
+    final s = remain == 1 ? '' : 's';
+    return '$tierLabel plan · $remain minute$s remaining this period';
   }
 
   Color _ringColor(ObsidianUiTokens t) {
     final ratio = usageInfo.usageRatio;
     if (ratio >= 1.0) return Colors.redAccent;
-    if (ratio >= 0.8) return t.warning;
+    if (ratio >= 0.85) return t.warning;
+    if (ratio >= 0.55) return t.secondary;
     return t.primary;
   }
 }
@@ -102,7 +146,7 @@ class _RingPainter extends CustomPainter {
   final Color trackColor;
   final Color progressColor;
 
-  static const double _strokeWidth = 5.0;
+  static const double _strokeWidth = 5.5;
 
   @override
   void paint(Canvas canvas, Size size) {

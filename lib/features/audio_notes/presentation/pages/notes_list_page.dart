@@ -61,7 +61,7 @@ class _NotesListView extends StatelessWidget {
       ),
       floatingActionButton: Padding(
         padding: EdgeInsets.only(bottom: obsidianFabBottomPadding(context)),
-        child: ObsidianGradientButton(
+        child: AppGradientFab(
           onPressed: () => _openRecording(context),
           icon: Icons.mic_rounded,
           label: 'Record',
@@ -72,34 +72,79 @@ class _NotesListView extends StatelessWidget {
   }
 
   Widget _buildEmpty(BuildContext context, ObsidianUiTokens t, ThemeData theme) {
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xxl),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(
-              Icons.mic_none_rounded,
-              size: 64,
-              color: t.primary.withValues(alpha: 0.35),
-            ),
-            const SizedBox(height: AppSpacing.xl),
-            Text(
-              'No notes yet',
-              textAlign: TextAlign.center,
-              style: theme.textTheme.titleLarge,
-            ),
-            const SizedBox(height: AppSpacing.sm),
-            Text(
-              'Tap the record button to create your first note.',
-              textAlign: TextAlign.center,
-              style: theme.textTheme.bodyMedium?.copyWith(
-                color: t.onSurfaceVariant,
-              ),
-            ),
-          ],
-        ),
+    // Empty-state for the *Notes library*. Frames the page as a journal /
+    // archive — not a recording screen — so it doesn't visually compete
+    // with the floating Record CTA. Uses a stack of hint rows to give
+    // the surface real content even when zero notes exist.
+    return ListView(
+      padding: const EdgeInsets.fromLTRB(
+        AppSpacing.base,
+        AppSpacing.lg,
+        AppSpacing.base,
+        120,
       ),
+      children: [
+        Container(
+          width: 64,
+          height: 64,
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [
+                t.primary.withValues(alpha: 0.18),
+                t.primary.withValues(alpha: 0.06),
+              ],
+            ),
+            borderRadius: BorderRadius.circular(ObsidianUiTokens.radiusLg),
+            border: Border.all(
+              color: t.primary.withValues(alpha: 0.22),
+            ),
+          ),
+          child: Icon(
+            Icons.auto_stories_rounded,
+            size: 30,
+            color: t.primary,
+          ),
+        ),
+        const SizedBox(height: AppSpacing.lg),
+        Text(
+          'Your notes will live here',
+          style: theme.textTheme.headlineSmall?.copyWith(
+            fontWeight: FontWeight.w800,
+          ),
+        ),
+        const SizedBox(height: AppSpacing.sm),
+        Text(
+          'Capture a thought, transcribe it instantly, and keep '
+          'everything organized in one place.',
+          style: theme.textTheme.bodyMedium?.copyWith(
+            color: t.onSurfaceVariant,
+            height: 1.4,
+          ),
+        ),
+        const SizedBox(height: AppSpacing.xxl),
+        _EmptyHint(
+          icon: Icons.graphic_eq_rounded,
+          title: 'Auto-transcribed',
+          subtitle: 'Speech turns into searchable text.',
+          tokens: t,
+        ),
+        const SizedBox(height: AppSpacing.md),
+        _EmptyHint(
+          icon: Icons.bolt_rounded,
+          title: 'Smart summaries',
+          subtitle: 'Get the gist without re-listening.',
+          tokens: t,
+        ),
+        const SizedBox(height: AppSpacing.md),
+        _EmptyHint(
+          icon: Icons.bookmark_added_rounded,
+          title: 'Favorites & recall',
+          subtitle: 'Pin notes you want to find fast.',
+          tokens: t,
+        ),
+      ],
     );
   }
 
@@ -234,6 +279,71 @@ class _NotesListView extends StatelessWidget {
       );
       context.read<FavoritesBloc>().add(const FavoritesEvent.refreshed());
     }
+  }
+}
+
+// ─── Empty-state hint row ────────────────────────────────────────────────────
+
+class _EmptyHint extends StatelessWidget {
+  const _EmptyHint({
+    required this.icon,
+    required this.title,
+    required this.subtitle,
+    required this.tokens,
+  });
+
+  final IconData icon;
+  final String title;
+  final String subtitle;
+  final ObsidianUiTokens tokens;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    return Container(
+      padding: const EdgeInsets.all(AppSpacing.base),
+      decoration: BoxDecoration(
+        color: tokens.surfaceContainer,
+        borderRadius: BorderRadius.circular(ObsidianUiTokens.radiusLg),
+        border: Border.all(
+          color: tokens.outlineVariant.withValues(alpha: 0.5),
+        ),
+      ),
+      child: Row(
+        children: [
+          Container(
+            width: 40,
+            height: 40,
+            decoration: BoxDecoration(
+              color: tokens.primary.withValues(alpha: 0.12),
+              borderRadius: BorderRadius.circular(ObsidianUiTokens.radiusMd),
+            ),
+            child: Icon(icon, size: 20, color: tokens.primary),
+          ),
+          const SizedBox(width: AppSpacing.base),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: theme.textTheme.titleSmall?.copyWith(
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  subtitle,
+                  style: theme.textTheme.bodySmall?.copyWith(
+                    color: tokens.onSurfaceVariant,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }
 

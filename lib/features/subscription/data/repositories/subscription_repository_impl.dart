@@ -65,18 +65,6 @@ class SubscriptionRepositoryImpl implements SubscriptionRepository {
   }
 
   @override
-  Future<Either<Failure, void>> presentCustomerCenter() async {
-    try {
-      await _dataSource.presentCustomerCenter();
-      return const Right(null);
-    } on PlatformException catch (e) {
-      return Left(_mapPlatformException(e));
-    } catch (e) {
-      return Left(PurchaseFailure('Failed to open customer center: $e'));
-    }
-  }
-
-  @override
   Future<Either<Failure, void>> logIn(String appUserId) async {
     try {
       await _dataSource.logIn(appUserId);

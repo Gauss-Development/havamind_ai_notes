@@ -2,6 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:sample/core/theme/obsidian_ui_tokens.dart';
 
+/// "Obsidian Bold" Manrope expressive type scale.
+///
+/// Pushes Manrope's weight contrast (400 → 700 → 800/900) and tightens
+/// tracking on display/headline so hero numerals and section titles read as
+/// confidently bold. Body keeps a calm 400 for legibility.
 TextTheme _buildTextTheme({
   required Color onSurface,
   required Color onSurfaceVariant,
@@ -9,89 +14,114 @@ TextTheme _buildTextTheme({
   final m = GoogleFonts.manropeTextTheme();
 
   return m.copyWith(
+    // ── Display — hero numerals, marquee text ────────────────────────────
     displayLarge: m.displayLarge?.copyWith(
       fontSize: 56,
-      height: 1.1,
-      letterSpacing: -0.02 * 56,
-      fontWeight: FontWeight.w800,
+      height: 1.05,
+      letterSpacing: -1.6,
+      fontWeight: FontWeight.w900,
       color: onSurface,
     ),
     displayMedium: m.displayMedium?.copyWith(
-      letterSpacing: -0.02 * 45,
+      fontSize: 44,
+      height: 1.1,
+      letterSpacing: -1.2,
       fontWeight: FontWeight.w800,
       color: onSurface,
     ),
     displaySmall: m.displaySmall?.copyWith(
-      letterSpacing: -0.02 * 36,
+      fontSize: 36,
+      height: 1.15,
+      letterSpacing: -1.0,
       fontWeight: FontWeight.w800,
       color: onSurface,
     ),
+    // ── Headline — page + section ────────────────────────────────────────
     headlineLarge: m.headlineLarge?.copyWith(
       fontSize: 28,
       height: 1.2,
-      letterSpacing: -0.5,
+      letterSpacing: -0.6,
       fontWeight: FontWeight.w800,
       color: onSurface,
     ),
     headlineMedium: m.headlineMedium?.copyWith(
-      fontSize: 24,
+      fontSize: 22,
       height: 1.25,
       letterSpacing: -0.4,
       fontWeight: FontWeight.w700,
       color: onSurface,
     ),
     headlineSmall: m.headlineSmall?.copyWith(
+      fontSize: 18,
+      height: 1.3,
+      letterSpacing: -0.2,
       fontWeight: FontWeight.w700,
       color: onSurface,
     ),
+    // ── Title — sheet/card/dialog headings ───────────────────────────────
     titleLarge: m.titleLarge?.copyWith(
-      fontSize: 20,
+      fontSize: 18,
+      height: 1.3,
+      letterSpacing: -0.2,
       fontWeight: FontWeight.w700,
       color: onSurface,
     ),
     titleMedium: m.titleMedium?.copyWith(
       fontSize: 16,
+      height: 1.35,
+      letterSpacing: -0.1,
       fontWeight: FontWeight.w600,
       color: onSurface,
     ),
     titleSmall: m.titleSmall?.copyWith(
       fontSize: 14,
+      height: 1.4,
+      letterSpacing: 0,
       fontWeight: FontWeight.w600,
       color: onSurface,
     ),
+    // ── Body — long-form reading ─────────────────────────────────────────
     bodyLarge: m.bodyLarge?.copyWith(
       fontSize: 16,
-      height: 1.45,
-      fontWeight: FontWeight.w500,
+      height: 1.5,
+      letterSpacing: 0,
+      fontWeight: FontWeight.w400,
       color: onSurface,
     ),
     bodyMedium: m.bodyMedium?.copyWith(
       fontSize: 14,
-      height: 1.45,
-      fontWeight: FontWeight.w500,
+      height: 1.5,
+      letterSpacing: 0,
+      fontWeight: FontWeight.w400,
       color: onSurface,
     ),
     bodySmall: m.bodySmall?.copyWith(
-      fontSize: 12,
-      height: 1.35,
-      fontWeight: FontWeight.w500,
+      fontSize: 13,
+      height: 1.4,
+      letterSpacing: 0,
+      fontWeight: FontWeight.w400,
       color: onSurfaceVariant,
     ),
+    // ── Label — buttons, tabs, micro CAPS ────────────────────────────────
     labelLarge: m.labelLarge?.copyWith(
       fontSize: 14,
-      fontWeight: FontWeight.w700,
+      height: 1.2,
       letterSpacing: 0.2,
+      fontWeight: FontWeight.w700,
       color: onSurface,
     ),
     labelMedium: m.labelMedium?.copyWith(
       fontSize: 12,
-      fontWeight: FontWeight.w600,
+      height: 1.2,
+      letterSpacing: 0.6,
+      fontWeight: FontWeight.w700,
       color: onSurfaceVariant,
     ),
     labelSmall: m.labelSmall?.copyWith(
       fontSize: 11,
+      height: 1.2,
+      letterSpacing: 0.8,
       fontWeight: FontWeight.w700,
-      letterSpacing: 1.2,
       color: onSurfaceVariant,
     ),
   );
@@ -105,6 +135,7 @@ ThemeData _buildTheme({
   required ObsidianUiTokens tokens,
   required Brightness brightness,
 }) {
+  final isDark = brightness == Brightness.dark;
   final textTheme = _buildTextTheme(
     onSurface: tokens.onSurface,
     onSurfaceVariant: tokens.onSurfaceVariant,
@@ -115,35 +146,32 @@ ThemeData _buildTheme({
     primary: tokens.primary,
     onPrimary: tokens.onPrimaryButton,
     primaryContainer: tokens.primaryContainer,
-    onPrimaryContainer: brightness == Brightness.dark
+    onPrimaryContainer: isDark
         ? const Color(0xFFE0E7FF)
         : const Color(0xFF1E1B4B),
     secondary: tokens.secondary,
-    onSecondary: tokens.onPrimaryButton,
-    secondaryContainer: brightness == Brightness.dark
-        ? const Color(0xFF2D3548)
-        : const Color(0xFFE0E7FF),
-    onSecondaryContainer: brightness == Brightness.dark
-        ? const Color(0xFFC7D2FE)
-        : const Color(0xFF3730A3),
-    tertiary: tokens.warning,
-    onTertiary: const Color(0xFF1C1507),
-    tertiaryContainer: brightness == Brightness.dark
-        ? const Color(0xFF78350F)
-        : const Color(0xFFFFFBEB),
-    onTertiaryContainer: brightness == Brightness.dark
-        ? const Color(0xFFFFE7C2)
-        : const Color(0xFF78350F),
-    error: brightness == Brightness.dark
-        ? const Color(0xFFFFB4AB)
-        : const Color(0xFFDC2626),
-    onError: brightness == Brightness.dark
-        ? const Color(0xFF690005)
-        : Colors.white,
-    errorContainer: brightness == Brightness.dark
+    onSecondary: isDark ? const Color(0xFF002B27) : Colors.white,
+    secondaryContainer: isDark
+        ? const Color(0xFF134E4A)
+        : const Color(0xFFCCFBF1),
+    onSecondaryContainer: isDark
+        ? const Color(0xFFB2F5EA)
+        : const Color(0xFF134E4A),
+    // Tertiary = cyan accent (was previously warning).
+    tertiary: tokens.tertiary,
+    onTertiary: isDark ? const Color(0xFF00363D) : Colors.white,
+    tertiaryContainer: isDark
+        ? const Color(0xFF155E75)
+        : const Color(0xFFCFFAFE),
+    onTertiaryContainer: isDark
+        ? const Color(0xFFA5F3FC)
+        : const Color(0xFF155E75),
+    error: isDark ? const Color(0xFFFCA5A5) : const Color(0xFFDC2626),
+    onError: isDark ? const Color(0xFF690005) : Colors.white,
+    errorContainer: isDark
         ? const Color(0xFF93000A)
         : const Color(0xFFFFDAD6),
-    onErrorContainer: brightness == Brightness.dark
+    onErrorContainer: isDark
         ? const Color(0xFFFFDAD6)
         : const Color(0xFF410002),
     surface: tokens.surface,
@@ -156,19 +184,12 @@ ThemeData _buildTheme({
     onSurfaceVariant: tokens.onSurfaceVariant,
     outline: tokens.ghostBorder(_kGhost),
     outlineVariant: tokens.ghostBorder(_kGhost),
-    shadow: Color.fromRGBO(
-      79,
-      70,
-      229,
-      brightness == Brightness.light ? 0.06 : 0.12,
-    ),
-    scrim: brightness == Brightness.dark ? Colors.black54 : Colors.black45,
-    inverseSurface: brightness == Brightness.dark
+    shadow: tokens.primary.withValues(alpha: isDark ? 0.20 : 0.08),
+    scrim: isDark ? Colors.black54 : Colors.black45,
+    inverseSurface: isDark
         ? tokens.surfaceBright
         : const Color(0xFF1E1B4B),
-    onInverseSurface: brightness == Brightness.dark
-        ? tokens.onSurface
-        : tokens.surfaceBright,
+    onInverseSurface: isDark ? tokens.onSurface : tokens.surfaceBright,
     inversePrimary: tokens.primaryContainer,
     surfaceTint: Colors.transparent,
   );
@@ -205,7 +226,7 @@ ThemeData _buildTheme({
     ),
     dialogTheme: DialogThemeData(
       backgroundColor: tokens.surfaceBright.withValues(
-        alpha: brightness == Brightness.dark ? 0.92 : 0.98,
+        alpha: isDark ? 0.92 : 0.98,
       ),
       surfaceTintColor: Colors.transparent,
       elevation: 0,
@@ -225,25 +246,28 @@ ThemeData _buildTheme({
     filledButtonTheme: FilledButtonThemeData(
       style: FilledButton.styleFrom(
         foregroundColor: tokens.onPrimaryButton,
+        minimumSize: const Size(0, AppTapTarget.minSize),
         padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
         shape: const StadiumBorder(),
-        textStyle: textTheme.titleSmall,
+        textStyle: textTheme.labelLarge,
       ),
     ),
     outlinedButtonTheme: OutlinedButtonThemeData(
       style: OutlinedButton.styleFrom(
         foregroundColor: tokens.onSurface,
+        minimumSize: const Size(0, AppTapTarget.minSize),
         padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
         side: BorderSide(color: tokens.ghostBorder(_kGhost)),
         shape: const StadiumBorder(),
-        textStyle: textTheme.titleSmall,
+        textStyle: textTheme.labelLarge,
       ),
     ),
     textButtonTheme: TextButtonThemeData(
       style: TextButton.styleFrom(
         foregroundColor: tokens.secondary,
+        minimumSize: const Size(0, AppTapTarget.minSize),
         textStyle:
-            textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w600),
+            textTheme.labelLarge?.copyWith(fontWeight: FontWeight.w700),
       ),
     ),
     inputDecorationTheme: InputDecorationTheme(
@@ -277,8 +301,8 @@ ThemeData _buildTheme({
     tabBarTheme: TabBarThemeData(
       labelColor: tokens.primary,
       unselectedLabelColor: tokens.onSurfaceVariant,
-      labelStyle: textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w700),
-      unselectedLabelStyle: textTheme.titleSmall,
+      labelStyle: textTheme.labelLarge?.copyWith(fontWeight: FontWeight.w700),
+      unselectedLabelStyle: textTheme.labelLarge,
       indicator: UnderlineTabIndicator(
         borderSide: BorderSide(color: tokens.primary, width: 2.5),
         borderRadius: BorderRadius.circular(2),
@@ -295,6 +319,7 @@ ThemeData _buildTheme({
     ),
     listTileTheme: ListTileThemeData(
       tileColor: Colors.transparent,
+      minTileHeight: AppTapTarget.minSize,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(ObsidianUiTokens.radiusMd),
       ),
@@ -310,6 +335,12 @@ ThemeData _buildTheme({
         borderRadius: BorderRadius.circular(ObsidianUiTokens.radiusMd),
       ),
     ),
+    iconButtonTheme: IconButtonThemeData(
+      style: IconButton.styleFrom(
+        minimumSize: const Size.square(AppTapTarget.minSize),
+        tapTargetSize: MaterialTapTargetSize.padded,
+      ),
+    ),
     checkboxTheme: CheckboxThemeData(
       shape: const CircleBorder(),
       side: BorderSide(color: tokens.ghostBorder(0.4), width: 2),
@@ -319,7 +350,7 @@ ThemeData _buildTheme({
       surfaceTintColor: Colors.transparent,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(
-          top: Radius.circular(ObsidianUiTokens.radiusLg),
+          top: Radius.circular(ObsidianUiTokens.radiusXxl),
         ),
       ),
     ),
@@ -333,3 +364,15 @@ ThemeData buildObsidianTheme() =>
 /// Light theme.
 ThemeData buildObsidianLightTheme() =>
     _buildTheme(tokens: ObsidianUiTokens.light, brightness: Brightness.light);
+
+// ── Forward-looking aliases (Obsidian* → AppTheme/AppColors/AppTokens) ────
+//
+// The existing `Obsidian*` symbols are being incrementally renamed to a neutral
+// `App*` prefix per the approved Step-3 plan. Keep both names live during the
+// migration so consumers can update at their own pace without churn.
+
+/// Dark theme. Prefer over [buildObsidianTheme] in new code.
+ThemeData buildAppTheme() => buildObsidianTheme();
+
+/// Light theme. Prefer over [buildObsidianLightTheme] in new code.
+ThemeData buildAppLightTheme() => buildObsidianLightTheme();

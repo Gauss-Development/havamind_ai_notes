@@ -11,7 +11,17 @@ import 'package:sample/features/subscription/presentation/widgets/subscription_d
 import 'package:sample/features/subscription/presentation/widgets/usage_circular_indicator.dart';
 
 class SubscriptionStatusCard extends StatelessWidget {
-  const SubscriptionStatusCard({super.key});
+  const SubscriptionStatusCard({
+    super.key,
+    this.accountDisplayName,
+    this.accountEmail,
+    this.memberSince,
+  });
+
+  /// Shown in the subscription detail sheet (not raw user / product ids).
+  final String? accountDisplayName;
+  final String? accountEmail;
+  final DateTime? memberSince;
 
   @override
   Widget build(BuildContext context) {
@@ -43,6 +53,9 @@ class SubscriptionStatusCard extends StatelessWidget {
               ? _ProActiveCard(
                   status: state.status,
                   usageInfo: state.usageInfo,
+                  accountDisplayName: accountDisplayName,
+                  accountEmail: accountEmail,
+                  memberSince: memberSince,
                 )
               : _FreeCard(usageInfo: state.usageInfo);
         }
@@ -72,6 +85,13 @@ class _CardShell extends StatelessWidget {
         color: t.surfaceContainerLowest,
         borderRadius: BorderRadius.circular(ObsidianUiTokens.radiusMd),
         border: Border.all(color: t.ghostBorder(0.12)),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.05),
+            blurRadius: 16,
+            offset: const Offset(0, 6),
+          ),
+        ],
       ),
       clipBehavior: Clip.antiAlias,
       child: child,
@@ -82,15 +102,41 @@ class _CardShell extends StatelessWidget {
 // ── Pro active card ───────────────────────────────────────────────────────────
 
 class _ProActiveCard extends StatelessWidget {
-  const _ProActiveCard({required this.status, this.usageInfo});
+  const _ProActiveCard({
+    required this.status,
+    this.usageInfo,
+    this.accountDisplayName,
+    this.accountEmail,
+    this.memberSince,
+  });
 
   final SubscriptionStatus status;
   final UsageInfo? usageInfo;
+  final String? accountDisplayName;
+  final String? accountEmail;
+  final DateTime? memberSince;
 
   @override
   Widget build(BuildContext context) {
     final t = context.obsidian;
     final theme = Theme.of(context);
+    final tierGradient = status.tier == SubscriptionTier.basic
+        ? LinearGradient(
+            colors: [
+              t.secondary,
+              t.secondary.withValues(alpha: 0.75),
+            ],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          )
+        : LinearGradient(
+            colors: [t.primary, t.primary.withValues(alpha: 0.7)],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          );
+    final tierIcon = status.tier == SubscriptionTier.basic
+        ? Icons.record_voice_over_rounded
+        : Icons.workspace_premium_rounded;
 
     return _CardShell(
       child: Column(
@@ -104,15 +150,11 @@ class _ProActiveCard extends StatelessWidget {
                   width: 44,
                   height: 44,
                   decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      colors: [t.primary, t.primary.withValues(alpha: 0.7)],
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                    ),
+                    gradient: tierGradient,
                     shape: BoxShape.circle,
                   ),
-                  child: const Icon(
-                    Icons.workspace_premium_rounded,
+                  child: Icon(
+                    tierIcon,
                     color: Colors.white,
                     size: 24,
                   ),
@@ -123,7 +165,7 @@ class _ProActiveCard extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'Havamind Voice Pro',
+                        status.marketingProductName,
                         style: theme.textTheme.titleSmall?.copyWith(
                           fontWeight: FontWeight.w700,
                         ),
@@ -219,7 +261,7 @@ class _ProActiveCard extends StatelessWidget {
                 ? 'Resubscribe or Get Help'
                 : 'Manage Subscription',
             onTap: () {
-              context.read<SubscriptionCubit>().showCustomerCenter();
+              context.read<SubscriptionCubit>().showCustomerCenter(context);
             },
           ),
         ],
@@ -240,14 +282,19 @@ class _ProActiveCard extends StatelessWidget {
     final action = await showSubscriptionDetailSheet(
       context: context,
       status: status,
+      usageInfo: usageInfo,
+      accountDisplayName: accountDisplayName,
+      accountEmail: accountEmail,
+      memberSince: memberSince,
     );
+    if (!context.mounted) return;
     if (action == null) return;
     switch (action) {
       case SubscriptionSheetAction.changePlan:
         cubit.showPaywall();
       case SubscriptionSheetAction.customerCenter:
       case SubscriptionSheetAction.manageSubscription:
-        cubit.showCustomerCenter();
+        cubit.showCustomerCenter(context);
     }
   }
 }

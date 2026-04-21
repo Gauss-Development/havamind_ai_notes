@@ -3,18 +3,32 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:sample/core/theme/app_spacing.dart';
 import 'package:sample/core/theme/obsidian_ui_tokens.dart';
+import 'package:sample/core/widgets/app_gradient_card.dart';
+import 'package:sample/core/widgets/app_icon_chip.dart';
+import 'package:sample/core/widgets/app_section_header.dart';
+import 'package:sample/core/widgets/founder_backdrop.dart';
 import 'package:sample/core/widgets/obsidian_gradient_button.dart';
+import 'package:sample/core/widgets/obsidian_note_list_tile.dart';
 import 'package:sample/features/audio_notes/domain/entities/audio_note.dart';
 import 'package:sample/features/audio_notes/domain/entities/audio_note_status.dart';
 import 'package:sample/features/audio_notes/presentation/bloc/audio_notes_list_bloc.dart';
 import 'package:sample/features/audio_notes/presentation/pages/note_detail_page.dart';
 import 'package:sample/features/audio_notes/presentation/pages/recording_page.dart';
-import 'package:sample/features/audio_notes/presentation/utils/audio_note_status_ui.dart';
 import 'package:sample/features/audio_notes/presentation/widgets/audio_note_duration_formatter.dart';
 import 'package:sample/features/auth/domain/entities/user_profile.dart';
 import 'package:sample/features/favorites/presentation/bloc/favorites_bloc.dart';
 import 'package:sample/features/search/presentation/widgets/home_notes_search_section.dart';
 
+/// Home tab — bold, vibrant landing for the audio notes app.
+///
+/// Composition (top → bottom):
+///   1. Hero block: radial brand backdrop + greeting + stat chips.
+///   2. Primary CTA: gradient hero card summarizing the library +
+///      "Record" tap target. Becomes a "first note" prompt when empty.
+///   3. Search: existing memoized search section (recently optimized).
+///   4. Recent notes: `AppSectionHeader` + `AppNoteListTile` rows.
+///
+/// FAB: `AppGradientFab` extended action, kept above the floating nav.
 class HomePage extends StatelessWidget {
   const HomePage({super.key, required this.profile});
 
@@ -22,7 +36,7 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final t = context.obsidian;
+    final t = context.appTokens;
     final greetingName = profile.displayName.trim().isEmpty
         ? 'there'
         : profile.displayName.trim().split(' ').first;
@@ -30,6 +44,7 @@ class HomePage extends StatelessWidget {
     return Scaffold(
       backgroundColor: t.surface,
       body: SafeArea(
+        bottom: false,
         child: BlocBuilder<AudioNotesListBloc, AudioNotesListState>(
           builder: (context, state) {
             final notes = state.maybeWhen(
@@ -53,32 +68,20 @@ class HomePage extends StatelessWidget {
               child: CustomScrollView(
                 physics: const AlwaysScrollableScrollPhysics(),
                 slivers: [
-                  SliverPadding(
-                    padding: const EdgeInsets.fromLTRB(
-                      AppSpacing.lg,
-                      AppSpacing.base,
-                      AppSpacing.lg,
-                      0,
-                    ),
-                    sliver: SliverToBoxAdapter(
-                      child: _Header(name: greetingName),
+                  // ── Hero header (greeting + stats + CTA card) ───────────
+                  SliverToBoxAdapter(
+                    child: _HomeHero(
+                      name: greetingName,
+                      notes: notes,
+                      onRecord: () => _openRecording(context),
                     ),
                   ),
+
+                  // ── Search ──────────────────────────────────────────────
                   SliverPadding(
                     padding: const EdgeInsets.fromLTRB(
                       AppSpacing.lg,
-                      AppSpacing.base,
-                      AppSpacing.lg,
-                      0,
-                    ),
-                    sliver: SliverToBoxAdapter(
-                      child: _StatsRow(notes: notes),
-                    ),
-                  ),
-                  SliverPadding(
-                    padding: const EdgeInsets.fromLTRB(
-                      AppSpacing.lg,
-                      AppSpacing.lg,
+                      AppSpacing.xl,
                       AppSpacing.lg,
                       0,
                     ),
@@ -91,17 +94,26 @@ class HomePage extends StatelessWidget {
                       ),
                     ),
                   ),
-                  SliverPadding(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: AppSpacing.lg,
-                    ),
-                    sliver: SliverToBoxAdapter(
-                      child: _SectionHeader(
-                        title: 'Recent Notes',
-                        count: notes.length,
+
+                  // ── Recent notes section header ─────────────────────────
+                  if (notes.isNotEmpty)
+                    SliverToBoxAdapter(
+                      child: AppSectionHeader(
+                        eyebrow: 'Library',
+                        title: 'Recent notes',
+                        subtitle: notes.length == 1
+                            ? '1 saved'
+                            : '${notes.length} saved',
+                        padding: const EdgeInsets.fromLTRB(
+                          AppSpacing.lg,
+                          AppSpacing.xl,
+                          AppSpacing.lg,
+                          AppSpacing.md,
+                        ),
                       ),
                     ),
-                  ),
+
+                  // ── Recent notes list / empty / loading ─────────────────
                   if (isLoading && notes.isEmpty)
                     const SliverFillRemaining(
                       hasScrollBody: false,
@@ -116,11 +128,11 @@ class HomePage extends StatelessWidget {
                     )
                   else
                     SliverPadding(
-                      padding: const EdgeInsets.fromLTRB(
+                      padding: EdgeInsets.fromLTRB(
                         AppSpacing.lg,
-                        AppSpacing.sm,
+                        0,
                         AppSpacing.lg,
-                        140,
+                        appFabBottomPadding(context) + AppSpacing.xl,
                       ),
                       sliver: SliverList.separated(
                         itemCount: notes.length > 5 ? 5 : notes.length,
@@ -128,10 +140,12 @@ class HomePage extends StatelessWidget {
                             const SizedBox(height: AppSpacing.sm),
                         itemBuilder: (context, index) {
                           final note = notes[index];
-                          return _RecentNoteTile(
-                            note: note,
-                            onTap: () =>
-                                _openNoteDetail(context, note.id),
+                          return AppNoteListTile(
+                            title: note.title,
+                            subtitle: _noteSubtitle(note),
+                            onTap: () => _openNoteDetail(context, note.id),
+                            status: note.status,
+                            index: index,
                           );
                         },
                       ),
@@ -144,11 +158,11 @@ class HomePage extends StatelessWidget {
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
       floatingActionButton: Padding(
-        padding: EdgeInsets.only(bottom: obsidianFabBottomPadding(context)),
-        child: ObsidianGradientButton(
+        padding: EdgeInsets.only(bottom: appFabBottomPadding(context)),
+        child: AppGradientFab(
           onPressed: () => _openRecording(context),
           icon: Icons.mic_rounded,
-          label: 'New Note',
+          label: 'New note',
         ),
       ),
     );
@@ -185,43 +199,93 @@ Future<void> _openNoteDetail(BuildContext context, String noteId) async {
   );
 }
 
-// ─── Header ──────────────────────────────────────────────────────────────────
+String _noteSubtitle(AudioNote note) {
+  final dateFmt = DateFormat.MMMd();
+  final date = dateFmt.format(note.createdAt.toLocal());
+  final duration = AudioNoteDurationFormatter.mmSs(note.durationSeconds);
+  return '$date · $duration';
+}
 
-class _Header extends StatelessWidget {
-  const _Header({required this.name});
+// ─── Hero block ──────────────────────────────────────────────────────────────
+
+/// Top-of-page hero: backdrop blob + greeting + stat chips + CTA card.
+///
+/// Pulled out of [HomePage] so the surrounding scrollable stays declarative
+/// and the hero can own its own paint subtree (radial gradient + gradient
+/// card) without interfering with sliver rebuilds.
+class _HomeHero extends StatelessWidget {
+  const _HomeHero({
+    required this.name,
+    required this.notes,
+    required this.onRecord,
+  });
 
   final String name;
+  final List<AudioNote> notes;
+  final VoidCallback onRecord;
 
   @override
   Widget build(BuildContext context) {
-    final t = context.obsidian;
+    final t = context.appTokens;
     final theme = Theme.of(context);
     final greeting = _timeGreeting();
 
-    return Row(
-      children: [
-        Expanded(
-          child: Text(
-            '$greeting, $name',
-            style: theme.textTheme.headlineLarge,
-          ),
+    return AppHeroBackdrop(
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(
+          AppSpacing.lg,
+          AppSpacing.lg,
+          AppSpacing.lg,
+          0,
         ),
-        const SizedBox(width: AppSpacing.md),
-        Container(
-          width: 44,
-          height: 44,
-          alignment: Alignment.center,
-          decoration: BoxDecoration(
-            color: t.surfaceContainerLowest,
-            shape: BoxShape.circle,
-            border: Border.all(color: t.ghostBorder(0.14)),
-          ),
-          child: Text(
-            name.characters.first.toUpperCase(),
-            style: theme.textTheme.titleMedium?.copyWith(color: t.primary),
-          ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Greeting row.
+            Row(
+              children: [
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        greeting,
+                        style: theme.textTheme.labelLarge?.copyWith(
+                          color: t.primary,
+                          letterSpacing: 1.4,
+                          fontWeight: FontWeight.w800,
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        name,
+                        style: theme.textTheme.displaySmall?.copyWith(
+                          fontWeight: FontWeight.w800,
+                          height: 1.05,
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(width: AppSpacing.md),
+                _Avatar(name: name),
+              ],
+            ),
+
+            // Inline stat chips (only when there's something to show).
+            if (notes.isNotEmpty) ...[
+              const SizedBox(height: AppSpacing.lg),
+              _StatsChips(notes: notes),
+            ],
+
+            // Hero CTA card.
+            const SizedBox(height: AppSpacing.lg),
+            _HeroCtaCard(notes: notes, onRecord: onRecord),
+          ],
         ),
-      ],
+      ),
     );
   }
 
@@ -233,145 +297,147 @@ class _Header extends StatelessWidget {
   }
 }
 
-// ─── Stats row ───────────────────────────────────────────────────────────────
+class _Avatar extends StatelessWidget {
+  const _Avatar({required this.name});
 
-class _StatsRow extends StatelessWidget {
-  const _StatsRow({required this.notes});
+  final String name;
+
+  @override
+  Widget build(BuildContext context) {
+    final t = context.appTokens;
+    final theme = Theme.of(context);
+    final initial =
+        name.trim().isEmpty ? '?' : name.characters.first.toUpperCase();
+
+    return Container(
+      width: 48,
+      height: 48,
+      alignment: Alignment.center,
+      decoration: BoxDecoration(
+        color: t.surfaceContainerLowest,
+        shape: BoxShape.circle,
+        border: Border.all(color: t.primary.withValues(alpha: 0.25), width: 1.5),
+      ),
+      child: Text(
+        initial,
+        style: theme.textTheme.titleMedium?.copyWith(
+          color: t.primary,
+          fontWeight: FontWeight.w800,
+        ),
+      ),
+    );
+  }
+}
+
+// ─── Stats ───────────────────────────────────────────────────────────────────
+
+class _StatsChips extends StatelessWidget {
+  const _StatsChips({required this.notes});
 
   final List<AudioNote> notes;
 
   @override
   Widget build(BuildContext context) {
-    final t = context.obsidian;
     final total = notes.length;
     final ready =
         notes.where((n) => n.status == AudioNoteStatus.completed).length;
     final processing =
         notes.where((n) => n.status.isPendingPipeline).length;
 
-    if (total == 0) return const SizedBox.shrink();
-
-    return Row(
+    return Wrap(
+      spacing: AppSpacing.sm,
+      runSpacing: AppSpacing.sm,
       children: [
-        Expanded(
-          child: _StatCard(
-            icon: Icons.library_music_rounded,
-            value: '$total',
-            label: 'Total',
-            accent: t.primary,
-          ),
+        AppIconChip(
+          icon: Icons.library_music_rounded,
+          label: '$total total',
+          tone: AppIconChipTone.brand,
         ),
-        const SizedBox(width: AppSpacing.sm),
-        Expanded(
-          child: _StatCard(
+        if (ready > 0)
+          AppIconChip(
             icon: Icons.check_circle_outline_rounded,
-            value: '$ready',
-            label: 'Ready',
-            accent: t.secondary,
+            label: '$ready ready',
+            tone: AppIconChipTone.success,
           ),
-        ),
-        if (processing > 0) ...[
-          const SizedBox(width: AppSpacing.sm),
-          Expanded(
-            child: _StatCard(
-              icon: Icons.hourglass_top_rounded,
-              value: '$processing',
-              label: 'Processing',
-              accent: t.warning,
-            ),
+        if (processing > 0)
+          AppIconChip(
+            icon: Icons.hourglass_top_rounded,
+            label: '$processing processing',
+            tone: AppIconChipTone.warning,
           ),
-        ],
       ],
     );
   }
 }
 
-class _StatCard extends StatelessWidget {
-  const _StatCard({
-    required this.icon,
-    required this.value,
-    required this.label,
-    required this.accent,
-  });
+// ─── Hero CTA card ───────────────────────────────────────────────────────────
 
-  final IconData icon;
-  final String value;
-  final String label;
-  final Color accent;
+class _HeroCtaCard extends StatelessWidget {
+  const _HeroCtaCard({required this.notes, required this.onRecord});
+
+  final List<AudioNote> notes;
+  final VoidCallback onRecord;
 
   @override
   Widget build(BuildContext context) {
-    final t = context.obsidian;
+    final t = context.appTokens;
     final theme = Theme.of(context);
+    final isFirstRun = notes.isEmpty;
 
-    return Container(
-      padding: const EdgeInsets.all(AppSpacing.base),
-      decoration: BoxDecoration(
-        color: t.surfaceContainerLowest,
-        borderRadius: BorderRadius.circular(ObsidianUiTokens.radiusMd),
-        border: Border.all(color: accent.withValues(alpha: 0.15)),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Container(
-            width: 32,
-            height: 32,
-            alignment: Alignment.center,
-            decoration: BoxDecoration(
-              color: accent.withValues(alpha: 0.12),
-              borderRadius: BorderRadius.circular(ObsidianUiTokens.radiusSm),
-            ),
-            child: Icon(icon, size: 16, color: accent),
-          ),
-          const SizedBox(height: AppSpacing.md),
-          Text(
-            value,
-            style: theme.textTheme.headlineMedium?.copyWith(
-              color: accent,
-              fontWeight: FontWeight.w800,
-            ),
-          ),
-          const SizedBox(height: 2),
-          Text(
-            label,
-            style: theme.textTheme.bodySmall?.copyWith(
-              color: t.onSurfaceVariant,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
+    final headline = isFirstRun ? 'Capture your first thought' : 'Ready when you are';
+    final body = isFirstRun
+        ? 'Tap record and we’ll transcribe, summarize, and tag it for you.'
+        : 'Pick up where you left off — record a new note in one tap.';
 
-// ─── Section header ──────────────────────────────────────────────────────────
-
-class _SectionHeader extends StatelessWidget {
-  const _SectionHeader({required this.title, required this.count});
-
-  final String title;
-  final int count;
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final t = context.obsidian;
-
-    return Padding(
-      padding: const EdgeInsets.only(bottom: AppSpacing.sm),
+    return AppGradientCard(
+      onTap: onRecord,
       child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Expanded(
-            child: Text(title, style: theme.textTheme.headlineMedium),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  headline,
+                  style: theme.textTheme.headlineSmall?.copyWith(
+                    color: t.onPrimaryButton,
+                    fontWeight: FontWeight.w800,
+                    height: 1.15,
+                  ),
+                ),
+                const SizedBox(height: AppSpacing.xs),
+                Text(
+                  body,
+                  style: theme.textTheme.bodyMedium?.copyWith(
+                    color: t.onPrimaryButton.withValues(alpha: 0.85),
+                  ),
+                ),
+              ],
+            ),
           ),
-          if (count > 0)
-            Text(
-              '$count notes',
-              style: theme.textTheme.bodySmall?.copyWith(
-                color: t.onSurfaceVariant,
+          const SizedBox(width: AppSpacing.md),
+          // Decorative mic medallion. Not the primary tap target — the whole
+          // card is tappable, and the FAB / "Record" button below take the
+          // explicit input.
+          Container(
+            width: 56,
+            height: 56,
+            alignment: Alignment.center,
+            decoration: BoxDecoration(
+              color: t.onPrimaryButton.withValues(alpha: 0.16),
+              shape: BoxShape.circle,
+              border: Border.all(
+                color: t.onPrimaryButton.withValues(alpha: 0.30),
+                width: 1.5,
               ),
             ),
+            child: Icon(
+              Icons.mic_rounded,
+              color: t.onPrimaryButton,
+              size: 26,
+            ),
+          ),
         ],
       ),
     );
@@ -387,132 +453,57 @@ class _EmptyState extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final t = context.obsidian;
+    final t = context.appTokens;
     final theme = Theme.of(context);
 
     return Center(
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xxl),
+        padding: const EdgeInsets.fromLTRB(
+          AppSpacing.xl,
+          AppSpacing.xl,
+          AppSpacing.xl,
+          AppSpacing.xxxl,
+        ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(
-              Icons.mic_none_rounded,
-              size: 64,
-              color: t.primary.withValues(alpha: 0.35),
+            Container(
+              width: 88,
+              height: 88,
+              alignment: Alignment.center,
+              decoration: BoxDecoration(
+                gradient: t.accentGradient,
+                shape: BoxShape.circle,
+                boxShadow: t.vibrantGlow,
+              ),
+              child: Icon(
+                Icons.graphic_eq_rounded,
+                size: 36,
+                color: t.onPrimaryButton,
+              ),
             ),
             const SizedBox(height: AppSpacing.lg),
             Text(
               'No notes yet',
               textAlign: TextAlign.center,
-              style: theme.textTheme.titleLarge,
+              style: theme.textTheme.headlineSmall,
             ),
             const SizedBox(height: AppSpacing.sm),
             Text(
-              'Record a voice note and it will appear here.',
+              'Record a voice note and it will appear here, '
+              'fully transcribed and searchable.',
               textAlign: TextAlign.center,
               style: theme.textTheme.bodyMedium?.copyWith(
                 color: t.onSurfaceVariant,
               ),
             ),
             const SizedBox(height: AppSpacing.xl),
-            ObsidianGradientButton(
+            AppGradientButton(
               onPressed: onRecord,
               icon: Icons.mic_rounded,
               label: 'Record your first note',
             ),
           ],
-        ),
-      ),
-    );
-  }
-}
-
-// ─── Recent note tile ────────────────────────────────────────────────────────
-
-class _RecentNoteTile extends StatelessWidget {
-  const _RecentNoteTile({required this.note, required this.onTap});
-
-  final AudioNote note;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    final t = context.obsidian;
-    final theme = Theme.of(context);
-    final statusColor = audioNoteStatusColor(context, note.status);
-    final dateFmt = DateFormat.MMMd();
-
-    return Material(
-      color: Colors.transparent,
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(ObsidianUiTokens.radiusMd),
-        child: Ink(
-          decoration: BoxDecoration(
-            color: t.surfaceContainerLowest,
-            borderRadius: BorderRadius.circular(ObsidianUiTokens.radiusMd),
-            border: Border.all(color: t.ghostBorder(0.12)),
-          ),
-          child: Padding(
-            padding: const EdgeInsets.all(AppSpacing.base),
-            child: Row(
-              children: [
-                Container(
-                  width: 40,
-                  height: 40,
-                  alignment: Alignment.center,
-                  decoration: BoxDecoration(
-                    color: t.primaryContainer,
-                    borderRadius:
-                        BorderRadius.circular(ObsidianUiTokens.radiusSm),
-                  ),
-                  child: Icon(
-                    Icons.graphic_eq_rounded,
-                    size: 20,
-                    color: t.primary,
-                  ),
-                ),
-                const SizedBox(width: AppSpacing.md),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        note.title,
-                        style: theme.textTheme.titleSmall,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                      const SizedBox(height: 2),
-                      Text(
-                        '${dateFmt.format(note.createdAt.toLocal())} · '
-                        '${AudioNoteDurationFormatter.mmSs(note.durationSeconds)}',
-                        style: theme.textTheme.bodySmall,
-                        maxLines: 1,
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(width: AppSpacing.sm),
-                if (note.status.isPendingPipeline)
-                  SizedBox(
-                    width: 16,
-                    height: 16,
-                    child: CircularProgressIndicator(
-                      strokeWidth: 2,
-                      color: statusColor,
-                    ),
-                  )
-                else
-                  Icon(
-                    Icons.chevron_right_rounded,
-                    size: 20,
-                    color: t.onSurfaceVariant.withValues(alpha: 0.5),
-                  ),
-              ],
-            ),
-          ),
         ),
       ),
     );

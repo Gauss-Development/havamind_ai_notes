@@ -1,28 +1,27 @@
 import 'dart:async';
 
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sample/core/usecases/usecase.dart';
 import 'package:sample/features/subscription/domain/entities/paywall_action_result.dart';
 import 'package:sample/features/subscription/domain/repositories/subscription_repository.dart';
 import 'package:sample/features/subscription/domain/usecases/get_current_usage_usecase.dart';
 import 'package:sample/features/subscription/domain/usecases/get_subscription_status_usecase.dart';
-import 'package:sample/features/subscription/domain/usecases/present_customer_center_usecase.dart';
 import 'package:sample/features/subscription/domain/usecases/present_paywall_usecase.dart';
 import 'package:sample/features/subscription/domain/usecases/restore_purchases_usecase.dart';
 import 'package:sample/features/subscription/presentation/cubit/subscription_state.dart';
+import 'package:sample/features/subscription/presentation/pages/customer_center_page.dart';
 
 class SubscriptionCubit extends Cubit<SubscriptionState> {
   SubscriptionCubit({
     required GetSubscriptionStatusUseCase getSubscriptionStatus,
     required RestorePurchasesUseCase restorePurchases,
     required PresentPaywallUseCase presentPaywall,
-    required PresentCustomerCenterUseCase presentCustomerCenter,
     required SubscriptionRepository repository,
     required GetCurrentUsageUseCase getCurrentUsage,
   })  : _getSubscriptionStatus = getSubscriptionStatus,
         _restorePurchases = restorePurchases,
         _presentPaywall = presentPaywall,
-        _presentCustomerCenter = presentCustomerCenter,
         _repository = repository,
         _getCurrentUsage = getCurrentUsage,
         super(const SubscriptionInitial());
@@ -30,7 +29,6 @@ class SubscriptionCubit extends Cubit<SubscriptionState> {
   final GetSubscriptionStatusUseCase _getSubscriptionStatus;
   final RestorePurchasesUseCase _restorePurchases;
   final PresentPaywallUseCase _presentPaywall;
-  final PresentCustomerCenterUseCase _presentCustomerCenter;
   final SubscriptionRepository _repository;
   final GetCurrentUsageUseCase _getCurrentUsage;
 
@@ -78,12 +76,16 @@ class SubscriptionCubit extends Cubit<SubscriptionState> {
     );
   }
 
-  Future<void> showCustomerCenter() async {
-    final result = await _presentCustomerCenter(const NoParams());
-    result.fold(
-      (failure) => emit(SubscriptionError(failure.message)),
-      (_) => _fetchStatusAndUsage(),
+  Future<void> showCustomerCenter(BuildContext context) async {
+    await Navigator.of(context).push<void>(
+      MaterialPageRoute(
+        builder: (_) => BlocProvider.value(
+          value: this,
+          child: const CustomerCenterPage(),
+        ),
+      ),
     );
+    await _fetchStatusAndUsage();
   }
 
   Future<void> restore() async {

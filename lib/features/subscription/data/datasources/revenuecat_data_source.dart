@@ -51,10 +51,6 @@ class RevenueCatDataSource {
     );
   }
 
-  Future<void> presentCustomerCenter() async {
-    await RevenueCatUI.presentCustomerCenter();
-  }
-
   Future<LogInResult> logIn(String appUserId) async {
     return Purchases.logIn(appUserId);
   }

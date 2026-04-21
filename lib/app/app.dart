@@ -8,6 +8,7 @@ import 'package:sample/core/theme/obsidian_theme.dart';
 import 'package:sample/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:sample/features/auth/presentation/pages/login_page.dart';
 import 'package:sample/features/subscription/domain/repositories/subscription_repository.dart';
+import 'package:sample/flavors.dart';
 import 'package:sample/l10n/generated/app_localizations.dart';
 
 class SampleApp extends StatelessWidget {
@@ -25,7 +26,7 @@ class SampleApp extends StatelessWidget {
       child: BlocBuilder<AppThemeCubit, ThemeMode>(
         builder: (context, themeMode) {
           return MaterialApp(
-            title: 'Audio Notes',
+            title: F.title,
             debugShowCheckedModeBanner: false,
             theme: buildObsidianLightTheme(),
             darkTheme: buildObsidianTheme(),

@@ -39,7 +39,7 @@ class _RecordingView extends StatelessWidget {
         );
       },
       builder: (context, state) {
-        final t = context.obsidian;
+        final t = context.appTokens;
         final theme = Theme.of(context);
 
         final elapsed = state.maybeWhen(
@@ -58,56 +58,102 @@ class _RecordingView extends StatelessWidget {
             leading: IconButton(
               onPressed: () => Navigator.of(context).maybePop(false),
               icon: const Icon(Icons.close_rounded),
+              tooltip: 'Close',
             ),
             title: Text('Voice Memo', style: theme.textTheme.titleMedium),
             centerTitle: true,
           ),
           body: SafeArea(
-            child: Column(
-              children: [
-                const Spacer(flex: 2),
-                Text(
-                  AudioNoteDurationFormatter.mmSs(elapsed),
-                  style: theme.textTheme.displayLarge?.copyWith(
-                    fontSize: 56,
-                    fontWeight: FontWeight.w800,
-                    letterSpacing: -1.4,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(
+                horizontal: AppSpacing.xl,
+              ),
+              child: Column(
+                children: [
+                  // Hero block: timer + status + waveform + mic button.
+                  // Vertically centered in the available space so the
+                  // visual focus stays in the middle of the screen across
+                  // all states.
+                  Expanded(
+                    child: Center(
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Text(
+                            AudioNoteDurationFormatter.mmSs(elapsed),
+                            textAlign: TextAlign.center,
+                            style: theme.textTheme.displayLarge?.copyWith(
+                              fontSize: 56,
+                              fontWeight: FontWeight.w800,
+                              letterSpacing: -1.4,
+                            ),
+                          ),
+                          const SizedBox(height: AppSpacing.sm),
+                          Text(
+                            isRecording ? 'RECORDING' : 'READY TO CAPTURE',
+                            textAlign: TextAlign.center,
+                            style: theme.textTheme.labelSmall?.copyWith(
+                              color: isRecording
+                                  ? t.primary
+                                  : t.onSurfaceVariant.withValues(alpha: 0.75),
+                            ),
+                          ),
+                          const SizedBox(height: AppSpacing.xxl),
+                          RecordingWaveformSketch(
+                            color: t.primary,
+                            isAnimating: isRecording,
+                          ),
+                          const SizedBox(height: AppSpacing.xxl),
+                          RecordingMicActionButton(
+                            color: t.primary,
+                            iconColor: t.onPrimaryButton,
+                            icon: isRecording
+                                ? Icons.stop_rounded
+                                : Icons.mic_rounded,
+                            onPressed: () {
+                              if (isRecording) {
+                                context.read<RecordingBloc>().add(
+                                      const RecordingEvent.stopPressed(),
+                                    );
+                              } else {
+                                context.read<RecordingBloc>().add(
+                                      const RecordingEvent.startPressed(),
+                                    );
+                              }
+                            },
+                          ),
+                        ],
+                      ),
+                    ),
                   ),
-                ),
-                const SizedBox(height: AppSpacing.sm),
-                Text(
-                  isRecording ? 'RECORDING' : 'READY TO CAPTURE',
-                  style: theme.textTheme.labelSmall?.copyWith(
-                    color: isRecording
-                        ? t.primary
-                        : t.onSurfaceVariant.withValues(alpha: 0.75),
+
+                  // Footer block: state-dependent controls (cancel/save,
+                  // uploading spinner, error, cancel-while-recording) and
+                  // the max-duration hint. AnimatedSize keeps transitions
+                  // smooth so the hero block above doesn't jump when
+                  // controls appear/disappear.
+                  AnimatedSize(
+                    duration: const Duration(milliseconds: 220),
+                    curve: Curves.easeOut,
+                    alignment: Alignment.topCenter,
+                    child: _RecordingFooterControls(
+                      state: state,
+                      isRecording: isRecording,
+                      tokens: t,
+                    ),
                   ),
-                ),
-                const SizedBox(height: AppSpacing.xxxl),
-                Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: AppSpacing.xxxl,
+                  const SizedBox(height: AppSpacing.lg),
+                  Text(
+                    'Max ${kMaxRecordingDurationSeconds ~/ 60} minutes',
+                    textAlign: TextAlign.center,
+                    style: theme.textTheme.bodySmall?.copyWith(
+                      color: t.onSurfaceVariant.withValues(alpha: 0.6),
+                    ),
                   ),
-                  child: RecordingWaveformSketch(
-                    color: t.primary,
-                    isAnimating: isRecording,
-                  ),
-                ),
-                const Spacer(flex: 2),
-                _RecordingControls(
-                  state: state,
-                  isRecording: isRecording,
-                  tokens: t,
-                ),
-                const SizedBox(height: AppSpacing.base),
-                Text(
-                  'Max ${kMaxRecordingDurationSeconds ~/ 60} minutes',
-                  style: theme.textTheme.bodySmall?.copyWith(
-                    color: t.onSurfaceVariant.withValues(alpha: 0.6),
-                  ),
-                ),
-                const Spacer(),
-              ],
+                  const SizedBox(height: AppSpacing.md),
+                ],
+              ),
             ),
           ),
         );
@@ -116,8 +162,8 @@ class _RecordingView extends StatelessWidget {
   }
 }
 
-class _RecordingControls extends StatelessWidget {
-  const _RecordingControls({
+class _RecordingFooterControls extends StatelessWidget {
+  const _RecordingFooterControls({
     required this.state,
     required this.isRecording,
     required this.tokens,
@@ -125,91 +171,65 @@ class _RecordingControls extends StatelessWidget {
 
   final RecordingState state;
   final bool isRecording;
-  final ObsidianUiTokens tokens;
+  final AppTokens tokens;
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
 
-    return Column(
-      children: [
-        RecordingMicActionButton(
-          color: tokens.primary,
-          iconColor: Colors.white,
-          icon: isRecording ? Icons.stop_rounded : Icons.mic_rounded,
-          onPressed: () {
-            if (isRecording) {
-              context.read<RecordingBloc>().add(
-                const RecordingEvent.stopPressed(),
-              );
-            } else {
-              context.read<RecordingBloc>().add(
-                const RecordingEvent.startPressed(),
-              );
-            }
-          },
-        ),
-        const SizedBox(height: AppSpacing.xl),
-        state.maybeWhen(
-          readyToSave: (path, duration) => Padding(
-            padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xl),
-            child: Row(
-              children: [
-                Expanded(
-                  child: OutlinedButton(
-                    onPressed: () => context.read<RecordingBloc>().add(
-                      const RecordingEvent.cancelPressed(),
-                    ),
-                    child: const Text('Cancel'),
+    return state.maybeWhen(
+      readyToSave: (path, duration) => Row(
+        children: [
+          Expanded(
+            child: OutlinedButton(
+              onPressed: () => context.read<RecordingBloc>().add(
+                    const RecordingEvent.cancelPressed(),
                   ),
-                ),
-                const SizedBox(width: AppSpacing.md),
-                Expanded(
-                  child: FilledButton(
-                    onPressed: () => context.read<RecordingBloc>().add(
-                      const RecordingEvent.savePressed(),
-                    ),
-                    child: const Text('Save'),
+              child: const Text('Cancel'),
+            ),
+          ),
+          const SizedBox(width: AppSpacing.md),
+          Expanded(
+            child: FilledButton(
+              onPressed: () => context.read<RecordingBloc>().add(
+                    const RecordingEvent.savePressed(),
                   ),
-                ),
-              ],
+              child: const Text('Save'),
             ),
-          ),
-          uploading: () => Column(
-            children: [
-              CircularProgressIndicator(color: tokens.primary),
-              const SizedBox(height: AppSpacing.md),
-              Text(
-                'Transcribing & analyzing...',
-                style: theme.textTheme.bodyMedium?.copyWith(
-                  color: tokens.onSurfaceVariant,
-                ),
-              ),
-            ],
-          ),
-          failure: (message) => Padding(
-            padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xl),
-            child: Text(
-              message,
-              textAlign: TextAlign.center,
-              style: theme.textTheme.bodySmall?.copyWith(
-                color: Theme.of(context).colorScheme.error,
-              ),
-            ),
-          ),
-          orElse: () => const SizedBox.shrink(),
-        ),
-        if (isRecording) ...[
-          const SizedBox(height: AppSpacing.base),
-          TextButton.icon(
-            onPressed: () => context.read<RecordingBloc>().add(
-              const RecordingEvent.cancelPressed(),
-            ),
-            icon: const Icon(Icons.close_rounded),
-            label: const Text('Cancel recording'),
           ),
         ],
-      ],
+      ),
+      uploading: () => Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          CircularProgressIndicator(color: tokens.primary),
+          const SizedBox(height: AppSpacing.md),
+          Text(
+            'Transcribing & analyzing...',
+            textAlign: TextAlign.center,
+            style: theme.textTheme.bodyMedium?.copyWith(
+              color: tokens.onSurfaceVariant,
+            ),
+          ),
+        ],
+      ),
+      failure: (message) => Text(
+        message,
+        textAlign: TextAlign.center,
+        style: theme.textTheme.bodySmall?.copyWith(
+          color: Theme.of(context).colorScheme.error,
+        ),
+      ),
+      orElse: () {
+        if (!isRecording) return const SizedBox.shrink();
+        return TextButton.icon(
+          onPressed: () => context.read<RecordingBloc>().add(
+                const RecordingEvent.cancelPressed(),
+              ),
+          icon: const Icon(Icons.close_rounded),
+          label: const Text('Cancel recording'),
+        );
+      },
     );
   }
 }

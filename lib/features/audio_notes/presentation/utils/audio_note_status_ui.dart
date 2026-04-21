@@ -20,15 +20,17 @@ String audioNoteStatusLabel(AudioNoteStatus status) {
 }
 
 Color audioNoteStatusColor(BuildContext context, AudioNoteStatus status) {
-  final t = context.obsidian;
+  final t = context.appTokens;
   switch (status) {
     case AudioNoteStatus.draft:
       return t.onSurfaceVariant;
     case AudioNoteStatus.uploaded:
     case AudioNoteStatus.processingTranscription:
     case AudioNoteStatus.processingAnalysis:
-      return t.warning;
+      // Cyan accent — "active / in-flight" pipeline state.
+      return t.tertiary;
     case AudioNoteStatus.completed:
+      // Teal — "ready / success" state.
       return t.secondary;
     case AudioNoteStatus.failed:
       return Theme.of(context).colorScheme.error;

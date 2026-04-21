@@ -41,7 +41,11 @@ class ProfilePage extends StatelessWidget {
                 const SizedBox(height: AppSpacing.xxl),
                 const _SectionLabel(text: 'SUBSCRIPTION'),
                 const SizedBox(height: AppSpacing.md),
-                const SubscriptionStatusCard(),
+                SubscriptionStatusCard(
+                  accountDisplayName: profile.displayName,
+                  accountEmail: profile.email,
+                  memberSince: profile.createdAt,
+                ),
                 const SizedBox(height: AppSpacing.xxl),
                 const _SectionLabel(text: 'PREFERENCES'),
                 const SizedBox(height: AppSpacing.md),

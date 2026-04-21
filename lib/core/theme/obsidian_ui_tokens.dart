@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:sample/core/theme/obsidian_colors.dart';
 
 /// Design tokens that follow the active [ThemeData] (light/dark).
+///
+/// "Obsidian Bold" — amplified indigo + violet/cyan gradient accents,
+/// brighter teal secondary, expressive elevation system.
 @immutable
 class ObsidianUiTokens extends ThemeExtension<ObsidianUiTokens> {
   const ObsidianUiTokens({
@@ -16,16 +19,25 @@ class ObsidianUiTokens extends ThemeExtension<ObsidianUiTokens> {
     required this.primary,
     required this.primaryContainer,
     required this.secondary,
+    required this.tertiary,
     required this.warning,
     required this.outlineVariant,
     required this.onPrimaryButton,
+    required this.primaryGradient,
+    required this.accentGradient,
+    required this.heroBackdropGradient,
   });
 
   // ── Radii ──────────────────────────────────────────────────────────────
+  /// Tightest radius — pill chips, dense badges.
+  static const double radiusXs = 4;
   static const double radiusSm = 8;
   static const double radiusMd = 12;
   static const double radiusLg = 16;
   static const double radiusXl = 24;
+
+  /// Hero card radius — sheets, large feature surfaces.
+  static const double radiusXxl = 32;
   static const double radiusFull = 999;
 
   @Deprecated('Use radiusLg instead')
@@ -45,21 +57,78 @@ class ObsidianUiTokens extends ThemeExtension<ObsidianUiTokens> {
   final Color primary;
   final Color primaryContainer;
   final Color secondary;
+
+  /// Cyan accent — highlights, data viz, "fresh" surfaces.
+  final Color tertiary;
   final Color warning;
   final Color outlineVariant;
 
   /// Text/icon on primary-colored buttons.
   final Color onPrimaryButton;
 
+  // ── Gradients ──────────────────────────────────────────────────────────
+  /// 135° indigo → violet. Primary brand gradient.
+  final LinearGradient primaryGradient;
+
+  /// 135° cyan → indigo. Accent CTAs and special chips.
+  final LinearGradient accentGradient;
+
+  /// Soft radial blob for hero backdrops (founder card, empty states).
+  final RadialGradient heroBackdropGradient;
+
   Color ghostBorder([double opacity = 0.15]) =>
       outlineVariant.withValues(alpha: opacity);
 
+  // ── Elevation presets ──────────────────────────────────────────────────
+  /// 1dp — subtle separation (chip on card, list dividers).
+  List<BoxShadow> get elevationSm => const [
+        BoxShadow(
+          color: Color(0x14000000),
+          blurRadius: 2,
+          offset: Offset(0, 1),
+        ),
+      ];
+
+  /// 4dp — cards lifted off scroll.
+  List<BoxShadow> get elevationMd => const [
+        BoxShadow(
+          color: Color(0x1F000000),
+          blurRadius: 12,
+          offset: Offset(0, 4),
+        ),
+      ];
+
+  /// 12dp — sheets, prominent floating menus, with soft brand glow.
+  List<BoxShadow> get elevationLg => [
+        const BoxShadow(
+          color: Color(0x2E000000),
+          blurRadius: 32,
+          offset: Offset(0, 12),
+        ),
+        BoxShadow(
+          color: primary.withValues(alpha: 0.20),
+          blurRadius: 24,
+          offset: Offset.zero,
+        ),
+      ];
+
+  /// Brand glow — primary CTA pressed/active state.
+  List<BoxShadow> get vibrantGlow => [
+        BoxShadow(
+          color: primary.withValues(alpha: 0.32),
+          blurRadius: 24,
+          offset: const Offset(0, 8),
+        ),
+      ];
+
   /// Subtle ambient shadow for floating UI (nav bar, elevated menus).
+  ///
+  /// Kept for backwards compatibility; prefer [elevationLg] for new code.
   List<BoxShadow> get ambientFloating {
     final isLight = surface.computeLuminance() > 0.5;
     return [
       BoxShadow(
-        color: Color.fromRGBO(79, 70, 229, isLight ? 0.06 : 0.12),
+        color: primary.withValues(alpha: isLight ? 0.06 : 0.12),
         blurRadius: 40,
         offset: const Offset(0, 20),
       ),
@@ -80,26 +149,68 @@ class ObsidianUiTokens extends ThemeExtension<ObsidianUiTokens> {
     primary: ObsidianColors.primary,
     primaryContainer: ObsidianColors.primaryContainer,
     secondary: ObsidianColors.secondary,
+    tertiary: ObsidianColors.tertiary,
     warning: ObsidianColors.warning,
     outlineVariant: ObsidianColors.outlineVariant,
-    onPrimaryButton: Color(0xFFFFFFFF),
+    onPrimaryButton: Color(0xFF0B0E1A),
+    primaryGradient: LinearGradient(
+      begin: Alignment.topLeft,
+      end: Alignment.bottomRight,
+      colors: [ObsidianColors.primary, ObsidianColors.primaryGradientEnd],
+    ),
+    accentGradient: LinearGradient(
+      begin: Alignment.topLeft,
+      end: Alignment.bottomRight,
+      colors: [ObsidianColors.tertiary, ObsidianColors.primary],
+    ),
+    heroBackdropGradient: RadialGradient(
+      center: Alignment(-0.4, -0.6),
+      radius: 1.2,
+      colors: [
+        Color(0x66818CF8),
+        Color(0x33C084FC),
+        Color(0x0022D3EE),
+      ],
+      stops: [0.0, 0.55, 1.0],
+    ),
   );
 
   static const ObsidianUiTokens light = ObsidianUiTokens(
-    surface: Color(0xFFFAFAFE),
+    surface: Color(0xFFFAFAFB),
     surfaceContainerLowest: Color(0xFFFFFFFF),
-    surfaceContainerLow: Color(0xFFF0F0F8),
-    surfaceContainer: Color(0xFFE2E8F8),
-    surfaceContainerHigh: Color(0xFFC7D2FE),
-    surfaceBright: Color(0xFFFFFFFF),
-    onSurface: Color(0xFF111827),
-    onSurfaceVariant: Color(0xFF6B7280),
-    primary: Color(0xFF4F46E5),
-    primaryContainer: Color(0xFFEEF2FF),
+    surfaceContainerLow: Color(0xFFF5F5F7),
+    surfaceContainer: Color(0xFFEFEFF3),
+    surfaceContainerHigh: Color(0xFFE8E8EE),
+    surfaceBright: Color(0xFFE0E0E8),
+    onSurface: Color(0xFF0F172A),
+    onSurfaceVariant: Color(0xFF64748B),
+    primary: Color(0xFF4338CA),
+    primaryContainer: Color(0xFFE0E7FF),
     secondary: Color(0xFF0D9488),
+    tertiary: Color(0xFF0891B2),
     warning: Color(0xFFD97706),
-    outlineVariant: Color(0xFF8B90A0),
+    outlineVariant: Color(0xFFE2E8F0),
     onPrimaryButton: Color(0xFFFFFFFF),
+    primaryGradient: LinearGradient(
+      begin: Alignment.topLeft,
+      end: Alignment.bottomRight,
+      colors: [Color(0xFF4F46E5), Color(0xFF7C3AED)],
+    ),
+    accentGradient: LinearGradient(
+      begin: Alignment.topLeft,
+      end: Alignment.bottomRight,
+      colors: [Color(0xFF0891B2), Color(0xFF4338CA)],
+    ),
+    heroBackdropGradient: RadialGradient(
+      center: Alignment(-0.4, -0.6),
+      radius: 1.2,
+      colors: [
+        Color(0x33818CF8),
+        Color(0x1FC084FC),
+        Color(0x0022D3EE),
+      ],
+      stops: [0.0, 0.55, 1.0],
+    ),
   );
 
   @override
@@ -115,9 +226,13 @@ class ObsidianUiTokens extends ThemeExtension<ObsidianUiTokens> {
     Color? primary,
     Color? primaryContainer,
     Color? secondary,
+    Color? tertiary,
     Color? warning,
     Color? outlineVariant,
     Color? onPrimaryButton,
+    LinearGradient? primaryGradient,
+    LinearGradient? accentGradient,
+    RadialGradient? heroBackdropGradient,
   }) {
     return ObsidianUiTokens(
       surface: surface ?? this.surface,
@@ -132,9 +247,13 @@ class ObsidianUiTokens extends ThemeExtension<ObsidianUiTokens> {
       primary: primary ?? this.primary,
       primaryContainer: primaryContainer ?? this.primaryContainer,
       secondary: secondary ?? this.secondary,
+      tertiary: tertiary ?? this.tertiary,
       warning: warning ?? this.warning,
       outlineVariant: outlineVariant ?? this.outlineVariant,
       onPrimaryButton: onPrimaryButton ?? this.onPrimaryButton,
+      primaryGradient: primaryGradient ?? this.primaryGradient,
+      accentGradient: accentGradient ?? this.accentGradient,
+      heroBackdropGradient: heroBackdropGradient ?? this.heroBackdropGradient,
     );
   }
 
@@ -177,9 +296,19 @@ class ObsidianUiTokens extends ThemeExtension<ObsidianUiTokens> {
         t,
       )!,
       secondary: Color.lerp(secondary, other.secondary, t)!,
+      tertiary: Color.lerp(tertiary, other.tertiary, t)!,
       warning: Color.lerp(warning, other.warning, t)!,
       outlineVariant: Color.lerp(outlineVariant, other.outlineVariant, t)!,
       onPrimaryButton: Color.lerp(onPrimaryButton, other.onPrimaryButton, t)!,
+      primaryGradient:
+          LinearGradient.lerp(primaryGradient, other.primaryGradient, t)!,
+      accentGradient:
+          LinearGradient.lerp(accentGradient, other.accentGradient, t)!,
+      heroBackdropGradient: RadialGradient.lerp(
+        heroBackdropGradient,
+        other.heroBackdropGradient,
+        t,
+      )!,
     );
   }
 }
@@ -197,3 +326,31 @@ double obsidianFabBottomPadding(BuildContext context) {
   final safe = MediaQuery.paddingOf(context).bottom;
   return kObsidianNavBarHeight + safe + 12;
 }
+
+// ── Forward-looking aliases (Obsidian* → App*) ───────────────────────────
+//
+// Step-3 plan introduces neutral `App*` names for the design system. Both
+// names live side-by-side during the migration so consumers can update
+// incrementally without churn.
+
+/// Design tokens. Prefer over [ObsidianUiTokens] in new code.
+typedef AppTokens = ObsidianUiTokens;
+
+extension AppTokensContext on BuildContext {
+  /// Active design tokens for the current theme. Prefer over `obsidian`.
+  AppTokens get appTokens => obsidian;
+}
+
+/// Tap-target sizing rules. Every interactive element must meet
+/// [minSize] (48dp) — Material guideline + WCAG 2.5.5.
+abstract final class AppTapTarget {
+  /// Minimum width and height for any tappable surface.
+  static const double minSize = 48;
+}
+
+/// Floating bottom-nav metrics. Re-exported under the `App*` prefix.
+const double kAppNavBarHeight = kObsidianNavBarHeight;
+
+/// Extra padding for FABs so they clear the floating nav + home indicator.
+double appFabBottomPadding(BuildContext context) =>
+    obsidianFabBottomPadding(context);

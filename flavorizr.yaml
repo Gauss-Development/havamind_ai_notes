@@ -1,0 +1,28 @@
+app:
+  android:
+    flavorDimensions: "environment"
+  ios:
+    generateDummyAssets: false
+
+flavors:
+  development:
+    app:
+      name: "Hava Mind Dev"
+
+    android:
+      applicationId: "com.havamind.app.dev"
+      generateDummyAssets: true
+    ios:
+      bundleId: "com.havamind.app.dev"
+      generateDummyAssets: true
+
+  production:
+    app:
+      name: "Hava Mind"
+
+    android:
+      applicationId: "com.havamind.app"
+      generateDummyAssets: true
+    ios:
+      bundleId: "com.havamind.app"
+      generateDummyAssets: true

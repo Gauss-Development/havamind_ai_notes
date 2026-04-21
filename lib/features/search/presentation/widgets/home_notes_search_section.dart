@@ -33,19 +33,24 @@ class _HomeNotesSearchSectionState extends State<HomeNotesSearchSection> {
   late final FocusNode _searchFocusNode;
   String _query = '';
 
+  // Memoized ranking. We recompute only when the trimmed query or the
+  // identity of the notes list changes — never on focus events or on
+  // unrelated parent rebuilds. This keeps keystroke latency flat even
+  // when the underlying note list is large.
+  String? _cachedQuery;
+  List<AudioNote>? _cachedNotesRef;
+  List<AudioNote> _cachedRanked = const <AudioNote>[];
+
   @override
   void initState() {
     super.initState();
     _searchController = TextEditingController();
     _searchFocusNode = FocusNode();
-    _searchFocusNode.addListener(_refreshOnFocusChange);
   }
 
   @override
   void dispose() {
-    _searchFocusNode
-      ..removeListener(_refreshOnFocusChange)
-      ..dispose();
+    _searchFocusNode.dispose();
     _searchController.dispose();
     super.dispose();
   }
@@ -54,15 +59,10 @@ class _HomeNotesSearchSectionState extends State<HomeNotesSearchSection> {
   Widget build(BuildContext context) {
     final trimmedQuery = _query.trim();
     final hasQuery = trimmedQuery.isNotEmpty;
-    final allRanked = hasQuery
-        ? _rankItemsByTitle<AudioNote>(
-            items: widget.notes,
-            query: trimmedQuery,
-            titleOf: (note) => note.title,
-            createdAtOf: (note) => note.createdAt,
-          )
-        : const <AudioNote>[];
-    final matches = allRanked.take(_suggestionsLimit).toList(growable: false);
+    final allRanked = hasQuery ? _rankedFor(trimmedQuery) : const <AudioNote>[];
+    final matches = allRanked.length <= _suggestionsLimit
+        ? allRanked
+        : allRanked.sublist(0, _suggestionsLimit);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -73,10 +73,15 @@ class _HomeNotesSearchSectionState extends State<HomeNotesSearchSection> {
           focusNode: _searchFocusNode,
           onTapSearchBar: _requestSearchFocus,
           onTapOutside: _unfocusSearch,
-          onChanged: (value) => setState(() => _query = value),
+          onChanged: (value) {
+            if (value == _query) return;
+            setState(() => _query = value);
+          },
           onClear: () {
             _searchController.clear();
-            setState(() => _query = '');
+            if (_query.isNotEmpty) {
+              setState(() => _query = '');
+            }
             _requestSearchFocus();
           },
         ),
@@ -100,9 +105,20 @@ class _HomeNotesSearchSectionState extends State<HomeNotesSearchSection> {
     );
   }
 
-  void _refreshOnFocusChange() {
-    if (!mounted) return;
-    setState(() {});
+  List<AudioNote> _rankedFor(String trimmedQuery) {
+    if (identical(_cachedNotesRef, widget.notes) &&
+        _cachedQuery == trimmedQuery) {
+      return _cachedRanked;
+    }
+    _cachedQuery = trimmedQuery;
+    _cachedNotesRef = widget.notes;
+    _cachedRanked = _rankItemsByTitle<AudioNote>(
+      items: widget.notes,
+      query: trimmedQuery,
+      titleOf: (note) => note.title,
+      createdAtOf: (note) => note.createdAt,
+    );
+    return _cachedRanked;
   }
 
   void _requestSearchFocus() {
@@ -139,81 +155,91 @@ class _SearchBar extends StatelessWidget {
   Widget build(BuildContext context) {
     final t = context.obsidian;
     final theme = Theme.of(context);
-    final hasValue = controller.text.trim().isNotEmpty;
-    final focused = focusNode.hasFocus;
     final barRadius = BorderRadius.circular(ObsidianUiTokens.radiusFull);
+    final hintStyle = theme.textTheme.bodyMedium?.copyWith(
+      color: t.onSurfaceVariant.withValues(alpha: 0.55),
+    );
 
-    return GestureDetector(
-      onTap: onTapSearchBar,
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 200),
-        curve: Curves.easeOutCubic,
-        height: 48,
-        padding: const EdgeInsets.symmetric(horizontal: AppSpacing.base),
-        decoration: BoxDecoration(
-          color: t.surfaceContainerLow,
-          borderRadius: barRadius,
-          border: Border.all(
-            color: focused
-                ? t.primary.withValues(alpha: 0.4)
-                : Colors.transparent,
-          ),
-        ),
-        child: Row(
-          children: [
-            Icon(
-              Icons.search_rounded,
-              color: focused ? t.primary : t.onSurfaceVariant,
-              size: 20,
+    // Listen locally to focus + controller so the parent section never has to
+    // rebuild on focus or text changes. This keeps the (potentially large)
+    // suggestions tree and the home page scroll view stable per keystroke.
+    return ListenableBuilder(
+      listenable: Listenable.merge([focusNode, controller]),
+      builder: (context, _) {
+        final focused = focusNode.hasFocus;
+        final hasValue = controller.text.trim().isNotEmpty;
+
+        return GestureDetector(
+          onTap: onTapSearchBar,
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 200),
+            curve: Curves.easeOutCubic,
+            height: 48,
+            padding: const EdgeInsets.symmetric(horizontal: AppSpacing.base),
+            decoration: BoxDecoration(
+              color: t.surfaceContainerLow,
+              borderRadius: barRadius,
+              border: Border.all(
+                color: focused
+                    ? t.primary.withValues(alpha: 0.4)
+                    : Colors.transparent,
+              ),
             ),
-            const SizedBox(width: AppSpacing.sm),
-            Expanded(
-              child: Semantics(
-                label: 'Search notes by title',
-                textField: true,
-                child: TextField(
-                  controller: controller,
-                  focusNode: focusNode,
-                  onTap: onTapSearchBar,
-                  onChanged: onChanged,
-                  onTapOutside: (_) => onTapOutside(),
-                  textInputAction: TextInputAction.search,
-                  cursorColor: t.primary,
-                  style: theme.textTheme.bodyMedium,
-                  decoration: InputDecoration(
-                    isCollapsed: true,
-                    border: InputBorder.none,
-                    hintText: notesCount == 0
-                        ? 'Search your notes...'
-                        : 'Search $notesCount notes...',
-                    hintStyle: theme.textTheme.bodyMedium?.copyWith(
-                      color: t.onSurfaceVariant.withValues(alpha: 0.55),
+            child: Row(
+              children: [
+                Icon(
+                  Icons.search_rounded,
+                  color: focused ? t.primary : t.onSurfaceVariant,
+                  size: 20,
+                ),
+                const SizedBox(width: AppSpacing.sm),
+                Expanded(
+                  child: Semantics(
+                    label: 'Search notes by title',
+                    textField: true,
+                    child: TextField(
+                      controller: controller,
+                      focusNode: focusNode,
+                      onTap: onTapSearchBar,
+                      onChanged: onChanged,
+                      onTapOutside: (_) => onTapOutside(),
+                      textInputAction: TextInputAction.search,
+                      cursorColor: t.primary,
+                      style: theme.textTheme.bodyMedium,
+                      decoration: InputDecoration(
+                        isCollapsed: true,
+                        border: InputBorder.none,
+                        hintText: notesCount == 0
+                            ? 'Search your notes...'
+                            : 'Search $notesCount notes...',
+                        hintStyle: hintStyle,
+                      ),
                     ),
                   ),
                 ),
-              ),
+                AnimatedSwitcher(
+                  duration: const Duration(milliseconds: 150),
+                  child: hasValue
+                      ? GestureDetector(
+                          key: const ValueKey('clear_search'),
+                          onTap: onClear,
+                          behavior: HitTestBehavior.opaque,
+                          child: Padding(
+                            padding: const EdgeInsets.all(4),
+                            child: Icon(
+                              Icons.cancel_rounded,
+                              size: 20,
+                              color: t.onSurfaceVariant.withValues(alpha: 0.6),
+                            ),
+                          ),
+                        )
+                      : const SizedBox.shrink(key: ValueKey('no_clear')),
+                ),
+              ],
             ),
-            AnimatedSwitcher(
-              duration: const Duration(milliseconds: 150),
-              child: hasValue
-                  ? GestureDetector(
-                      key: const ValueKey('clear_search'),
-                      onTap: onClear,
-                      behavior: HitTestBehavior.opaque,
-                      child: Padding(
-                        padding: const EdgeInsets.all(4),
-                        child: Icon(
-                          Icons.cancel_rounded,
-                          size: 20,
-                          color: t.onSurfaceVariant.withValues(alpha: 0.6),
-                        ),
-                      ),
-                    )
-                  : const SizedBox.shrink(key: ValueKey('no_clear')),
-            ),
-          ],
-        ),
-      ),
+          ),
+        );
+      },
     );
   }
 }

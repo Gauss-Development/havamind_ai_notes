@@ -12,8 +12,6 @@ abstract class SubscriptionRepository {
 
   Future<Either<Failure, PaywallActionResult>> presentPaywall();
 
-  Future<Either<Failure, void>> presentCustomerCenter();
-
   Future<Either<Failure, void>> logIn(String appUserId);
 
   Future<Either<Failure, void>> logOut();

@@ -48,6 +48,13 @@ class SubscriptionStatus extends Equatable {
   bool get isCancelled => !willRenew && !isLifetime && isActive;
   bool get hasBillingIssue => billingIssueDetectedAt != null;
 
+  /// Store-facing product line (tier). Never exposes raw store product ids.
+  String get marketingProductName => switch (tier) {
+        SubscriptionTier.free => 'Havamind Voice Free',
+        SubscriptionTier.basic => 'Havamind Voice Basic',
+        SubscriptionTier.pro => 'Havamind Voice Pro',
+      };
+
   String get planDisplayName {
     switch (period) {
       case SubscriptionPeriod.monthly:

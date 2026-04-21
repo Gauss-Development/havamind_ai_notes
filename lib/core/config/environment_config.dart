@@ -13,14 +13,24 @@ class EnvironmentConfig {
 
   static late final EnvironmentConfig instance;
 
-  static Future<void> initialize() async {
-    try {
-      await dotenv.load(fileName: 'assets/env/.env');
-    } catch (_) {
-      try {
-        await dotenv.load(fileName: 'assets/env/.env.example');
-      } catch (_) {}
+  /// Loads the first existing file among:
+  /// `assets/env/.env.[flavorName]` → `.env` → `.env.example`.
+  static Future<void> initialize({required String flavorName}) async {
+    Future<bool> loadFirst(Iterable<String> paths) async {
+      for (final path in paths) {
+        try {
+          await dotenv.load(fileName: path);
+          return true;
+        } catch (_) {}
+      }
+      return false;
     }
+
+    await loadFirst([
+      'assets/env/.env.$flavorName',
+      'assets/env/.env',
+      'assets/env/.env.example',
+    ]);
 
     String read(String key) {
       final fromFile = dotenv.env[key]?.trim();
@@ -41,7 +51,8 @@ class EnvironmentConfig {
     if (supabaseUrl.isEmpty || supabaseAnonKey.isEmpty) {
       throw StateError(
         'Environment is not configured. Set SUPABASE_URL and '
-        'SUPABASE_ANON_KEY in assets/env/.env or pass --dart-define.',
+        'SUPABASE_ANON_KEY in assets/env/.env.[flavor], assets/env/.env, '
+        'or pass --dart-define.',
       );
     }
   }

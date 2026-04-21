@@ -43,7 +43,6 @@ import 'package:sample/features/subscription/data/repositories/subscription_repo
 import 'package:sample/features/subscription/domain/repositories/subscription_repository.dart';
 import 'package:sample/features/subscription/domain/usecases/get_current_usage_usecase.dart';
 import 'package:sample/features/subscription/domain/usecases/get_subscription_status_usecase.dart';
-import 'package:sample/features/subscription/domain/usecases/present_customer_center_usecase.dart';
 import 'package:sample/features/subscription/domain/usecases/present_paywall_usecase.dart';
 import 'package:sample/features/subscription/domain/usecases/restore_purchases_usecase.dart';
 import 'package:sample/features/subscription/presentation/cubit/subscription_cubit.dart';
@@ -187,7 +186,6 @@ Future<void> configureDependencies() async {
   getIt.registerFactory(() => GetSubscriptionStatusUseCase(getIt()));
   getIt.registerFactory(() => RestorePurchasesUseCase(getIt()));
   getIt.registerFactory(() => PresentPaywallUseCase(getIt()));
-  getIt.registerFactory(() => PresentCustomerCenterUseCase(getIt()));
   getIt.registerFactory(
     () => GetCurrentUsageUseCase(
       subscriptionRepository: getIt(),
@@ -200,7 +198,6 @@ Future<void> configureDependencies() async {
       getSubscriptionStatus: getIt(),
       restorePurchases: getIt(),
       presentPaywall: getIt(),
-      presentCustomerCenter: getIt(),
       repository: getIt(),
       getCurrentUsage: getIt(),
     ),
