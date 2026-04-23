@@ -22,18 +22,21 @@ mixin _$AudioNotesListEvent {
     required TResult Function() started,
     required TResult Function() refreshed,
     required TResult Function() loadMore,
+    required TResult Function(List<String> tagIds) tagFilterChanged,
   }) => throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? started,
     TResult? Function()? refreshed,
     TResult? Function()? loadMore,
+    TResult? Function(List<String> tagIds)? tagFilterChanged,
   }) => throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? started,
     TResult Function()? refreshed,
     TResult Function()? loadMore,
+    TResult Function(List<String> tagIds)? tagFilterChanged,
     required TResult orElse(),
   }) => throw _privateConstructorUsedError;
   @optionalTypeArgs
@@ -41,18 +44,21 @@ mixin _$AudioNotesListEvent {
     required TResult Function(_ListStarted value) started,
     required TResult Function(_ListRefreshed value) refreshed,
     required TResult Function(_ListLoadMore value) loadMore,
+    required TResult Function(_TagFilterChanged value) tagFilterChanged,
   }) => throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(_ListStarted value)? started,
     TResult? Function(_ListRefreshed value)? refreshed,
     TResult? Function(_ListLoadMore value)? loadMore,
+    TResult? Function(_TagFilterChanged value)? tagFilterChanged,
   }) => throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object?>({
     TResult Function(_ListStarted value)? started,
     TResult Function(_ListRefreshed value)? refreshed,
     TResult Function(_ListLoadMore value)? loadMore,
+    TResult Function(_TagFilterChanged value)? tagFilterChanged,
     required TResult orElse(),
   }) => throw _privateConstructorUsedError;
 }
@@ -125,6 +131,7 @@ class _$ListStartedImpl implements _ListStarted {
     required TResult Function() started,
     required TResult Function() refreshed,
     required TResult Function() loadMore,
+    required TResult Function(List<String> tagIds) tagFilterChanged,
   }) {
     return started();
   }
@@ -135,6 +142,7 @@ class _$ListStartedImpl implements _ListStarted {
     TResult? Function()? started,
     TResult? Function()? refreshed,
     TResult? Function()? loadMore,
+    TResult? Function(List<String> tagIds)? tagFilterChanged,
   }) {
     return started?.call();
   }
@@ -145,6 +153,7 @@ class _$ListStartedImpl implements _ListStarted {
     TResult Function()? started,
     TResult Function()? refreshed,
     TResult Function()? loadMore,
+    TResult Function(List<String> tagIds)? tagFilterChanged,
     required TResult orElse(),
   }) {
     if (started != null) {
@@ -159,6 +168,7 @@ class _$ListStartedImpl implements _ListStarted {
     required TResult Function(_ListStarted value) started,
     required TResult Function(_ListRefreshed value) refreshed,
     required TResult Function(_ListLoadMore value) loadMore,
+    required TResult Function(_TagFilterChanged value) tagFilterChanged,
   }) {
     return started(this);
   }
@@ -169,6 +179,7 @@ class _$ListStartedImpl implements _ListStarted {
     TResult? Function(_ListStarted value)? started,
     TResult? Function(_ListRefreshed value)? refreshed,
     TResult? Function(_ListLoadMore value)? loadMore,
+    TResult? Function(_TagFilterChanged value)? tagFilterChanged,
   }) {
     return started?.call(this);
   }
@@ -179,6 +190,7 @@ class _$ListStartedImpl implements _ListStarted {
     TResult Function(_ListStarted value)? started,
     TResult Function(_ListRefreshed value)? refreshed,
     TResult Function(_ListLoadMore value)? loadMore,
+    TResult Function(_TagFilterChanged value)? tagFilterChanged,
     required TResult orElse(),
   }) {
     if (started != null) {
@@ -238,6 +250,7 @@ class _$ListRefreshedImpl implements _ListRefreshed {
     required TResult Function() started,
     required TResult Function() refreshed,
     required TResult Function() loadMore,
+    required TResult Function(List<String> tagIds) tagFilterChanged,
   }) {
     return refreshed();
   }
@@ -248,6 +261,7 @@ class _$ListRefreshedImpl implements _ListRefreshed {
     TResult? Function()? started,
     TResult? Function()? refreshed,
     TResult? Function()? loadMore,
+    TResult? Function(List<String> tagIds)? tagFilterChanged,
   }) {
     return refreshed?.call();
   }
@@ -258,6 +272,7 @@ class _$ListRefreshedImpl implements _ListRefreshed {
     TResult Function()? started,
     TResult Function()? refreshed,
     TResult Function()? loadMore,
+    TResult Function(List<String> tagIds)? tagFilterChanged,
     required TResult orElse(),
   }) {
     if (refreshed != null) {
@@ -272,6 +287,7 @@ class _$ListRefreshedImpl implements _ListRefreshed {
     required TResult Function(_ListStarted value) started,
     required TResult Function(_ListRefreshed value) refreshed,
     required TResult Function(_ListLoadMore value) loadMore,
+    required TResult Function(_TagFilterChanged value) tagFilterChanged,
   }) {
     return refreshed(this);
   }
@@ -282,6 +298,7 @@ class _$ListRefreshedImpl implements _ListRefreshed {
     TResult? Function(_ListStarted value)? started,
     TResult? Function(_ListRefreshed value)? refreshed,
     TResult? Function(_ListLoadMore value)? loadMore,
+    TResult? Function(_TagFilterChanged value)? tagFilterChanged,
   }) {
     return refreshed?.call(this);
   }
@@ -292,6 +309,7 @@ class _$ListRefreshedImpl implements _ListRefreshed {
     TResult Function(_ListStarted value)? started,
     TResult Function(_ListRefreshed value)? refreshed,
     TResult Function(_ListLoadMore value)? loadMore,
+    TResult Function(_TagFilterChanged value)? tagFilterChanged,
     required TResult orElse(),
   }) {
     if (refreshed != null) {
@@ -351,6 +369,7 @@ class _$ListLoadMoreImpl implements _ListLoadMore {
     required TResult Function() started,
     required TResult Function() refreshed,
     required TResult Function() loadMore,
+    required TResult Function(List<String> tagIds) tagFilterChanged,
   }) {
     return loadMore();
   }
@@ -361,6 +380,7 @@ class _$ListLoadMoreImpl implements _ListLoadMore {
     TResult? Function()? started,
     TResult? Function()? refreshed,
     TResult? Function()? loadMore,
+    TResult? Function(List<String> tagIds)? tagFilterChanged,
   }) {
     return loadMore?.call();
   }
@@ -371,6 +391,7 @@ class _$ListLoadMoreImpl implements _ListLoadMore {
     TResult Function()? started,
     TResult Function()? refreshed,
     TResult Function()? loadMore,
+    TResult Function(List<String> tagIds)? tagFilterChanged,
     required TResult orElse(),
   }) {
     if (loadMore != null) {
@@ -385,6 +406,7 @@ class _$ListLoadMoreImpl implements _ListLoadMore {
     required TResult Function(_ListStarted value) started,
     required TResult Function(_ListRefreshed value) refreshed,
     required TResult Function(_ListLoadMore value) loadMore,
+    required TResult Function(_TagFilterChanged value) tagFilterChanged,
   }) {
     return loadMore(this);
   }
@@ -395,6 +417,7 @@ class _$ListLoadMoreImpl implements _ListLoadMore {
     TResult? Function(_ListStarted value)? started,
     TResult? Function(_ListRefreshed value)? refreshed,
     TResult? Function(_ListLoadMore value)? loadMore,
+    TResult? Function(_TagFilterChanged value)? tagFilterChanged,
   }) {
     return loadMore?.call(this);
   }
@@ -405,6 +428,7 @@ class _$ListLoadMoreImpl implements _ListLoadMore {
     TResult Function(_ListStarted value)? started,
     TResult Function(_ListRefreshed value)? refreshed,
     TResult Function(_ListLoadMore value)? loadMore,
+    TResult Function(_TagFilterChanged value)? tagFilterChanged,
     required TResult orElse(),
   }) {
     if (loadMore != null) {
@@ -416,6 +440,170 @@ class _$ListLoadMoreImpl implements _ListLoadMore {
 
 abstract class _ListLoadMore implements AudioNotesListEvent {
   const factory _ListLoadMore() = _$ListLoadMoreImpl;
+}
+
+/// @nodoc
+abstract class _$$TagFilterChangedImplCopyWith<$Res> {
+  factory _$$TagFilterChangedImplCopyWith(
+    _$TagFilterChangedImpl value,
+    $Res Function(_$TagFilterChangedImpl) then,
+  ) = __$$TagFilterChangedImplCopyWithImpl<$Res>;
+  @useResult
+  $Res call({List<String> tagIds});
+}
+
+/// @nodoc
+class __$$TagFilterChangedImplCopyWithImpl<$Res>
+    extends _$AudioNotesListEventCopyWithImpl<$Res, _$TagFilterChangedImpl>
+    implements _$$TagFilterChangedImplCopyWith<$Res> {
+  __$$TagFilterChangedImplCopyWithImpl(
+    _$TagFilterChangedImpl _value,
+    $Res Function(_$TagFilterChangedImpl) _then,
+  ) : super(_value, _then);
+
+  /// Create a copy of AudioNotesListEvent
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({Object? tagIds = null}) {
+    return _then(
+      _$TagFilterChangedImpl(
+        null == tagIds
+            ? _value._tagIds
+            : tagIds // ignore: cast_nullable_to_non_nullable
+                  as List<String>,
+      ),
+    );
+  }
+}
+
+/// @nodoc
+
+class _$TagFilterChangedImpl implements _TagFilterChanged {
+  const _$TagFilterChangedImpl(final List<String> tagIds) : _tagIds = tagIds;
+
+  final List<String> _tagIds;
+  @override
+  List<String> get tagIds {
+    if (_tagIds is EqualUnmodifiableListView) return _tagIds;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_tagIds);
+  }
+
+  @override
+  String toString() {
+    return 'AudioNotesListEvent.tagFilterChanged(tagIds: $tagIds)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$TagFilterChangedImpl &&
+            const DeepCollectionEquality().equals(other._tagIds, _tagIds));
+  }
+
+  @override
+  int get hashCode =>
+      Object.hash(runtimeType, const DeepCollectionEquality().hash(_tagIds));
+
+  /// Create a copy of AudioNotesListEvent
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$TagFilterChangedImplCopyWith<_$TagFilterChangedImpl> get copyWith =>
+      __$$TagFilterChangedImplCopyWithImpl<_$TagFilterChangedImpl>(
+        this,
+        _$identity,
+      );
+
+  @override
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>({
+    required TResult Function() started,
+    required TResult Function() refreshed,
+    required TResult Function() loadMore,
+    required TResult Function(List<String> tagIds) tagFilterChanged,
+  }) {
+    return tagFilterChanged(tagIds);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult? Function()? started,
+    TResult? Function()? refreshed,
+    TResult? Function()? loadMore,
+    TResult? Function(List<String> tagIds)? tagFilterChanged,
+  }) {
+    return tagFilterChanged?.call(tagIds);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function()? started,
+    TResult Function()? refreshed,
+    TResult Function()? loadMore,
+    TResult Function(List<String> tagIds)? tagFilterChanged,
+    required TResult orElse(),
+  }) {
+    if (tagFilterChanged != null) {
+      return tagFilterChanged(tagIds);
+    }
+    return orElse();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>({
+    required TResult Function(_ListStarted value) started,
+    required TResult Function(_ListRefreshed value) refreshed,
+    required TResult Function(_ListLoadMore value) loadMore,
+    required TResult Function(_TagFilterChanged value) tagFilterChanged,
+  }) {
+    return tagFilterChanged(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult? Function(_ListStarted value)? started,
+    TResult? Function(_ListRefreshed value)? refreshed,
+    TResult? Function(_ListLoadMore value)? loadMore,
+    TResult? Function(_TagFilterChanged value)? tagFilterChanged,
+  }) {
+    return tagFilterChanged?.call(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(_ListStarted value)? started,
+    TResult Function(_ListRefreshed value)? refreshed,
+    TResult Function(_ListLoadMore value)? loadMore,
+    TResult Function(_TagFilterChanged value)? tagFilterChanged,
+    required TResult orElse(),
+  }) {
+    if (tagFilterChanged != null) {
+      return tagFilterChanged(this);
+    }
+    return orElse();
+  }
+}
+
+abstract class _TagFilterChanged implements AudioNotesListEvent {
+  const factory _TagFilterChanged(final List<String> tagIds) =
+      _$TagFilterChangedImpl;
+
+  List<String> get tagIds;
+
+  /// Create a copy of AudioNotesListEvent
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  _$$TagFilterChangedImplCopyWith<_$TagFilterChangedImpl> get copyWith =>
+      throw _privateConstructorUsedError;
 }
 
 /// @nodoc

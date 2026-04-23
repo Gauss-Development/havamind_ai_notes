@@ -6,6 +6,12 @@ const String kAudioNotesBucketId = 'audio-notes';
 /// if you renamed the deployment (e.g. `OpenAI_Convecter`), set it here.
 const String kProcessAudioNoteEdgeFunction = 'process-audio-note';
 
+/// Edge Function for iterative plan refinement (GAU-94).
+const String kRefinePlanEdgeFunction = 'refine-plan';
+
+/// Maximum number of refinement rounds per plan (MVP, feature flag).
+const int kMaxRefinementRounds = 5;
+
 /// Maximum recording length in seconds (MVP).
 const int kMaxRecordingDurationSeconds = 600;
 

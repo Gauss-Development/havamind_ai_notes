@@ -63,4 +63,17 @@ class TagsCubit extends Cubit<TagsState> {
       )),
     );
   }
+
+  Future<List<String>> getTagIdsForNote(String noteId) async {
+    final result = await _repository.getTagIdsForNote(noteId);
+    return result.fold((_) => [], (ids) => ids);
+  }
+
+  Future<void> setTagsForNote(String noteId, List<String> tagIds) async {
+    final result = await _repository.setTagsForNote(noteId, tagIds);
+    result.fold(
+      (f) => emit(state.copyWith(error: f.message)),
+      (_) {},
+    );
+  }
 }

@@ -17,6 +17,7 @@ import 'package:sample/features/audio_notes/presentation/pages/recording_page.da
 import 'package:sample/features/audio_notes/presentation/widgets/audio_note_duration_formatter.dart';
 import 'package:sample/features/auth/domain/entities/user_profile.dart';
 import 'package:sample/features/favorites/presentation/bloc/favorites_bloc.dart';
+import 'package:sample/features/tags/presentation/bloc/tags_cubit.dart';
 import 'package:sample/features/search/presentation/widgets/home_notes_search_section.dart';
 
 /// Home tab — bold, vibrant landing for the audio notes app.
@@ -185,10 +186,14 @@ class HomePage extends StatelessWidget {
 
 Future<void> _openNoteDetail(BuildContext context, String noteId) async {
   final favBloc = context.read<FavoritesBloc>();
+  final tagsCubit = context.read<TagsCubit>();
   await Navigator.of(context).push<bool>(
     MaterialPageRoute(
-      builder: (_) => BlocProvider.value(
-        value: favBloc,
+      builder: (_) => MultiBlocProvider(
+        providers: [
+          BlocProvider<FavoritesBloc>.value(value: favBloc),
+          BlocProvider<TagsCubit>.value(value: tagsCubit),
+        ],
         child: NoteDetailPage(noteId: noteId),
       ),
     ),

@@ -14,9 +14,12 @@ import 'package:sample/features/audio_notes/domain/entities/startup_analysis.dar
 import 'package:sample/features/audio_notes/presentation/bloc/audio_player_cubit.dart';
 import 'package:sample/features/audio_notes/presentation/bloc/note_detail_bloc.dart';
 import 'package:sample/features/audio_notes/presentation/utils/audio_note_status_ui.dart';
+import 'package:sample/features/audio_notes/presentation/pages/refinement_recording_page.dart';
 import 'package:sample/features/audio_notes/presentation/utils/note_share_formatter.dart';
 import 'package:sample/features/audio_notes/presentation/widgets/audio_note_duration_formatter.dart';
 import 'package:sample/features/favorites/presentation/widgets/favorite_button.dart';
+import 'package:sample/features/tags/presentation/bloc/tags_cubit.dart';
+import 'package:sample/features/tags/presentation/widgets/tag_chips.dart';
 import 'package:share_plus/share_plus.dart';
 
 class NoteDetailPage extends StatelessWidget {
@@ -356,7 +359,28 @@ class _CompletedView extends StatelessWidget {
                     analysis: analysis,
                     localAudioExists: localAudioExists,
                   ),
-                  _AnalysisTab(note: note, analysis: analysis),
+                  _AnalysisTab(
+                    note: note,
+                    analysis: analysis,
+                    onAnswerByVoice: (index, question) async {
+                      final refined =
+                          await Navigator.of(context).push<bool>(
+                        MaterialPageRoute(
+                          fullscreenDialog: true,
+                          builder: (_) => RefinementRecordingPage(
+                            noteId: note.id,
+                            followUpQuestionId: index.toString(),
+                            followUpQuestionText: question,
+                          ),
+                        ),
+                      );
+                      if (refined == true && context.mounted) {
+                        context.read<NoteDetailBloc>().add(
+                          NoteDetailEvent.loadRequested(note.id),
+                        );
+                      }
+                    },
+                  ),
                   _TranscriptTab(transcript: transcript),
                 ],
               ),
@@ -370,7 +394,7 @@ class _CompletedView extends StatelessWidget {
 
 // ─── Tab 1: Summary ──────────────────────────────────────────────────────────
 
-class _SummaryTab extends StatelessWidget {
+class _SummaryTab extends StatefulWidget {
   const _SummaryTab({
     required this.note,
     this.analysis,
@@ -380,6 +404,59 @@ class _SummaryTab extends StatelessWidget {
   final AudioNote note;
   final StartupAnalysis? analysis;
   final bool localAudioExists;
+
+  @override
+  State<_SummaryTab> createState() => _SummaryTabState();
+}
+
+class _SummaryTabState extends State<_SummaryTab> {
+  Set<String> _selectedTagIds = {};
+
+  @override
+  void initState() {
+    super.initState();
+    _loadNoteTags();
+  }
+
+  Future<void> _loadNoteTags() async {
+    final cubit = context.read<TagsCubit>();
+    final ids = await cubit.getTagIdsForNote(widget.note.id);
+    if (mounted) setState(() => _selectedTagIds = ids.toSet());
+  }
+
+  Future<void> _toggleTag(String tagId) async {
+    final updated = Set<String>.from(_selectedTagIds);
+    if (updated.contains(tagId)) {
+      updated.remove(tagId);
+    } else {
+      updated.add(tagId);
+    }
+    setState(() => _selectedTagIds = updated);
+    await context.read<TagsCubit>().setTagsForNote(
+      widget.note.id,
+      updated.toList(),
+    );
+  }
+
+  Future<void> _addTag() async {
+    final result = await showEditBottomSheet(
+      context: context,
+      title: 'New tag',
+      hintText: 'Tag name',
+      maxLines: 1,
+      minLines: 1,
+      saveLabel: 'Create',
+    );
+    if (result != null && mounted) {
+      final cubit = context.read<TagsCubit>();
+      await cubit.create(result);
+      // Auto-select the newly created tag
+      final newTag = cubit.state.tags.where((t) => t.name == result).firstOrNull;
+      if (newTag != null) {
+        await _toggleTag(newTag.id);
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -396,7 +473,7 @@ class _SummaryTab extends StatelessWidget {
       ),
       children: [
         Text(
-          dateFmt.format(note.createdAt.toLocal()),
+          dateFmt.format(widget.note.createdAt.toLocal()),
           style: theme.textTheme.bodySmall,
         ),
         const SizedBox(height: AppSpacing.sm),
@@ -407,7 +484,7 @@ class _SummaryTab extends StatelessWidget {
             children: [
               Expanded(
                 child: Text(
-                  note.title,
+                  widget.note.title,
                   style: theme.textTheme.headlineLarge,
                 ),
               ),
@@ -423,28 +500,39 @@ class _SummaryTab extends StatelessWidget {
           ),
         ),
         const SizedBox(height: AppSpacing.base),
-        _AudioPlayerCard(
-          duration: note.durationSeconds,
-          localAudioExists: localAudioExists,
+        BlocBuilder<TagsCubit, TagsState>(
+          builder: (context, tagsState) {
+            return TagChips(
+              tags: tagsState.tags,
+              selectedIds: _selectedTagIds,
+              onToggle: _toggleTag,
+              onAdd: _addTag,
+            );
+          },
         ),
-        if (localAudioExists) ...[
+        const SizedBox(height: AppSpacing.base),
+        _AudioPlayerCard(
+          duration: widget.note.durationSeconds,
+          localAudioExists: widget.localAudioExists,
+        ),
+        if (widget.localAudioExists) ...[
           const SizedBox(height: AppSpacing.sm),
           Text(
             'Local audio file saved on device',
             style: theme.textTheme.bodySmall,
           ),
         ],
-        if (analysis?.shortSummary != null) ...[
+        if (widget.analysis?.shortSummary != null) ...[
           const SizedBox(height: AppSpacing.lg),
           GestureDetector(
             onTap: () => _editField(
               context,
               title: 'Edit summary',
-              value: analysis!.shortSummary,
+              value: widget.analysis!.shortSummary,
               field: StartupAnalysisEditableField.shortSummary,
             ),
             child: Text(
-              analysis!.shortSummary!,
+              widget.analysis!.shortSummary!,
               style: theme.textTheme.bodyLarge?.copyWith(
                 height: 1.55,
                 color: t.onSurfaceVariant,
@@ -452,22 +540,51 @@ class _SummaryTab extends StatelessWidget {
             ),
           ),
         ],
-        if (analysis != null) ...[
+        if (widget.analysis != null) ...[
           const SizedBox(height: AppSpacing.xl),
           _VentureIntelligence(
-            marketPotential: analysis!.marketPotentialScore ?? 0,
-            technicalComplexity: analysis!.technicalComplexityScore ?? 0,
+            marketPotential: widget.analysis!.marketPotentialScore ?? 0,
+            technicalComplexity: widget.analysis!.technicalComplexityScore ?? 0,
+          ),
+          const SizedBox(height: AppSpacing.xl),
+          ObsidianGradientButton(
+            onPressed: () => _openRefinementRecording(context),
+            icon: Icons.mic_rounded,
+            label: 'Continue recording',
           ),
         ],
       ],
     );
   }
 
+  Future<void> _openRefinementRecording(
+    BuildContext context, {
+    String? followUpQuestionId,
+    String? followUpQuestionText,
+  }) async {
+    final refined = await Navigator.of(context).push<bool>(
+      MaterialPageRoute(
+        fullscreenDialog: true,
+        builder: (_) => RefinementRecordingPage(
+          noteId: widget.note.id,
+          followUpQuestionId: followUpQuestionId,
+          followUpQuestionText: followUpQuestionText,
+        ),
+      ),
+    );
+    if (refined == true && context.mounted) {
+      // Refresh the detail page to show updated plan
+      context.read<NoteDetailBloc>().add(
+        NoteDetailEvent.loadRequested(widget.note.id),
+      );
+    }
+  }
+
   Future<void> _editTitle(BuildContext context) async {
     final result = await showEditBottomSheet(
       context: context,
       title: 'Rename note',
-      initialValue: note.title,
+      initialValue: widget.note.title,
       hintText: 'Title',
       maxLines: 2,
       minLines: 1,
@@ -501,10 +618,15 @@ class _SummaryTab extends StatelessWidget {
 // ─── Tab 2: Analysis ─────────────────────────────────────────────────────────
 
 class _AnalysisTab extends StatelessWidget {
-  const _AnalysisTab({required this.note, this.analysis});
+  const _AnalysisTab({
+    required this.note,
+    this.analysis,
+    this.onAnswerByVoice,
+  });
 
   final AudioNote note;
   final StartupAnalysis? analysis;
+  final void Function(int index, String question)? onAnswerByVoice;
 
   @override
   Widget build(BuildContext context) {
@@ -586,6 +708,7 @@ class _AnalysisTab extends StatelessWidget {
           const SizedBox(height: AppSpacing.lg),
           _FollowUpQuestionsCard(
             questions: analysis!.followUpQuestions!,
+            onAnswerByVoice: onAnswerByVoice,
           ),
         ],
       ],
@@ -750,9 +873,13 @@ class _CollapsibleAnalysisCardState extends State<_CollapsibleAnalysisCard> {
 }
 
 class _FollowUpQuestionsCard extends StatelessWidget {
-  const _FollowUpQuestionsCard({required this.questions});
+  const _FollowUpQuestionsCard({
+    required this.questions,
+    this.onAnswerByVoice,
+  });
 
   final List<String> questions;
+  final void Function(int index, String question)? onAnswerByVoice;
 
   @override
   Widget build(BuildContext context) {
@@ -803,6 +930,21 @@ class _FollowUpQuestionsCard extends StatelessWidget {
                     ),
                   ),
                 ),
+                if (onAnswerByVoice != null)
+                  IconButton(
+                    onPressed: () => onAnswerByVoice!(i, questions[i]),
+                    icon: Icon(
+                      Icons.mic_rounded,
+                      size: 18,
+                      color: t.primary,
+                    ),
+                    tooltip: 'Answer by voice',
+                    constraints: const BoxConstraints(
+                      minWidth: 36,
+                      minHeight: 36,
+                    ),
+                    padding: EdgeInsets.zero,
+                  ),
               ],
             ),
             if (i < questions.length - 1)

@@ -42,11 +42,13 @@ class AudioNotesRepositoryImpl implements AudioNotesRepository {
   Future<Either<Failure, List<AudioNote>>> listNotes({
     int limit = 20,
     int offset = 0,
+    List<String>? tagIds,
   }) async {
     try {
       final list = await _remote.listForCurrentUser(
         limit: limit,
         offset: offset,
+        tagIds: tagIds,
       );
       if (offset == 0) {
         _local?.cacheNotes(list);
@@ -296,6 +298,40 @@ class AudioNotesRepositoryImpl implements AudioNotesRepository {
       return Right(total);
     } catch (e) {
       return Left(UnexpectedFailure(e.toString()));
+    }
+  }
+
+  @override
+  Future<Either<Failure, Map<String, dynamic>>> refinePlanByVoice({
+    required String noteId,
+    required String localFilePath,
+    String? followUpQuestionId,
+  }) async {
+    final user = _client.auth.currentUser;
+    if (user == null) {
+      return const Left(AuthFailure('Authentication required'));
+    }
+
+    try {
+      final file = File(localFilePath);
+      if (!await file.exists()) {
+        return const Left(UnexpectedFailure('Recording file not found'));
+      }
+
+      // Upload to a refinement subfolder in storage
+      final storagePath =
+          '${user.id}/$noteId/refinement_${DateTime.now().millisecondsSinceEpoch}.m4a';
+      await _storage.uploadObject(objectPath: storagePath, file: file);
+
+      // Call refine-plan with the audio path
+      final result = await _remote.invokePlanRefinement(
+        planId: noteId,
+        audioPath: storagePath,
+        followUpQuestionId: followUpQuestionId,
+      );
+      return Right(result);
+    } catch (e) {
+      return Left(ServerFailure(_userFacingError(e)));
     }
   }
 

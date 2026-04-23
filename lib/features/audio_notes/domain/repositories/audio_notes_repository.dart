@@ -8,6 +8,7 @@ abstract class AudioNotesRepository {
   Future<Either<Failure, List<AudioNote>>> listNotes({
     int limit = 20,
     int offset = 0,
+    List<String>? tagIds,
   });
 
   Future<Either<Failure, AudioNote>> getNote(String id);
@@ -46,6 +47,12 @@ abstract class AudioNotesRepository {
   Future<Either<Failure, int>> getTotalUsageSeconds({
     required DateTime from,
     required DateTime to,
+  });
+
+  Future<Either<Failure, Map<String, dynamic>>> refinePlanByVoice({
+    required String noteId,
+    required String localFilePath,
+    String? followUpQuestionId,
   });
 
   Stream<AudioNote> watchNote(String noteId);

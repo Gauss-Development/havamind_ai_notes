@@ -8,6 +8,7 @@ import 'package:sample/features/audio_notes/presentation/pages/note_detail_page.
 import 'package:sample/features/audio_notes/presentation/utils/audio_note_status_ui.dart';
 import 'package:sample/features/favorites/presentation/bloc/favorites_bloc.dart';
 import 'package:sample/features/favorites/presentation/widgets/favorite_button.dart';
+import 'package:sample/features/tags/presentation/bloc/tags_cubit.dart';
 
 class FavoritesPage extends StatelessWidget {
   const FavoritesPage({super.key});
@@ -63,10 +64,16 @@ class FavoritesPage extends StatelessWidget {
                           '${audioNoteStatusLabel(n.status)}',
                       onTap: () async {
                         final favBloc = context.read<FavoritesBloc>();
+                        final tagsCubit = context.read<TagsCubit>();
                         await Navigator.of(context).push<bool>(
                           MaterialPageRoute(
-                            builder: (_) => BlocProvider.value(
-                              value: favBloc,
+                            builder: (_) => MultiBlocProvider(
+                              providers: [
+                                BlocProvider<FavoritesBloc>.value(
+                                    value: favBloc),
+                                BlocProvider<TagsCubit>.value(
+                                    value: tagsCubit),
+                              ],
                               child: NoteDetailPage(noteId: n.id),
                             ),
                           ),

@@ -5,10 +5,15 @@ import 'package:sample/features/audio_notes/domain/entities/audio_note.dart';
 import 'package:sample/features/audio_notes/domain/repositories/audio_notes_repository.dart';
 
 class ListAudioNotesParams {
-  const ListAudioNotesParams({this.limit = 20, this.offset = 0});
+  const ListAudioNotesParams({
+    this.limit = 20,
+    this.offset = 0,
+    this.tagIds,
+  });
 
   final int limit;
   final int offset;
+  final List<String>? tagIds;
 }
 
 class ListAudioNotesUseCase
@@ -21,6 +26,10 @@ class ListAudioNotesUseCase
   Future<Either<Failure, List<AudioNote>>> call(
     ListAudioNotesParams params,
   ) {
-    return _repository.listNotes(limit: params.limit, offset: params.offset);
+    return _repository.listNotes(
+      limit: params.limit,
+      offset: params.offset,
+      tagIds: params.tagIds,
+    );
   }
 }

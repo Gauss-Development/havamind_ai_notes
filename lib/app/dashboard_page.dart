@@ -6,6 +6,7 @@ import 'package:sample/features/audio_notes/presentation/bloc/audio_notes_list_b
 import 'package:sample/features/audio_notes/presentation/pages/notes_list_page.dart';
 import 'package:sample/features/auth/domain/entities/user_profile.dart';
 import 'package:sample/features/favorites/presentation/bloc/favorites_bloc.dart';
+import 'package:sample/features/tags/presentation/bloc/tags_cubit.dart';
 import 'package:sample/features/favorites/presentation/pages/favorites_page.dart';
 import 'package:sample/features/home/presentation/pages/home_page.dart';
 import 'package:sample/features/profile/presentation/pages/profile_page.dart';
@@ -23,6 +24,7 @@ class _DashboardPageState extends State<DashboardPage> {
   int _currentIndex = 0;
   late final AudioNotesListBloc _audioNotesListBloc;
   late final FavoritesBloc _favoritesBloc;
+  late final TagsCubit _tagsCubit;
 
   @override
   void initState() {
@@ -31,12 +33,14 @@ class _DashboardPageState extends State<DashboardPage> {
       ..add(const AudioNotesListEvent.started());
     _favoritesBloc = getIt<FavoritesBloc>()
       ..add(const FavoritesEvent.started());
+    _tagsCubit = getIt<TagsCubit>()..load();
   }
 
   @override
   void dispose() {
     _audioNotesListBloc.close();
     _favoritesBloc.close();
+    _tagsCubit.close();
     super.dispose();
   }
 
@@ -69,6 +73,7 @@ class _DashboardPageState extends State<DashboardPage> {
       providers: [
         BlocProvider<AudioNotesListBloc>.value(value: _audioNotesListBloc),
         BlocProvider<FavoritesBloc>.value(value: _favoritesBloc),
+        BlocProvider<TagsCubit>.value(value: _tagsCubit),
       ],
       child: Scaffold(
         body: IndexedStack(

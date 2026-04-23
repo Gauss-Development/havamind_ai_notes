@@ -17,11 +17,48 @@ class AudioNotesRemoteDataSource {
   Future<List<AudioNote>> listForCurrentUser({
     int limit = 20,
     int offset = 0,
+    List<String>? tagIds,
   }) async {
     final userId = _client.auth.currentUser?.id;
     if (userId == null) {
       throw Exception('Not signed in');
     }
+
+    if (tagIds != null && tagIds.isNotEmpty) {
+      // Join through note_tags to filter by tags.
+      // Fetch note IDs that have ALL of the selected tags, then load notes.
+      final tagRows = await _client
+          .from('note_tags')
+          .select('audio_note_id')
+          .eq('user_id', userId)
+          .inFilter('tag_id', tagIds);
+
+      // Count how many of the requested tags each note matches.
+      final counts = <String, int>{};
+      for (final row in tagRows as List<dynamic>) {
+        final noteId = (row as Map)['audio_note_id'] as String;
+        counts[noteId] = (counts[noteId] ?? 0) + 1;
+      }
+      // Keep notes matching at least one selected tag (OR filter).
+      final matchingIds = counts.keys.toList();
+
+      if (matchingIds.isEmpty) return [];
+
+      final rows = await _client
+          .from('audio_notes')
+          .select()
+          .eq('user_id', userId)
+          .inFilter('id', matchingIds)
+          .order('created_at', ascending: false)
+          .range(offset, offset + limit - 1);
+      return (rows as List<dynamic>)
+          .map(
+            (e) =>
+                AudioNoteMapper.fromRow(Map<String, dynamic>.from(e as Map)),
+          )
+          .toList();
+    }
+
     final rows = await _client
         .from('audio_notes')
         .select()
@@ -255,6 +292,35 @@ class AudioNotesRemoteDataSource {
       total += ((row as Map)['duration_seconds'] as num).toInt();
     }
     return total;
+  }
+
+  /// Calls the `refine-plan` Edge Function with an uploaded audio path.
+  /// Returns the parsed response map with updatedPlan, newFollowUpQuestions, etc.
+  Future<Map<String, dynamic>> invokePlanRefinement({
+    required String planId,
+    required String audioPath,
+    String? followUpQuestionId,
+  }) async {
+    try {
+      final body = <String, dynamic>{
+        'planId': planId,
+        'audioPath': audioPath,
+      };
+      if (followUpQuestionId != null) {
+        body['followUpQuestionId'] = followUpQuestionId;
+      }
+      final res = await _client.functions.invoke(
+        kRefinePlanEdgeFunction,
+        body: body,
+      );
+      final data = res.data;
+      if (data is Map && data['error'] != null) {
+        throw Exception(data['error'].toString());
+      }
+      return Map<String, dynamic>.from(data as Map);
+    } on FunctionException catch (e) {
+      throw Exception(_messageFromFunctionException(e));
+    }
   }
 
   Stream<AudioNote> watchNote(String noteId) {

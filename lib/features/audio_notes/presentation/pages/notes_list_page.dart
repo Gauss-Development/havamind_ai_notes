@@ -14,6 +14,8 @@ import 'package:sample/features/audio_notes/presentation/widgets/audio_note_dura
 import 'package:sample/features/auth/domain/entities/user_profile.dart';
 import 'package:sample/features/favorites/presentation/bloc/favorites_bloc.dart';
 import 'package:sample/features/favorites/presentation/widgets/favorite_button.dart';
+import 'package:sample/features/tags/presentation/bloc/tags_cubit.dart';
+import 'package:sample/features/tags/presentation/widgets/tag_chips.dart';
 
 class NotesListPage extends StatelessWidget {
   const NotesListPage({super.key, required this.profile});
@@ -24,8 +26,28 @@ class NotesListPage extends StatelessWidget {
   Widget build(BuildContext context) => const _NotesListView();
 }
 
-class _NotesListView extends StatelessWidget {
+class _NotesListView extends StatefulWidget {
   const _NotesListView();
+
+  @override
+  State<_NotesListView> createState() => _NotesListViewState();
+}
+
+class _NotesListViewState extends State<_NotesListView> {
+  final Set<String> _selectedTagIds = {};
+
+  void _onTagToggle(String tagId) {
+    setState(() {
+      if (_selectedTagIds.contains(tagId)) {
+        _selectedTagIds.remove(tagId);
+      } else {
+        _selectedTagIds.add(tagId);
+      }
+    });
+    context.read<AudioNotesListBloc>().add(
+      AudioNotesListEvent.tagFilterChanged(_selectedTagIds.toList()),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -36,28 +58,55 @@ class _NotesListView extends StatelessWidget {
       appBar: AppBar(
         title: Text('Notes', style: theme.textTheme.headlineLarge),
       ),
-      body: BlocConsumer<AudioNotesListBloc, AudioNotesListState>(
-        listener: (context, state) {
-          state.maybeWhen(
-            failure: (m) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text(m)),
+      body: Column(
+        children: [
+          BlocBuilder<TagsCubit, TagsState>(
+            builder: (context, tagsState) {
+              if (tagsState.tags.isEmpty) return const SizedBox.shrink();
+              return Padding(
+                padding: const EdgeInsets.fromLTRB(
+                  AppSpacing.base,
+                  AppSpacing.xs,
+                  AppSpacing.base,
+                  AppSpacing.xs,
+                ),
+                child: TagChips(
+                  tags: tagsState.tags,
+                  selectedIds: _selectedTagIds,
+                  onToggle: _onTagToggle,
+                ),
               );
             },
-            orElse: () {},
-          );
-        },
-        builder: (context, state) {
-          return state.when(
-            initial: () => const Center(child: CircularProgressIndicator()),
-            loading: () => const Center(child: CircularProgressIndicator()),
-            loaded: (notes, hasReachedEnd, isLoadingMore) {
-              if (notes.isEmpty) return _buildEmpty(context, t, theme);
-              return _buildList(context, notes, t);
-            },
-            failure: (message) => _buildError(context, t, theme, message),
-          );
-        },
+          ),
+          Expanded(
+            child: BlocConsumer<AudioNotesListBloc, AudioNotesListState>(
+              listener: (context, state) {
+                state.maybeWhen(
+                  failure: (m) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text(m)),
+                    );
+                  },
+                  orElse: () {},
+                );
+              },
+              builder: (context, state) {
+                return state.when(
+                  initial: () =>
+                      const Center(child: CircularProgressIndicator()),
+                  loading: () =>
+                      const Center(child: CircularProgressIndicator()),
+                  loaded: (notes, hasReachedEnd, isLoadingMore) {
+                    if (notes.isEmpty) return _buildEmpty(context, t, theme);
+                    return _buildList(context, notes, t);
+                  },
+                  failure: (message) =>
+                      _buildError(context, t, theme, message),
+                );
+              },
+            ),
+          ),
+        ],
       ),
       floatingActionButton: Padding(
         padding: EdgeInsets.only(bottom: obsidianFabBottomPadding(context)),
@@ -265,10 +314,14 @@ class _NotesListView extends StatelessWidget {
 
   Future<void> _openNoteDetail(BuildContext context, String noteId) async {
     final favBloc = context.read<FavoritesBloc>();
+    final tagsCubit = context.read<TagsCubit>();
     await Navigator.of(context).push<bool>(
       MaterialPageRoute(
-        builder: (_) => BlocProvider.value(
-          value: favBloc,
+        builder: (_) => MultiBlocProvider(
+          providers: [
+            BlocProvider<FavoritesBloc>.value(value: favBloc),
+            BlocProvider<TagsCubit>.value(value: tagsCubit),
+          ],
           child: NoteDetailPage(noteId: noteId),
         ),
       ),

@@ -14,3 +14,11 @@
 # Redeploy after change: supabase functions deploy process-audio-note
 [functions.process-audio-note]
 verify_jwt = false
+
+# GAU-94: Iterative plan refinement. Custom JWT validation inside the function.
+[functions.refine-plan]
+verify_jwt = false
+
+# GAU-95: Plan version history (list, detail, restore). Custom JWT validation.
+[functions.plan-versions]
+verify_jwt = false
