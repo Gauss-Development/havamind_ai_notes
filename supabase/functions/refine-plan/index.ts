@@ -20,7 +20,19 @@ const MAX_CONTEXT_CHARS = CONTEXT_TOKEN_BUDGET * CHARS_PER_TOKEN;
 // Bump PROMPT_VERSION when changing prompt logic so we can correlate
 // outputs to the prompt that generated them.
 
-const PROMPT_VERSION = "refine-v1";
+const PROMPT_VERSION = "refine-v2";
+
+const SUMMARIZATION_PROMPT = `You are a concise business context summarizer.
+
+Given a series of refinement rounds for a startup plan, produce a compact summary that preserves:
+- Key decisions made by the founder
+- Directions explicitly rejected or changed
+- User priorities and preferences expressed
+- Critical facts added in each round
+
+Do NOT include the current plan state (that's provided separately). Focus only on the CONVERSATION HISTORY — what the user said and what changed.
+
+Output a single block of text, max 500 words. No JSON, no markdown — just plain text.`;
 
 const REFINEMENT_SYSTEM_PROMPT = `Ты бизнес-аналитик стартапов. Тебе дан текущий план стартапа и новый голосовой ввод от основателя.
 
@@ -107,6 +119,7 @@ type PriorRound = {
   round_number: number;
   transcription: string;
   diff_summary: string | null;
+  context_summary: string | null;
 };
 
 type RefinementResponse = {
@@ -156,27 +169,13 @@ function snapshotFromAnalysis(
 }
 
 /**
- * When prior rounds exceed the context budget, summarize older rounds
- * into a single "story so far" block, keeping the most recent 2 rounds verbatim.
+ * Truncation-only fallback when LLM summarization fails or isn't needed.
  */
-function trimContext(
-  rounds: PriorRound[],
-): PriorRound[] {
-  if (rounds.length === 0) return rounds;
-
-  const totalChars = rounds.reduce(
-    (sum, r) => sum + r.transcription.length + (r.diff_summary?.length ?? 0),
-    0,
-  );
-
-  if (totalChars <= MAX_CONTEXT_CHARS) return rounds;
-
-  // Keep last 2 rounds verbatim, summarize the rest
+function truncateContext(rounds: PriorRound[]): PriorRound[] {
   const keepVerbatim = rounds.slice(-2);
   const toSummarize = rounds.slice(0, -2);
 
   if (toSummarize.length === 0) {
-    // Only 2 rounds but still over budget — truncate transcriptions
     return keepVerbatim.map((r) => ({
       ...r,
       transcription: r.transcription.slice(0, MAX_CONTEXT_CHARS / 2),
@@ -186,17 +185,150 @@ function trimContext(
   const summaryText = toSummarize
     .map((r) => {
       const diff = r.diff_summary ? ` → ${r.diff_summary}` : "";
-      return `Раунд ${r.round_number}: ${r.transcription.slice(0, 200)}${diff}`;
+      return `Round ${r.round_number}: ${r.transcription.slice(0, 200)}${diff}`;
     })
     .join("\n");
 
   const condensed: PriorRound = {
-    round_number: 0, // marker for "summary block"
-    transcription: `[Сводка раундов 1-${toSummarize.length}]\n${summaryText}`,
+    round_number: 0,
+    transcription: `[Summary of rounds 1-${toSummarize.length}]\n${summaryText}`,
     diff_summary: null,
+    context_summary: null,
   };
 
   return [condensed, ...keepVerbatim];
+}
+
+/**
+ * When prior rounds exceed the context budget, use LLM to summarize older
+ * rounds into a "story so far" block. Reuses stored context_summary from
+ * a prior round if available. Falls back to truncation on failure.
+ *
+ * Returns { rounds, contextSummary } where contextSummary is the generated
+ * summary to store on the new plan_version row.
+ */
+async function summarizeContext(
+  rounds: PriorRound[],
+  openaiKey: string,
+): Promise<{ rounds: PriorRound[]; contextSummary: string | null }> {
+  if (rounds.length === 0) return { rounds, contextSummary: null };
+
+  const totalChars = rounds.reduce(
+    (sum, r) => sum + r.transcription.length + (r.diff_summary?.length ?? 0),
+    0,
+  );
+
+  if (totalChars <= MAX_CONTEXT_CHARS) {
+    return { rounds, contextSummary: null };
+  }
+
+  const keepVerbatim = rounds.slice(-2);
+  const toSummarize = rounds.slice(0, -2);
+
+  if (toSummarize.length === 0) {
+    return { rounds: truncateContext(rounds), contextSummary: null };
+  }
+
+  // Check if the most recent round to be summarized already has a
+  // stored context_summary — if so, we can extend it instead of
+  // re-summarizing everything from scratch.
+  const lastSummarized = [...toSummarize].reverse()
+    .find((r) => r.context_summary);
+  const existingSummary = lastSummarized?.context_summary ?? null;
+
+  // Build the text for the summarization LLM call
+  let roundsText: string;
+  if (existingSummary) {
+    // Only summarize rounds AFTER the one that has the stored summary
+    const afterIdx = toSummarize.indexOf(lastSummarized!);
+    const newRounds = toSummarize.slice(afterIdx + 1);
+    if (newRounds.length === 0) {
+      // Existing summary covers all rounds to summarize — reuse directly
+      const condensed: PriorRound = {
+        round_number: 0,
+        transcription: `[Context summary]\n${existingSummary}`,
+        diff_summary: null,
+        context_summary: existingSummary,
+      };
+      return {
+        rounds: [condensed, ...keepVerbatim],
+        contextSummary: existingSummary,
+      };
+    }
+    roundsText = `Previous summary:\n${existingSummary}\n\nNew rounds to integrate:\n`;
+    roundsText += newRounds
+      .map((r) => {
+        const diff = r.diff_summary ? `\nChanges: ${r.diff_summary}` : "";
+        return `Round ${r.round_number}:\nUser input: ${r.transcription}${diff}`;
+      })
+      .join("\n\n");
+  } else {
+    roundsText = toSummarize
+      .map((r) => {
+        const diff = r.diff_summary ? `\nChanges: ${r.diff_summary}` : "";
+        return `Round ${r.round_number}:\nUser input: ${r.transcription}${diff}`;
+      })
+      .join("\n\n");
+  }
+
+  // Call GPT-4o-mini for summarization
+  try {
+    const res = await fetch("https://api.openai.com/v1/chat/completions", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${openaiKey}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        model: CHAT_MODEL,
+        messages: [
+          { role: "system", content: SUMMARIZATION_PROMPT },
+          { role: "user", content: roundsText },
+        ],
+        temperature: 0.2,
+        max_tokens: 600,
+      }),
+    });
+
+    if (!res.ok) {
+      throw new Error(`Summarization call failed (${res.status})`);
+    }
+
+    const json = (await res.json()) as {
+      choices?: { message?: { content?: string } }[];
+      usage?: { prompt_tokens?: number; completion_tokens?: number };
+    };
+
+    const summary = json.choices?.[0]?.message?.content?.trim() ?? "";
+    const sumTokens = json.usage?.prompt_tokens ?? 0;
+    console.log(
+      `[refine-plan] context_summarization rounds=${toSummarize.length} ` +
+        `summary_tokens=${sumTokens} summary_chars=${summary.length}`,
+    );
+
+    if (!summary) {
+      throw new Error("Summarization returned empty text");
+    }
+
+    const condensed: PriorRound = {
+      round_number: 0,
+      transcription: `[Context summary]\n${summary}`,
+      diff_summary: null,
+      context_summary: summary,
+    };
+
+    return {
+      rounds: [condensed, ...keepVerbatim],
+      contextSummary: summary,
+    };
+  } catch (e) {
+    // Graceful fallback to truncation
+    console.error(
+      "[refine-plan] Summarization failed, falling back to truncation:",
+      e instanceof Error ? e.message : String(e),
+    );
+    return { rounds: truncateContext(rounds), contextSummary: null };
+  }
 }
 
 // ── Main handler ────────────────────────────────────────────────────
@@ -345,7 +477,7 @@ Deno.serve(async (req: Request) => {
   // ── Load prior refinement rounds ────────────────────────────────
   const { data: priorVersions, error: pvErr } = await supabase
     .from("plan_versions")
-    .select("round_number, transcription, diff_summary")
+    .select("round_number, transcription, diff_summary, context_summary")
     .eq("plan_id", analysis.id)
     .order("round_number", { ascending: true });
 
@@ -379,12 +511,15 @@ Deno.serve(async (req: Request) => {
 
   // ── Build prompt with context management ────────────────────────
   const currentPlan = snapshotFromAnalysis(analysis);
-  const trimmedRounds = trimContext(priorVersions ?? []);
+  const { rounds: contextRounds, contextSummary } = await summarizeContext(
+    priorVersions ?? [],
+    openaiKey,
+  );
 
   const userPrompt = buildRefinementUserPrompt(
     currentPlan,
     transcription,
-    trimmedRounds,
+    contextRounds,
     followUpQuestion,
   );
 
@@ -452,7 +587,7 @@ Deno.serve(async (req: Request) => {
       transcription: transcription,
       follow_up_questions: refined.follow_up_questions ?? [],
       diff_summary: refined.diff_summary ?? null,
-      context_summary: null, // populated by GAU-96 when summarization kicks in
+      context_summary: contextSummary,
       follow_up_question_id: followUpQuestionId ?? null,
     });
 

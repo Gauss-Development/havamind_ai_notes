@@ -12,9 +12,17 @@ const CHAT_MODEL = "gpt-4o-mini";
 
 type AnalysisJson = {
   summary: string;
+  startup_title: string;
   problem: string;
   solution: string;
   target_audience: string;
+  business_model: string;
+  key_metrics: string;
+  advantages: string;
+  risks_gaps: string;
+  follow_up_questions: string[];
+  market_potential_score: number;
+  technical_complexity_score: number;
 };
 
 function extractTranscriptText(trJson: unknown): string {
@@ -153,25 +161,32 @@ Deno.serve(async (req: Request) => {
     if (st2Err) throw new Error(st2Err.message);
 
     const analysisPrompt =
-      `Ты бизнес-аналитик стартапов.
+      `You are a startup business analyst.
 
-На основе текста ниже:
-1. кратко опиши идею
-2. выдели проблему
-3. предложенное решение
-4. целевую аудиторию
-
-Если данных нет — напиши "не указано".
-
-Ответ верни строго в JSON:
+Based on the transcription, return strictly JSON with this structure:
 {
   "summary": "",
+  "startup_title": "",
   "problem": "",
   "solution": "",
-  "target_audience": ""
+  "target_audience": "",
+  "business_model": "",
+  "key_metrics": "",
+  "advantages": "",
+  "risks_gaps": "",
+  "follow_up_questions": ["", ""],
+  "market_potential_score": 0,
+  "technical_complexity_score": 0
 }
 
-Текст:
+Rules:
+- if data is missing, use "not specified"
+- follow_up_questions is always an array of strings (can be empty)
+- market_potential_score — integer 0-100, market potential assessment
+- technical_complexity_score — integer 0-100, technical complexity assessment
+- no markdown, only JSON
+
+Transcription:
 ${transcriptText}`;
 
     const chatRes = await fetch("https://api.openai.com/v1/chat/completions", {
@@ -209,9 +224,17 @@ ${transcriptText}`;
         audio_note_id: audioNoteId,
         user_id: note.user_id,
         short_summary: parsed.summary ?? "",
+        startup_title: parsed.startup_title ?? "",
         problem: parsed.problem ?? "",
         solution: parsed.solution ?? "",
         target_audience: parsed.target_audience ?? "",
+        business_model: parsed.business_model ?? "",
+        key_metrics: parsed.key_metrics ?? "",
+        advantages: parsed.advantages ?? "",
+        risks_gaps: parsed.risks_gaps ?? "",
+        follow_up_questions: parsed.follow_up_questions ?? [],
+        market_potential_score: parsed.market_potential_score ?? 0,
+        technical_complexity_score: parsed.technical_complexity_score ?? 0,
         raw_ai_response: parsed,
       },
       { onConflict: "audio_note_id" },
