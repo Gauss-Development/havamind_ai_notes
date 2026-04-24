@@ -1,6 +1,7 @@
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'package:sample/core/constants/audio_notes_constants.dart';
+import 'package:sample/features/audio_notes/domain/entities/plan_version.dart';
 import 'package:sample/features/audio_notes/data/models/audio_note_mapper.dart';
 import 'package:sample/features/audio_notes/data/models/audio_note_transcript_mapper.dart';
 import 'package:sample/features/audio_notes/data/models/startup_analysis_mapper.dart';
@@ -292,6 +293,48 @@ class AudioNotesRemoteDataSource {
       total += ((row as Map)['duration_seconds'] as num).toInt();
     }
     return total;
+  }
+
+  Future<List<PlanVersion>> listPlanVersions(String planId) async {
+    final rows = await _client
+        .from('plan_versions')
+        .select()
+        .eq('plan_id', planId)
+        .order('round_number', ascending: true);
+
+    return (rows as List<dynamic>).map((e) {
+      final row = Map<String, dynamic>.from(e as Map);
+      return PlanVersion(
+        id: row['id'] as String,
+        planId: row['plan_id'] as String,
+        audioNoteId: row['audio_note_id'] as String,
+        roundNumber: row['round_number'] as int,
+        planSnapshot:
+            Map<String, dynamic>.from(row['plan_snapshot'] as Map),
+        transcription: row['transcription'] as String?,
+        diffSummary: row['diff_summary'] as String?,
+        followUpQuestions: (row['follow_up_questions'] as List?)
+            ?.map((e) => e.toString())
+            .toList(),
+        createdAt: DateTime.parse(row['created_at'] as String),
+      );
+    }).toList();
+  }
+
+  Future<Map<String, dynamic>> restorePlanVersion(String versionId) async {
+    try {
+      final res = await _client.functions.invoke(
+        'plan-versions',
+        body: {'action': 'restore', 'id': versionId},
+      );
+      final data = res.data;
+      if (data is Map && data['error'] != null) {
+        throw Exception(data['error'].toString());
+      }
+      return Map<String, dynamic>.from(data as Map);
+    } on FunctionException catch (e) {
+      throw Exception(_messageFromFunctionException(e));
+    }
   }
 
   /// Calls the `refine-plan` Edge Function with an uploaded audio path.

@@ -117,8 +117,14 @@ Deno.serve(async (req: Request) => {
 
   // ── POST: restore ───────────────────────────────────────────────
   if (req.method === "POST") {
-    const action = url.searchParams.get("action");
-    const versionId = url.searchParams.get("id");
+    // Accept params from query string OR JSON body
+    let bodyParams: { action?: string; id?: string } = {};
+    try {
+      bodyParams = await req.json();
+    } catch { /* no body is fine if query params provided */ }
+
+    const action = url.searchParams.get("action") ?? bodyParams.action;
+    const versionId = url.searchParams.get("id") ?? bodyParams.id;
 
     if (action !== "restore") {
       return jsonResponse({ error: "Unknown action" }, 400);

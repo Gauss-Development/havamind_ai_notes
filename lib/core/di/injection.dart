@@ -31,6 +31,7 @@ import 'package:sample/features/audio_notes/domain/usecases/watch_audio_note_use
 import 'package:sample/features/audio_notes/presentation/bloc/audio_notes_list_bloc.dart';
 import 'package:sample/features/audio_notes/presentation/bloc/note_detail_bloc.dart';
 import 'package:sample/features/audio_notes/presentation/bloc/plan_refinement_cubit.dart';
+import 'package:sample/features/audio_notes/presentation/bloc/plan_version_history_cubit.dart';
 import 'package:sample/features/audio_notes/presentation/bloc/recording_bloc.dart';
 import 'package:sample/features/favorites/data/datasources/favorites_remote_data_source.dart';
 import 'package:sample/features/favorites/data/repositories/favorites_repository_impl.dart';
@@ -125,6 +126,9 @@ Future<void> configureDependencies() async {
       processLocalAudioNote: getIt(),
       getCurrentUsage: getIt(),
     ),
+  );
+  getIt.registerFactory(
+    () => PlanVersionHistoryCubit(repository: getIt()),
   );
   getIt.registerFactory(
     () => PlanRefinementCubit(

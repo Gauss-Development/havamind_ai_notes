@@ -14,6 +14,7 @@ import 'package:sample/features/audio_notes/domain/entities/startup_analysis.dar
 import 'package:sample/features/audio_notes/presentation/bloc/audio_player_cubit.dart';
 import 'package:sample/features/audio_notes/presentation/bloc/note_detail_bloc.dart';
 import 'package:sample/features/audio_notes/presentation/utils/audio_note_status_ui.dart';
+import 'package:sample/features/audio_notes/presentation/pages/plan_version_history_page.dart';
 import 'package:sample/features/audio_notes/presentation/pages/refinement_recording_page.dart';
 import 'package:sample/features/audio_notes/presentation/utils/note_share_formatter.dart';
 import 'package:sample/features/audio_notes/presentation/widgets/audio_note_duration_formatter.dart';
@@ -68,6 +69,13 @@ class _NoteDetailView extends StatelessWidget {
                 loaded: (note, transcript, analysis, localAudioExists) => Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
+                    if (analysis != null)
+                      IconButton(
+                        tooltip: 'Version history',
+                        icon: const Icon(Icons.history_rounded),
+                        onPressed: () =>
+                            _openVersionHistory(context, note, analysis),
+                      ),
                     _ShareMenuButton(
                       note: note,
                       transcript: transcript,
@@ -111,6 +119,26 @@ class _NoteDetailView extends StatelessWidget {
         );
       },
     );
+  }
+
+  Future<void> _openVersionHistory(
+    BuildContext context,
+    AudioNote note,
+    StartupAnalysis analysis,
+  ) async {
+    final restored = await Navigator.of(context).push<bool>(
+      MaterialPageRoute(
+        builder: (_) => PlanVersionHistoryPage(
+          planId: analysis.id,
+          noteId: note.id,
+        ),
+      ),
+    );
+    if (restored == true && context.mounted) {
+      context.read<NoteDetailBloc>().add(
+        NoteDetailEvent.loadRequested(noteId),
+      );
+    }
   }
 
   Future<void> _confirmDelete(BuildContext context) async {

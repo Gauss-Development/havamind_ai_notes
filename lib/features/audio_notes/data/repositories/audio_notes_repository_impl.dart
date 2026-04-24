@@ -12,6 +12,7 @@ import 'package:sample/features/audio_notes/data/datasources/audio_storage_data_
 import 'package:sample/features/audio_notes/domain/entities/audio_note.dart';
 import 'package:sample/features/audio_notes/domain/entities/audio_note_status.dart';
 import 'package:sample/features/audio_notes/domain/entities/audio_note_transcript.dart';
+import 'package:sample/features/audio_notes/domain/entities/plan_version.dart';
 import 'package:sample/features/audio_notes/domain/entities/startup_analysis.dart';
 import 'package:sample/features/audio_notes/domain/repositories/audio_notes_repository.dart';
 
@@ -298,6 +299,30 @@ class AudioNotesRepositoryImpl implements AudioNotesRepository {
       return Right(total);
     } catch (e) {
       return Left(UnexpectedFailure(e.toString()));
+    }
+  }
+
+  @override
+  Future<Either<Failure, List<PlanVersion>>> listPlanVersions(
+    String planId,
+  ) async {
+    try {
+      final versions = await _remote.listPlanVersions(planId);
+      return Right(versions);
+    } catch (e) {
+      return Left(UnexpectedFailure(e.toString()));
+    }
+  }
+
+  @override
+  Future<Either<Failure, Map<String, dynamic>>> restorePlanVersion(
+    String versionId,
+  ) async {
+    try {
+      final result = await _remote.restorePlanVersion(versionId);
+      return Right(result);
+    } catch (e) {
+      return Left(ServerFailure(_userFacingError(e)));
     }
   }
 

@@ -2,6 +2,7 @@ import 'package:dartz/dartz.dart';
 import 'package:sample/core/error/failure.dart';
 import 'package:sample/features/audio_notes/domain/entities/audio_note.dart';
 import 'package:sample/features/audio_notes/domain/entities/audio_note_transcript.dart';
+import 'package:sample/features/audio_notes/domain/entities/plan_version.dart';
 import 'package:sample/features/audio_notes/domain/entities/startup_analysis.dart';
 
 abstract class AudioNotesRepository {
@@ -48,6 +49,12 @@ abstract class AudioNotesRepository {
     required DateTime from,
     required DateTime to,
   });
+
+  Future<Either<Failure, List<PlanVersion>>> listPlanVersions(String planId);
+
+  Future<Either<Failure, Map<String, dynamic>>> restorePlanVersion(
+    String versionId,
+  );
 
   Future<Either<Failure, Map<String, dynamic>>> refinePlanByVoice({
     required String noteId,
