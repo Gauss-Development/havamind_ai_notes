@@ -45,7 +45,8 @@ import 'package:sample/features/subscription/data/repositories/subscription_repo
 import 'package:sample/features/subscription/domain/repositories/subscription_repository.dart';
 import 'package:sample/features/subscription/domain/usecases/get_current_usage_usecase.dart';
 import 'package:sample/features/subscription/domain/usecases/get_subscription_status_usecase.dart';
-import 'package:sample/features/subscription/domain/usecases/present_paywall_usecase.dart';
+import 'package:sample/features/subscription/domain/usecases/get_offerings_usecase.dart';
+import 'package:sample/features/subscription/domain/usecases/purchase_package_usecase.dart';
 import 'package:sample/features/subscription/domain/usecases/restore_purchases_usecase.dart';
 import 'package:sample/features/subscription/presentation/cubit/subscription_cubit.dart';
 import 'package:sample/features/tags/data/datasources/tags_remote_data_source.dart';
@@ -197,7 +198,8 @@ Future<void> configureDependencies() async {
 
   getIt.registerFactory(() => GetSubscriptionStatusUseCase(getIt()));
   getIt.registerFactory(() => RestorePurchasesUseCase(getIt()));
-  getIt.registerFactory(() => PresentPaywallUseCase(getIt()));
+  getIt.registerFactory(() => GetOfferingsUseCase(getIt()));
+  getIt.registerFactory(() => PurchasePackageUseCase(getIt()));
   getIt.registerFactory(
     () => GetCurrentUsageUseCase(
       subscriptionRepository: getIt(),
@@ -209,7 +211,8 @@ Future<void> configureDependencies() async {
     () => SubscriptionCubit(
       getSubscriptionStatus: getIt(),
       restorePurchases: getIt(),
-      presentPaywall: getIt(),
+      getOfferings: getIt(),
+      purchasePackage: getIt(),
       repository: getIt(),
       getCurrentUsage: getIt(),
     ),

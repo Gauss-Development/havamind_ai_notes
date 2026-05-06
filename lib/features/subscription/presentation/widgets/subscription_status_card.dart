@@ -291,7 +291,7 @@ class _ProActiveCard extends StatelessWidget {
     if (action == null) return;
     switch (action) {
       case SubscriptionSheetAction.changePlan:
-        cubit.showPaywall();
+        cubit.showPaywall(context);
       case SubscriptionSheetAction.customerCenter:
       case SubscriptionSheetAction.manageSubscription:
         cubit.showCustomerCenter(context);
@@ -520,7 +520,7 @@ class _FreeCard extends StatelessWidget {
               children: [
                 FilledButton(
                   onPressed: () {
-                    context.read<SubscriptionCubit>().showPaywall();
+                    context.read<SubscriptionCubit>().showPaywall(context);
                   },
                   style: FilledButton.styleFrom(
                     padding: const EdgeInsets.symmetric(vertical: 14),

@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:purchases_flutter/purchases_flutter.dart';
-import 'package:purchases_ui_flutter/purchases_ui_flutter.dart';
 
 class RevenueCatDataSource {
   static const _proEntitlementId = 'Havamind Voice Pro';
@@ -43,12 +42,9 @@ class RevenueCatDataSource {
     return Purchases.getOfferings();
   }
 
-  Future<PaywallResult> presentPaywall() async {
-    final offerings = await Purchases.getOfferings();
-    return RevenueCatUI.presentPaywall(
-      offering: offerings.current,
-      displayCloseButton: true,
-    );
+  Future<CustomerInfo> purchasePackage(Package package) async {
+    final result = await Purchases.purchase(PurchaseParams.package(package));
+    return result.customerInfo;
   }
 
   Future<LogInResult> logIn(String appUserId) async {

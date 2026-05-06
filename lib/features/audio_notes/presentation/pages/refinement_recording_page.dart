@@ -8,6 +8,7 @@ import 'package:sample/features/audio_notes/presentation/bloc/plan_refinement_cu
 import 'package:sample/features/audio_notes/presentation/widgets/audio_note_duration_formatter.dart';
 import 'package:sample/features/audio_notes/presentation/widgets/recording/recording_mic_action_button.dart';
 import 'package:sample/features/audio_notes/presentation/widgets/recording/recording_waveform_sketch.dart';
+import 'package:sample/features/subscription/presentation/widgets/paywall_sheet.dart';
 
 /// Recording page for plan refinement — either free-form "continue recording"
 /// or targeted follow-up question response.
@@ -55,6 +56,9 @@ class _RefinementRecordingView extends StatelessWidget {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text(state.error!)),
           );
+        }
+        if (state.status == PlanRefinementStatus.limitReached) {
+          showPaywallSheet(context, limitReached: true);
         }
         if (state.status == PlanRefinementStatus.success) {
           Navigator.of(context).pop(true);
@@ -215,7 +219,8 @@ class _RefinementRecordingView extends StatelessWidget {
   bool _canInteract(PlanRefinementStatus status) {
     return status == PlanRefinementStatus.idle ||
         status == PlanRefinementStatus.recording ||
-        status == PlanRefinementStatus.failure;
+        status == PlanRefinementStatus.failure ||
+        status == PlanRefinementStatus.limitReached;
   }
 
   String _statusLabel(PlanRefinementStatus status) {
@@ -227,6 +232,7 @@ class _RefinementRecordingView extends StatelessWidget {
       PlanRefinementStatus.refining => 'REFINING YOUR PLAN...',
       PlanRefinementStatus.success => 'DONE',
       PlanRefinementStatus.failure => 'READY TO CAPTURE',
+      PlanRefinementStatus.limitReached => 'LIMIT REACHED',
     };
   }
 }

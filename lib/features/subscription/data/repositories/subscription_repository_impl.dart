@@ -1,10 +1,8 @@
 import 'package:dartz/dartz.dart';
 import 'package:flutter/services.dart';
 import 'package:purchases_flutter/purchases_flutter.dart';
-import 'package:purchases_ui_flutter/purchases_ui_flutter.dart';
 import 'package:sample/core/error/failure.dart';
 import 'package:sample/features/subscription/data/datasources/revenuecat_data_source.dart';
-import 'package:sample/features/subscription/domain/entities/paywall_action_result.dart';
 import 'package:sample/features/subscription/domain/entities/subscription_status.dart';
 import 'package:sample/features/subscription/domain/repositories/subscription_repository.dart';
 
@@ -53,14 +51,28 @@ class SubscriptionRepositoryImpl implements SubscriptionRepository {
   }
 
   @override
-  Future<Either<Failure, PaywallActionResult>> presentPaywall() async {
+  Future<Either<Failure, Offerings>> getOfferings() async {
     try {
-      final result = await _dataSource.presentPaywall();
-      return Right(_mapPaywallResult(result));
+      final offerings = await _dataSource.getOfferings();
+      return Right(offerings);
     } on PlatformException catch (e) {
       return Left(_mapPlatformException(e));
     } catch (e) {
-      return Left(PurchaseFailure('Failed to present paywall: $e'));
+      return Left(PurchaseFailure('Failed to load offerings: $e'));
+    }
+  }
+
+  @override
+  Future<Either<Failure, SubscriptionStatus>> purchasePackage(
+    Package package,
+  ) async {
+    try {
+      final info = await _dataSource.purchasePackage(package);
+      return Right(_mapCustomerInfo(info));
+    } on PlatformException catch (e) {
+      return Left(_mapPlatformException(e));
+    } catch (e) {
+      return Left(PurchaseFailure('Failed to complete purchase: $e'));
     }
   }
 
@@ -162,21 +174,6 @@ class SubscriptionRepositoryImpl implements SubscriptionRepository {
         return SubscriptionStore.promotional;
       default:
         return SubscriptionStore.unknown;
-    }
-  }
-
-  PaywallActionResult _mapPaywallResult(PaywallResult result) {
-    switch (result) {
-      case PaywallResult.purchased:
-        return PaywallActionResult.purchased;
-      case PaywallResult.restored:
-        return PaywallActionResult.restored;
-      case PaywallResult.cancelled:
-        return PaywallActionResult.cancelled;
-      case PaywallResult.error:
-        return PaywallActionResult.error;
-      case PaywallResult.notPresented:
-        return PaywallActionResult.notPresented;
     }
   }
 

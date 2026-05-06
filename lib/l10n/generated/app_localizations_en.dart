@@ -316,4 +316,83 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get addTag => 'Add tag';
+
+  @override
+  String get paywallTitle => 'Unlock your founder voice';
+
+  @override
+  String get paywallSubtitle =>
+      'Capture every idea. Get AI-powered analysis on every note.';
+
+  @override
+  String get paywallLimitReachedTitle => 'You\'ve used all your minutes';
+
+  @override
+  String get paywallLimitReachedSubtitle =>
+      'Upgrade to keep capturing ideas without interruption.';
+
+  @override
+  String get paywallEverythingYouGet => 'Everything you get';
+
+  @override
+  String get paywallTierFree => 'Free';
+
+  @override
+  String get paywallTierBasic => 'Basic';
+
+  @override
+  String get paywallTierPro => 'Pro';
+
+  @override
+  String get paywallTagFree => 'Try the essentials.';
+
+  @override
+  String get paywallTagBasic => 'For founders capturing daily ideas.';
+
+  @override
+  String get paywallTagPro => 'For serious idea-mappers and operators.';
+
+  @override
+  String get paywallBillingMonthly => 'Monthly';
+
+  @override
+  String get paywallBillingAnnual => 'Annual';
+
+  @override
+  String paywallSavePercent(int percent) {
+    return 'Save $percent%';
+  }
+
+  @override
+  String get paywallPerYear => '/ year';
+
+  @override
+  String get paywallPerMonth => '/ month';
+
+  @override
+  String paywallStartFor(String price) {
+    return 'Start with $price';
+  }
+
+  @override
+  String get paywallContinue => 'Continue';
+
+  @override
+  String get paywallCurrent => 'CURRENT';
+
+  @override
+  String get paywallRestore => 'Restore purchases';
+
+  @override
+  String get paywallTermsLine =>
+      'Subscription auto-renews. Cancel anytime in your account settings.';
+
+  @override
+  String get paywallCouldNotLoad => 'Could not load plans. Please try again.';
+
+  @override
+  String get paywallTryAgain => 'Try again';
+
+  @override
+  String get paywallNoActivePurchases => 'No active purchases to restore.';
 }

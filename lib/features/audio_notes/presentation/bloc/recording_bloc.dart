@@ -37,6 +37,10 @@ class RecordingState with _$RecordingState {
   const factory RecordingState.uploading() = _Uploading;
   const factory RecordingState.success(AudioNote note) = _Success;
   const factory RecordingState.failure(String message) = _Failure;
+
+  /// User attempted to record but their monthly quota is exhausted.
+  /// Triggers the paywall sheet at the listening page.
+  const factory RecordingState.limitReached() = _LimitReached;
 }
 
 class RecordingBloc extends Bloc<RecordingEvent, RecordingState> {
@@ -68,9 +72,7 @@ class RecordingBloc extends Bloc<RecordingEvent, RecordingState> {
     final usageResult = await _getCurrentUsage(const NoParams());
     final usageInfo = usageResult.fold((_) => null, (info) => info);
     if (usageInfo != null && usageInfo.isExhausted) {
-      emit(const RecordingState.failure(
-        'Monthly recording limit reached. Upgrade your plan for more time.',
-      ));
+      emit(const RecordingState.limitReached());
       emit(const RecordingState.idle());
       return;
     }

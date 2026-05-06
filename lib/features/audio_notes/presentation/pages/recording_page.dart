@@ -8,6 +8,7 @@ import 'package:sample/features/audio_notes/presentation/bloc/recording_bloc.dar
 import 'package:sample/features/audio_notes/presentation/widgets/audio_note_duration_formatter.dart';
 import 'package:sample/features/audio_notes/presentation/widgets/recording/recording_mic_action_button.dart';
 import 'package:sample/features/audio_notes/presentation/widgets/recording/recording_waveform_sketch.dart';
+import 'package:sample/features/subscription/presentation/widgets/paywall_sheet.dart';
 
 class RecordingPage extends StatelessWidget {
   const RecordingPage({super.key});
@@ -33,6 +34,9 @@ class _RecordingView extends StatelessWidget {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(content: Text(m)),
             );
+          },
+          limitReached: () {
+            showPaywallSheet(context, limitReached: true);
           },
           success: (_) => Navigator.of(context).pop(true),
           orElse: () {},

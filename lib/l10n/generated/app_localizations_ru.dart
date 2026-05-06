@@ -317,4 +317,87 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get addTag => 'Добавить тег';
+
+  @override
+  String get paywallTitle => 'Откройте голос основателя';
+
+  @override
+  String get paywallSubtitle =>
+      'Фиксируйте каждую идею. ИИ-анализ для каждой заметки.';
+
+  @override
+  String get paywallLimitReachedTitle => 'Минуты на этот месяц закончились';
+
+  @override
+  String get paywallLimitReachedSubtitle =>
+      'Оформите подписку, чтобы продолжить без ограничений.';
+
+  @override
+  String get paywallEverythingYouGet => 'Что вы получаете';
+
+  @override
+  String get paywallTierFree => 'Бесплатно';
+
+  @override
+  String get paywallTierBasic => 'Базовый';
+
+  @override
+  String get paywallTierPro => 'Pro';
+
+  @override
+  String get paywallTagFree => 'Базовый набор для пробы.';
+
+  @override
+  String get paywallTagBasic =>
+      'Для основателей, которые фиксируют идеи каждый день.';
+
+  @override
+  String get paywallTagPro =>
+      'Для серьёзной работы со стратегией и аналитикой.';
+
+  @override
+  String get paywallBillingMonthly => 'Месяц';
+
+  @override
+  String get paywallBillingAnnual => 'Год';
+
+  @override
+  String paywallSavePercent(int percent) {
+    return 'Экономия $percent%';
+  }
+
+  @override
+  String get paywallPerYear => '/ год';
+
+  @override
+  String get paywallPerMonth => '/ месяц';
+
+  @override
+  String paywallStartFor(String price) {
+    return 'Начать за $price';
+  }
+
+  @override
+  String get paywallContinue => 'Продолжить';
+
+  @override
+  String get paywallCurrent => 'ТЕКУЩИЙ';
+
+  @override
+  String get paywallRestore => 'Восстановить покупки';
+
+  @override
+  String get paywallTermsLine =>
+      'Подписка продлевается автоматически. Отменить можно в настройках аккаунта.';
+
+  @override
+  String get paywallCouldNotLoad =>
+      'Не удалось загрузить тарифы. Попробуйте снова.';
+
+  @override
+  String get paywallTryAgain => 'Попробовать снова';
+
+  @override
+  String get paywallNoActivePurchases =>
+      'Нет активных покупок для восстановления.';
 }

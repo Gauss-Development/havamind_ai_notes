@@ -691,6 +691,150 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Add tag'**
   String get addTag;
+
+  /// No description provided for @paywallTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Unlock your founder voice'**
+  String get paywallTitle;
+
+  /// No description provided for @paywallSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Capture every idea. Get AI-powered analysis on every note.'**
+  String get paywallSubtitle;
+
+  /// No description provided for @paywallLimitReachedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'You\'ve used all your minutes'**
+  String get paywallLimitReachedTitle;
+
+  /// No description provided for @paywallLimitReachedSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Upgrade to keep capturing ideas without interruption.'**
+  String get paywallLimitReachedSubtitle;
+
+  /// No description provided for @paywallEverythingYouGet.
+  ///
+  /// In en, this message translates to:
+  /// **'Everything you get'**
+  String get paywallEverythingYouGet;
+
+  /// No description provided for @paywallTierFree.
+  ///
+  /// In en, this message translates to:
+  /// **'Free'**
+  String get paywallTierFree;
+
+  /// No description provided for @paywallTierBasic.
+  ///
+  /// In en, this message translates to:
+  /// **'Basic'**
+  String get paywallTierBasic;
+
+  /// No description provided for @paywallTierPro.
+  ///
+  /// In en, this message translates to:
+  /// **'Pro'**
+  String get paywallTierPro;
+
+  /// No description provided for @paywallTagFree.
+  ///
+  /// In en, this message translates to:
+  /// **'Try the essentials.'**
+  String get paywallTagFree;
+
+  /// No description provided for @paywallTagBasic.
+  ///
+  /// In en, this message translates to:
+  /// **'For founders capturing daily ideas.'**
+  String get paywallTagBasic;
+
+  /// No description provided for @paywallTagPro.
+  ///
+  /// In en, this message translates to:
+  /// **'For serious idea-mappers and operators.'**
+  String get paywallTagPro;
+
+  /// No description provided for @paywallBillingMonthly.
+  ///
+  /// In en, this message translates to:
+  /// **'Monthly'**
+  String get paywallBillingMonthly;
+
+  /// No description provided for @paywallBillingAnnual.
+  ///
+  /// In en, this message translates to:
+  /// **'Annual'**
+  String get paywallBillingAnnual;
+
+  /// No description provided for @paywallSavePercent.
+  ///
+  /// In en, this message translates to:
+  /// **'Save {percent}%'**
+  String paywallSavePercent(int percent);
+
+  /// No description provided for @paywallPerYear.
+  ///
+  /// In en, this message translates to:
+  /// **'/ year'**
+  String get paywallPerYear;
+
+  /// No description provided for @paywallPerMonth.
+  ///
+  /// In en, this message translates to:
+  /// **'/ month'**
+  String get paywallPerMonth;
+
+  /// No description provided for @paywallStartFor.
+  ///
+  /// In en, this message translates to:
+  /// **'Start with {price}'**
+  String paywallStartFor(String price);
+
+  /// No description provided for @paywallContinue.
+  ///
+  /// In en, this message translates to:
+  /// **'Continue'**
+  String get paywallContinue;
+
+  /// No description provided for @paywallCurrent.
+  ///
+  /// In en, this message translates to:
+  /// **'CURRENT'**
+  String get paywallCurrent;
+
+  /// No description provided for @paywallRestore.
+  ///
+  /// In en, this message translates to:
+  /// **'Restore purchases'**
+  String get paywallRestore;
+
+  /// No description provided for @paywallTermsLine.
+  ///
+  /// In en, this message translates to:
+  /// **'Subscription auto-renews. Cancel anytime in your account settings.'**
+  String get paywallTermsLine;
+
+  /// No description provided for @paywallCouldNotLoad.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not load plans. Please try again.'**
+  String get paywallCouldNotLoad;
+
+  /// No description provided for @paywallTryAgain.
+  ///
+  /// In en, this message translates to:
+  /// **'Try again'**
+  String get paywallTryAgain;
+
+  /// No description provided for @paywallNoActivePurchases.
+  ///
+  /// In en, this message translates to:
+  /// **'No active purchases to restore.'**
+  String get paywallNoActivePurchases;
 }
 
 class _AppLocalizationsDelegate

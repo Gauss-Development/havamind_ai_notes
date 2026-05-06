@@ -1,6 +1,6 @@
 import 'package:dartz/dartz.dart';
+import 'package:purchases_flutter/purchases_flutter.dart';
 import 'package:sample/core/error/failure.dart';
-import 'package:sample/features/subscription/domain/entities/paywall_action_result.dart';
 import 'package:sample/features/subscription/domain/entities/subscription_status.dart';
 
 abstract class SubscriptionRepository {
@@ -10,7 +10,9 @@ abstract class SubscriptionRepository {
 
   Future<Either<Failure, SubscriptionStatus>> restorePurchases();
 
-  Future<Either<Failure, PaywallActionResult>> presentPaywall();
+  Future<Either<Failure, Offerings>> getOfferings();
+
+  Future<Either<Failure, SubscriptionStatus>> purchasePackage(Package package);
 
   Future<Either<Failure, void>> logIn(String appUserId);
 

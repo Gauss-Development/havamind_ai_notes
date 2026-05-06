@@ -118,5 +118,35 @@
   "statusAnalyzing": "Analyzing...",
   "statusReady": "Ready",
   "statusFailed": "Failed",
-  "addTag": "Add tag"
+  "addTag": "Add tag",
+  "paywallTitle": "Unlock your founder voice",
+  "paywallSubtitle": "Capture every idea. Get AI-powered analysis on every note.",
+  "paywallLimitReachedTitle": "You've used all your minutes",
+  "paywallLimitReachedSubtitle": "Upgrade to keep capturing ideas without interruption.",
+  "paywallEverythingYouGet": "Everything you get",
+  "paywallTierFree": "Free",
+  "paywallTierBasic": "Basic",
+  "paywallTierPro": "Pro",
+  "paywallTagFree": "Try the essentials.",
+  "paywallTagBasic": "For founders capturing daily ideas.",
+  "paywallTagPro": "For serious idea-mappers and operators.",
+  "paywallBillingMonthly": "Monthly",
+  "paywallBillingAnnual": "Annual",
+  "paywallSavePercent": "Save {percent}%",
+  "@paywallSavePercent": {
+    "placeholders": { "percent": { "type": "int" } }
+  },
+  "paywallPerYear": "/ year",
+  "paywallPerMonth": "/ month",
+  "paywallStartFor": "Start with {price}",
+  "@paywallStartFor": {
+    "placeholders": { "price": { "type": "String" } }
+  },
+  "paywallContinue": "Continue",
+  "paywallCurrent": "CURRENT",
+  "paywallRestore": "Restore purchases",
+  "paywallTermsLine": "Subscription auto-renews. Cancel anytime in your account settings.",
+  "paywallCouldNotLoad": "Could not load plans. Please try again.",
+  "paywallTryAgain": "Try again",
+  "paywallNoActivePurchases": "No active purchases to restore."
 }

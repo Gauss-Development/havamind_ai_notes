@@ -78,6 +78,7 @@ enum PlanRefinementStatus {
   refining,
   success,
   failure,
+  limitReached,
 }
 
 class PlanRefinementCubit extends Cubit<PlanRefinementState> {
@@ -112,10 +113,7 @@ class PlanRefinementCubit extends Cubit<PlanRefinementState> {
     final usageResult = await _getCurrentUsage(const NoParams());
     final usageInfo = usageResult.fold((_) => null, (info) => info);
     if (usageInfo != null && usageInfo.isExhausted) {
-      emit(state.copyWith(
-        status: PlanRefinementStatus.failure,
-        error: 'Monthly recording limit reached. Upgrade your plan for more time.',
-      ));
+      emit(state.copyWith(status: PlanRefinementStatus.limitReached));
       return;
     }
 

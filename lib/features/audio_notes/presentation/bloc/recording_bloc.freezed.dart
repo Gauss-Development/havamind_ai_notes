@@ -724,6 +724,7 @@ mixin _$RecordingState {
     required TResult Function() uploading,
     required TResult Function(AudioNote note) success,
     required TResult Function(String message) failure,
+    required TResult Function() limitReached,
   }) => throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
@@ -733,6 +734,7 @@ mixin _$RecordingState {
     TResult? Function()? uploading,
     TResult? Function(AudioNote note)? success,
     TResult? Function(String message)? failure,
+    TResult? Function()? limitReached,
   }) => throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
@@ -742,6 +744,7 @@ mixin _$RecordingState {
     TResult Function()? uploading,
     TResult Function(AudioNote note)? success,
     TResult Function(String message)? failure,
+    TResult Function()? limitReached,
     required TResult orElse(),
   }) => throw _privateConstructorUsedError;
   @optionalTypeArgs
@@ -752,6 +755,7 @@ mixin _$RecordingState {
     required TResult Function(_Uploading value) uploading,
     required TResult Function(_Success value) success,
     required TResult Function(_Failure value) failure,
+    required TResult Function(_LimitReached value) limitReached,
   }) => throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
@@ -761,6 +765,7 @@ mixin _$RecordingState {
     TResult? Function(_Uploading value)? uploading,
     TResult? Function(_Success value)? success,
     TResult? Function(_Failure value)? failure,
+    TResult? Function(_LimitReached value)? limitReached,
   }) => throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object?>({
@@ -770,6 +775,7 @@ mixin _$RecordingState {
     TResult Function(_Uploading value)? uploading,
     TResult Function(_Success value)? success,
     TResult Function(_Failure value)? failure,
+    TResult Function(_LimitReached value)? limitReached,
     required TResult orElse(),
   }) => throw _privateConstructorUsedError;
 }
@@ -843,6 +849,7 @@ class _$IdleImpl implements _Idle {
     required TResult Function() uploading,
     required TResult Function(AudioNote note) success,
     required TResult Function(String message) failure,
+    required TResult Function() limitReached,
   }) {
     return idle();
   }
@@ -856,6 +863,7 @@ class _$IdleImpl implements _Idle {
     TResult? Function()? uploading,
     TResult? Function(AudioNote note)? success,
     TResult? Function(String message)? failure,
+    TResult? Function()? limitReached,
   }) {
     return idle?.call();
   }
@@ -869,6 +877,7 @@ class _$IdleImpl implements _Idle {
     TResult Function()? uploading,
     TResult Function(AudioNote note)? success,
     TResult Function(String message)? failure,
+    TResult Function()? limitReached,
     required TResult orElse(),
   }) {
     if (idle != null) {
@@ -886,6 +895,7 @@ class _$IdleImpl implements _Idle {
     required TResult Function(_Uploading value) uploading,
     required TResult Function(_Success value) success,
     required TResult Function(_Failure value) failure,
+    required TResult Function(_LimitReached value) limitReached,
   }) {
     return idle(this);
   }
@@ -899,6 +909,7 @@ class _$IdleImpl implements _Idle {
     TResult? Function(_Uploading value)? uploading,
     TResult? Function(_Success value)? success,
     TResult? Function(_Failure value)? failure,
+    TResult? Function(_LimitReached value)? limitReached,
   }) {
     return idle?.call(this);
   }
@@ -912,6 +923,7 @@ class _$IdleImpl implements _Idle {
     TResult Function(_Uploading value)? uploading,
     TResult Function(_Success value)? success,
     TResult Function(_Failure value)? failure,
+    TResult Function(_LimitReached value)? limitReached,
     required TResult orElse(),
   }) {
     if (idle != null) {
@@ -1010,6 +1022,7 @@ class _$RecordingImpl implements _Recording {
     required TResult Function() uploading,
     required TResult Function(AudioNote note) success,
     required TResult Function(String message) failure,
+    required TResult Function() limitReached,
   }) {
     return recording(elapsedSeconds, filePath);
   }
@@ -1023,6 +1036,7 @@ class _$RecordingImpl implements _Recording {
     TResult? Function()? uploading,
     TResult? Function(AudioNote note)? success,
     TResult? Function(String message)? failure,
+    TResult? Function()? limitReached,
   }) {
     return recording?.call(elapsedSeconds, filePath);
   }
@@ -1036,6 +1050,7 @@ class _$RecordingImpl implements _Recording {
     TResult Function()? uploading,
     TResult Function(AudioNote note)? success,
     TResult Function(String message)? failure,
+    TResult Function()? limitReached,
     required TResult orElse(),
   }) {
     if (recording != null) {
@@ -1053,6 +1068,7 @@ class _$RecordingImpl implements _Recording {
     required TResult Function(_Uploading value) uploading,
     required TResult Function(_Success value) success,
     required TResult Function(_Failure value) failure,
+    required TResult Function(_LimitReached value) limitReached,
   }) {
     return recording(this);
   }
@@ -1066,6 +1082,7 @@ class _$RecordingImpl implements _Recording {
     TResult? Function(_Uploading value)? uploading,
     TResult? Function(_Success value)? success,
     TResult? Function(_Failure value)? failure,
+    TResult? Function(_LimitReached value)? limitReached,
   }) {
     return recording?.call(this);
   }
@@ -1079,6 +1096,7 @@ class _$RecordingImpl implements _Recording {
     TResult Function(_Uploading value)? uploading,
     TResult Function(_Success value)? success,
     TResult Function(_Failure value)? failure,
+    TResult Function(_LimitReached value)? limitReached,
     required TResult orElse(),
   }) {
     if (recording != null) {
@@ -1192,6 +1210,7 @@ class _$ReadyToSaveImpl implements _ReadyToSave {
     required TResult Function() uploading,
     required TResult Function(AudioNote note) success,
     required TResult Function(String message) failure,
+    required TResult Function() limitReached,
   }) {
     return readyToSave(filePath, durationSeconds);
   }
@@ -1205,6 +1224,7 @@ class _$ReadyToSaveImpl implements _ReadyToSave {
     TResult? Function()? uploading,
     TResult? Function(AudioNote note)? success,
     TResult? Function(String message)? failure,
+    TResult? Function()? limitReached,
   }) {
     return readyToSave?.call(filePath, durationSeconds);
   }
@@ -1218,6 +1238,7 @@ class _$ReadyToSaveImpl implements _ReadyToSave {
     TResult Function()? uploading,
     TResult Function(AudioNote note)? success,
     TResult Function(String message)? failure,
+    TResult Function()? limitReached,
     required TResult orElse(),
   }) {
     if (readyToSave != null) {
@@ -1235,6 +1256,7 @@ class _$ReadyToSaveImpl implements _ReadyToSave {
     required TResult Function(_Uploading value) uploading,
     required TResult Function(_Success value) success,
     required TResult Function(_Failure value) failure,
+    required TResult Function(_LimitReached value) limitReached,
   }) {
     return readyToSave(this);
   }
@@ -1248,6 +1270,7 @@ class _$ReadyToSaveImpl implements _ReadyToSave {
     TResult? Function(_Uploading value)? uploading,
     TResult? Function(_Success value)? success,
     TResult? Function(_Failure value)? failure,
+    TResult? Function(_LimitReached value)? limitReached,
   }) {
     return readyToSave?.call(this);
   }
@@ -1261,6 +1284,7 @@ class _$ReadyToSaveImpl implements _ReadyToSave {
     TResult Function(_Uploading value)? uploading,
     TResult Function(_Success value)? success,
     TResult Function(_Failure value)? failure,
+    TResult Function(_LimitReached value)? limitReached,
     required TResult orElse(),
   }) {
     if (readyToSave != null) {
@@ -1335,6 +1359,7 @@ class _$UploadingImpl implements _Uploading {
     required TResult Function() uploading,
     required TResult Function(AudioNote note) success,
     required TResult Function(String message) failure,
+    required TResult Function() limitReached,
   }) {
     return uploading();
   }
@@ -1348,6 +1373,7 @@ class _$UploadingImpl implements _Uploading {
     TResult? Function()? uploading,
     TResult? Function(AudioNote note)? success,
     TResult? Function(String message)? failure,
+    TResult? Function()? limitReached,
   }) {
     return uploading?.call();
   }
@@ -1361,6 +1387,7 @@ class _$UploadingImpl implements _Uploading {
     TResult Function()? uploading,
     TResult Function(AudioNote note)? success,
     TResult Function(String message)? failure,
+    TResult Function()? limitReached,
     required TResult orElse(),
   }) {
     if (uploading != null) {
@@ -1378,6 +1405,7 @@ class _$UploadingImpl implements _Uploading {
     required TResult Function(_Uploading value) uploading,
     required TResult Function(_Success value) success,
     required TResult Function(_Failure value) failure,
+    required TResult Function(_LimitReached value) limitReached,
   }) {
     return uploading(this);
   }
@@ -1391,6 +1419,7 @@ class _$UploadingImpl implements _Uploading {
     TResult? Function(_Uploading value)? uploading,
     TResult? Function(_Success value)? success,
     TResult? Function(_Failure value)? failure,
+    TResult? Function(_LimitReached value)? limitReached,
   }) {
     return uploading?.call(this);
   }
@@ -1404,6 +1433,7 @@ class _$UploadingImpl implements _Uploading {
     TResult Function(_Uploading value)? uploading,
     TResult Function(_Success value)? success,
     TResult Function(_Failure value)? failure,
+    TResult Function(_LimitReached value)? limitReached,
     required TResult orElse(),
   }) {
     if (uploading != null) {
@@ -1493,6 +1523,7 @@ class _$SuccessImpl implements _Success {
     required TResult Function() uploading,
     required TResult Function(AudioNote note) success,
     required TResult Function(String message) failure,
+    required TResult Function() limitReached,
   }) {
     return success(note);
   }
@@ -1506,6 +1537,7 @@ class _$SuccessImpl implements _Success {
     TResult? Function()? uploading,
     TResult? Function(AudioNote note)? success,
     TResult? Function(String message)? failure,
+    TResult? Function()? limitReached,
   }) {
     return success?.call(note);
   }
@@ -1519,6 +1551,7 @@ class _$SuccessImpl implements _Success {
     TResult Function()? uploading,
     TResult Function(AudioNote note)? success,
     TResult Function(String message)? failure,
+    TResult Function()? limitReached,
     required TResult orElse(),
   }) {
     if (success != null) {
@@ -1536,6 +1569,7 @@ class _$SuccessImpl implements _Success {
     required TResult Function(_Uploading value) uploading,
     required TResult Function(_Success value) success,
     required TResult Function(_Failure value) failure,
+    required TResult Function(_LimitReached value) limitReached,
   }) {
     return success(this);
   }
@@ -1549,6 +1583,7 @@ class _$SuccessImpl implements _Success {
     TResult? Function(_Uploading value)? uploading,
     TResult? Function(_Success value)? success,
     TResult? Function(_Failure value)? failure,
+    TResult? Function(_LimitReached value)? limitReached,
   }) {
     return success?.call(this);
   }
@@ -1562,6 +1597,7 @@ class _$SuccessImpl implements _Success {
     TResult Function(_Uploading value)? uploading,
     TResult Function(_Success value)? success,
     TResult Function(_Failure value)? failure,
+    TResult Function(_LimitReached value)? limitReached,
     required TResult orElse(),
   }) {
     if (success != null) {
@@ -1659,6 +1695,7 @@ class _$FailureImpl implements _Failure {
     required TResult Function() uploading,
     required TResult Function(AudioNote note) success,
     required TResult Function(String message) failure,
+    required TResult Function() limitReached,
   }) {
     return failure(message);
   }
@@ -1672,6 +1709,7 @@ class _$FailureImpl implements _Failure {
     TResult? Function()? uploading,
     TResult? Function(AudioNote note)? success,
     TResult? Function(String message)? failure,
+    TResult? Function()? limitReached,
   }) {
     return failure?.call(message);
   }
@@ -1685,6 +1723,7 @@ class _$FailureImpl implements _Failure {
     TResult Function()? uploading,
     TResult Function(AudioNote note)? success,
     TResult Function(String message)? failure,
+    TResult Function()? limitReached,
     required TResult orElse(),
   }) {
     if (failure != null) {
@@ -1702,6 +1741,7 @@ class _$FailureImpl implements _Failure {
     required TResult Function(_Uploading value) uploading,
     required TResult Function(_Success value) success,
     required TResult Function(_Failure value) failure,
+    required TResult Function(_LimitReached value) limitReached,
   }) {
     return failure(this);
   }
@@ -1715,6 +1755,7 @@ class _$FailureImpl implements _Failure {
     TResult? Function(_Uploading value)? uploading,
     TResult? Function(_Success value)? success,
     TResult? Function(_Failure value)? failure,
+    TResult? Function(_LimitReached value)? limitReached,
   }) {
     return failure?.call(this);
   }
@@ -1728,6 +1769,7 @@ class _$FailureImpl implements _Failure {
     TResult Function(_Uploading value)? uploading,
     TResult Function(_Success value)? success,
     TResult Function(_Failure value)? failure,
+    TResult Function(_LimitReached value)? limitReached,
     required TResult orElse(),
   }) {
     if (failure != null) {
@@ -1747,4 +1789,141 @@ abstract class _Failure implements RecordingState {
   @JsonKey(includeFromJson: false, includeToJson: false)
   _$$FailureImplCopyWith<_$FailureImpl> get copyWith =>
       throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class _$$LimitReachedImplCopyWith<$Res> {
+  factory _$$LimitReachedImplCopyWith(
+    _$LimitReachedImpl value,
+    $Res Function(_$LimitReachedImpl) then,
+  ) = __$$LimitReachedImplCopyWithImpl<$Res>;
+}
+
+/// @nodoc
+class __$$LimitReachedImplCopyWithImpl<$Res>
+    extends _$RecordingStateCopyWithImpl<$Res, _$LimitReachedImpl>
+    implements _$$LimitReachedImplCopyWith<$Res> {
+  __$$LimitReachedImplCopyWithImpl(
+    _$LimitReachedImpl _value,
+    $Res Function(_$LimitReachedImpl) _then,
+  ) : super(_value, _then);
+
+  /// Create a copy of RecordingState
+  /// with the given fields replaced by the non-null parameter values.
+}
+
+/// @nodoc
+
+class _$LimitReachedImpl implements _LimitReached {
+  const _$LimitReachedImpl();
+
+  @override
+  String toString() {
+    return 'RecordingState.limitReached()';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType && other is _$LimitReachedImpl);
+  }
+
+  @override
+  int get hashCode => runtimeType.hashCode;
+
+  @override
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>({
+    required TResult Function() idle,
+    required TResult Function(int elapsedSeconds, String filePath) recording,
+    required TResult Function(String filePath, int durationSeconds) readyToSave,
+    required TResult Function() uploading,
+    required TResult Function(AudioNote note) success,
+    required TResult Function(String message) failure,
+    required TResult Function() limitReached,
+  }) {
+    return limitReached();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult? Function()? idle,
+    TResult? Function(int elapsedSeconds, String filePath)? recording,
+    TResult? Function(String filePath, int durationSeconds)? readyToSave,
+    TResult? Function()? uploading,
+    TResult? Function(AudioNote note)? success,
+    TResult? Function(String message)? failure,
+    TResult? Function()? limitReached,
+  }) {
+    return limitReached?.call();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function()? idle,
+    TResult Function(int elapsedSeconds, String filePath)? recording,
+    TResult Function(String filePath, int durationSeconds)? readyToSave,
+    TResult Function()? uploading,
+    TResult Function(AudioNote note)? success,
+    TResult Function(String message)? failure,
+    TResult Function()? limitReached,
+    required TResult orElse(),
+  }) {
+    if (limitReached != null) {
+      return limitReached();
+    }
+    return orElse();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>({
+    required TResult Function(_Idle value) idle,
+    required TResult Function(_Recording value) recording,
+    required TResult Function(_ReadyToSave value) readyToSave,
+    required TResult Function(_Uploading value) uploading,
+    required TResult Function(_Success value) success,
+    required TResult Function(_Failure value) failure,
+    required TResult Function(_LimitReached value) limitReached,
+  }) {
+    return limitReached(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult? Function(_Idle value)? idle,
+    TResult? Function(_Recording value)? recording,
+    TResult? Function(_ReadyToSave value)? readyToSave,
+    TResult? Function(_Uploading value)? uploading,
+    TResult? Function(_Success value)? success,
+    TResult? Function(_Failure value)? failure,
+    TResult? Function(_LimitReached value)? limitReached,
+  }) {
+    return limitReached?.call(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(_Idle value)? idle,
+    TResult Function(_Recording value)? recording,
+    TResult Function(_ReadyToSave value)? readyToSave,
+    TResult Function(_Uploading value)? uploading,
+    TResult Function(_Success value)? success,
+    TResult Function(_Failure value)? failure,
+    TResult Function(_LimitReached value)? limitReached,
+    required TResult orElse(),
+  }) {
+    if (limitReached != null) {
+      return limitReached(this);
+    }
+    return orElse();
+  }
+}
+
+abstract class _LimitReached implements RecordingState {
+  const factory _LimitReached() = _$LimitReachedImpl;
 }

@@ -98,5 +98,35 @@
   "statusAnalyzing": "AI-анализ...",
   "statusReady": "Готово",
   "statusFailed": "Ошибка",
-  "addTag": "Добавить тег"
+  "addTag": "Добавить тег",
+  "paywallTitle": "Откройте голос основателя",
+  "paywallSubtitle": "Фиксируйте каждую идею. ИИ-анализ для каждой заметки.",
+  "paywallLimitReachedTitle": "Минуты на этот месяц закончились",
+  "paywallLimitReachedSubtitle": "Оформите подписку, чтобы продолжить без ограничений.",
+  "paywallEverythingYouGet": "Что вы получаете",
+  "paywallTierFree": "Бесплатно",
+  "paywallTierBasic": "Базовый",
+  "paywallTierPro": "Pro",
+  "paywallTagFree": "Базовый набор для пробы.",
+  "paywallTagBasic": "Для основателей, которые фиксируют идеи каждый день.",
+  "paywallTagPro": "Для серьёзной работы со стратегией и аналитикой.",
+  "paywallBillingMonthly": "Месяц",
+  "paywallBillingAnnual": "Год",
+  "paywallSavePercent": "Экономия {percent}%",
+  "@paywallSavePercent": {
+    "placeholders": { "percent": { "type": "int" } }
+  },
+  "paywallPerYear": "/ год",
+  "paywallPerMonth": "/ месяц",
+  "paywallStartFor": "Начать за {price}",
+  "@paywallStartFor": {
+    "placeholders": { "price": { "type": "String" } }
+  },
+  "paywallContinue": "Продолжить",
+  "paywallCurrent": "ТЕКУЩИЙ",
+  "paywallRestore": "Восстановить покупки",
+  "paywallTermsLine": "Подписка продлевается автоматически. Отменить можно в настройках аккаунта.",
+  "paywallCouldNotLoad": "Не удалось загрузить тарифы. Попробуйте снова.",
+  "paywallTryAgain": "Попробовать снова",
+  "paywallNoActivePurchases": "Нет активных покупок для восстановления."
 }
