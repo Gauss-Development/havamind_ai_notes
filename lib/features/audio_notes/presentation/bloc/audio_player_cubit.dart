@@ -51,7 +51,15 @@ class AudioPlayerCubit extends Cubit<AudioPlayerState> {
   StreamSubscription<PlayerState>? _playerStateSub;
 
   void _subscribeToStreams() {
-    _positionSub = _player.positionStream.listen((pos) {
+    // `positionStream` emits at the audio frame rate (up to ~60Hz on some
+    // platforms). For a Slider that just needs to look smooth, 5Hz is
+    // plenty and saves the layout pass on each emit during playback.
+    _positionSub = _player
+        .createPositionStream(
+          minPeriod: const Duration(milliseconds: 200),
+          maxPeriod: const Duration(milliseconds: 200),
+        )
+        .listen((pos) {
       if (!isClosed) {
         emit(state.copyWith(position: pos));
       }

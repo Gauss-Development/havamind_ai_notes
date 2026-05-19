@@ -81,20 +81,20 @@ class ObsidianUiTokens extends ThemeExtension<ObsidianUiTokens> {
 
   // ── Elevation presets ──────────────────────────────────────────────────
   /// 1dp — subtle separation (chip on card, list dividers).
-  List<BoxShadow> get elevationSm => const [
+  List<BoxShadow> get elevationSm => [
         BoxShadow(
-          color: Color(0x14000000),
+          color: primary.withValues(alpha: 0.08),
           blurRadius: 2,
-          offset: Offset(0, 1),
+          offset: const Offset(0, 1),
         ),
       ];
 
   /// 4dp — cards lifted off scroll.
-  List<BoxShadow> get elevationMd => const [
+  List<BoxShadow> get elevationMd => [
         BoxShadow(
-          color: Color(0x1F000000),
+          color: primary.withValues(alpha: 0.12),
           blurRadius: 12,
-          offset: Offset(0, 4),
+          offset: const Offset(0, 4),
         ),
       ];
 

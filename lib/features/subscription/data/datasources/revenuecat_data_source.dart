@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:flutter/foundation.dart';
 import 'package:purchases_flutter/purchases_flutter.dart';
 
 class RevenueCatDataSource {
@@ -14,7 +15,7 @@ class RevenueCatDataSource {
   Future<void> configure(String apiKey, {String? appUserId}) async {
     if (_isConfigured) return;
 
-    await Purchases.setLogLevel(LogLevel.debug);
+    await Purchases.setLogLevel(kDebugMode ? LogLevel.debug : LogLevel.error);
 
     final configuration = PurchasesConfiguration(apiKey)
       ..appUserID = appUserId

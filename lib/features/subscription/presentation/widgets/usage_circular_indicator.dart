@@ -18,7 +18,7 @@ class UsageCircularIndicator extends StatelessWidget {
   Widget build(BuildContext context) {
     final t = context.obsidian;
     final theme = Theme.of(context);
-    final ringColor = _ringColor(t);
+    final ringColor = _ringColor(t, theme.colorScheme);
 
     return Padding(
       padding: const EdgeInsets.fromLTRB(
@@ -126,9 +126,9 @@ class UsageCircularIndicator extends StatelessWidget {
     return '$tierLabel plan · $remain minute$s remaining this period';
   }
 
-  Color _ringColor(ObsidianUiTokens t) {
+  Color _ringColor(ObsidianUiTokens t, ColorScheme colorScheme) {
     final ratio = usageInfo.usageRatio;
-    if (ratio >= 1.0) return Colors.redAccent;
+    if (ratio >= 1.0) return colorScheme.error;
     if (ratio >= 0.85) return t.warning;
     if (ratio >= 0.55) return t.secondary;
     return t.primary;

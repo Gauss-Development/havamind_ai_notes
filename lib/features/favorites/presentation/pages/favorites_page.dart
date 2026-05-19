@@ -42,11 +42,11 @@ class FavoritesPage extends StatelessWidget {
                   );
                 },
                 child: ListView.separated(
-                  padding: const EdgeInsets.fromLTRB(
+                  padding: EdgeInsets.fromLTRB(
                     AppSpacing.base,
                     0,
                     AppSpacing.base,
-                    120,
+                    obsidianFabBottomPadding(context) + AppSpacing.lg,
                   ),
                   itemCount: notes.length,
                   separatorBuilder: (_, _) =>

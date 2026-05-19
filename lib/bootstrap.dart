@@ -16,6 +16,7 @@ Future<void> bootstrap(Flavor flavor) async {
     anonKey: EnvironmentConfig.instance.supabaseAnonKey,
   );
   await configureDependencies();
-  await getIt<SubscriptionRepository>().initialize();
+  final existingUserId = Supabase.instance.client.auth.currentUser?.id;
+  await getIt<SubscriptionRepository>().initialize(appUserId: existingUserId);
   runApp(const SampleApp());
 }

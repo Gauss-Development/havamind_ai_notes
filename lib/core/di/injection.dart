@@ -16,6 +16,7 @@ import 'package:sample/features/audio_notes/data/datasources/audio_storage_data_
 import 'package:sample/features/audio_notes/data/repositories/audio_notes_repository_impl.dart';
 import 'package:sample/features/audio_notes/data/services/audio_recording_service.dart';
 import 'package:sample/features/audio_notes/domain/repositories/audio_notes_repository.dart';
+import 'package:sample/features/audio_notes/domain/usecases/count_audio_notes_usecase.dart';
 import 'package:sample/features/audio_notes/domain/usecases/delete_audio_note_usecase.dart';
 import 'package:sample/features/audio_notes/domain/usecases/delete_local_audio_file_usecase.dart';
 import 'package:sample/features/audio_notes/domain/usecases/get_audio_note_usecase.dart';
@@ -25,10 +26,12 @@ import 'package:sample/features/audio_notes/domain/usecases/list_audio_notes_use
 import 'package:sample/features/audio_notes/domain/usecases/process_local_audio_note_usecase.dart';
 import 'package:sample/features/audio_notes/domain/usecases/request_processing_usecase.dart';
 import 'package:sample/features/audio_notes/domain/usecases/save_audio_recording_usecase.dart';
+import 'package:sample/features/audio_notes/domain/usecases/search_notes_by_title_usecase.dart';
 import 'package:sample/features/audio_notes/domain/usecases/update_analysis_field_usecase.dart';
 import 'package:sample/features/audio_notes/domain/usecases/update_note_title_usecase.dart';
 import 'package:sample/features/audio_notes/domain/usecases/watch_audio_note_usecase.dart';
 import 'package:sample/features/audio_notes/presentation/bloc/audio_notes_list_bloc.dart';
+import 'package:sample/features/audio_notes/presentation/cubit/notes_count_cubit.dart';
 import 'package:sample/features/audio_notes/presentation/bloc/note_detail_bloc.dart';
 import 'package:sample/features/audio_notes/presentation/bloc/plan_refinement_cubit.dart';
 import 'package:sample/features/audio_notes/presentation/bloc/plan_version_history_cubit.dart';
@@ -106,8 +109,14 @@ Future<void> configureDependencies() async {
     ),
   );
 
-  getIt.registerFactory(() => AudioRecordingService());
+  // Singleton: the underlying `AudioRecorder` owns the device microphone
+  // and cannot be safely instantiated twice. Sharing one instance means
+  // a second consumer that tries to start while the first is still
+  // recording will fail loudly instead of silently fighting over the mic.
+  getIt.registerLazySingleton(() => AudioRecordingService());
   getIt.registerFactory(() => ListAudioNotesUseCase(getIt()));
+  getIt.registerFactory(() => SearchNotesByTitleUseCase(getIt()));
+  getIt.registerFactory(() => CountAudioNotesUseCase(getIt()));
   getIt.registerFactory(() => GetAudioNoteUseCase(getIt()));
   getIt.registerFactory(() => SaveAudioRecordingUseCase(getIt()));
   getIt.registerFactory(() => ProcessLocalAudioNoteUseCase(getIt()));
@@ -121,6 +130,7 @@ Future<void> configureDependencies() async {
   getIt.registerFactory(() => WatchAudioNoteUseCase(getIt()));
 
   getIt.registerFactory(() => AudioNotesListBloc(listAudioNotes: getIt()));
+  getIt.registerFactory(() => NotesCountCubit(countNotes: getIt()));
   getIt.registerFactory(
     () => RecordingBloc(
       recordingService: getIt(),
@@ -207,7 +217,7 @@ Future<void> configureDependencies() async {
     ),
   );
 
-  getIt.registerFactory(
+  getIt.registerLazySingleton(
     () => SubscriptionCubit(
       getSubscriptionStatus: getIt(),
       restorePurchases: getIt(),
@@ -215,6 +225,7 @@ Future<void> configureDependencies() async {
       purchasePackage: getIt(),
       repository: getIt(),
       getCurrentUsage: getIt(),
+      profileRemote: getIt(),
     ),
   );
 }

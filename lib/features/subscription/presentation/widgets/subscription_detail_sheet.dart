@@ -108,7 +108,7 @@ class _SubscriptionDetailSheet extends StatelessWidget {
                   ),
                   child: Icon(
                     tierIcon,
-                    color: Colors.white,
+                    color: t.onPrimaryButton,
                     size: 28,
                   ),
                 ),
@@ -392,27 +392,15 @@ class _DetailCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final rows = <Widget>[];
-    for (var i = 0; i < children.length; i++) {
-      rows.add(children[i]);
-      if (i < children.length - 1) {
-        rows.add(
-          Divider(
-            height: 1,
-            thickness: 1,
-            color: t.outlineVariant.withValues(alpha: 0.12),
-          ),
-        );
-      }
-    }
-
+    // No-Divider Rule: rely on each `_DetailRow`'s inner vertical padding
+    // (≈ AppSpacing.md top & bottom) to keep rows visually separated.
     return Container(
       decoration: BoxDecoration(
         color: t.surfaceContainerLow,
         borderRadius: BorderRadius.circular(ObsidianUiTokens.radiusMd),
       ),
       clipBehavior: Clip.antiAlias,
-      child: Column(children: rows),
+      child: Column(children: children),
     );
   }
 }

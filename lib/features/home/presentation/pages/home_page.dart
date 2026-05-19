@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
+import 'package:sample/core/di/injection.dart';
 import 'package:sample/core/theme/app_spacing.dart';
 import 'package:sample/core/theme/obsidian_ui_tokens.dart';
 import 'package:sample/core/widgets/app_gradient_card.dart';
@@ -11,7 +12,9 @@ import 'package:sample/core/widgets/obsidian_gradient_button.dart';
 import 'package:sample/core/widgets/obsidian_note_list_tile.dart';
 import 'package:sample/features/audio_notes/domain/entities/audio_note.dart';
 import 'package:sample/features/audio_notes/domain/entities/audio_note_status.dart';
+import 'package:sample/features/audio_notes/domain/usecases/search_notes_by_title_usecase.dart';
 import 'package:sample/features/audio_notes/presentation/bloc/audio_notes_list_bloc.dart';
+import 'package:sample/features/audio_notes/presentation/cubit/notes_count_cubit.dart';
 import 'package:sample/features/audio_notes/presentation/pages/note_detail_page.dart';
 import 'package:sample/features/audio_notes/presentation/pages/recording_page.dart';
 import 'package:sample/features/audio_notes/presentation/widgets/audio_note_duration_formatter.dart';
@@ -56,6 +59,7 @@ class HomePage extends StatelessWidget {
               loading: () => true,
               orElse: () => false,
             );
+            final totalCount = context.watch<NotesCountCubit>().state;
 
             return RefreshIndicator(
               color: t.primary,
@@ -64,7 +68,9 @@ class HomePage extends StatelessWidget {
                 context.read<AudioNotesListBloc>().add(
                   const AudioNotesListEvent.refreshed(),
                 );
-                await Future<void>.delayed(const Duration(milliseconds: 350));
+                await Future<void>.delayed(
+                  const Duration(milliseconds: 350),
+                );
               },
               child: CustomScrollView(
                 physics: const AlwaysScrollableScrollPhysics(),
@@ -74,6 +80,7 @@ class HomePage extends StatelessWidget {
                     child: _HomeHero(
                       name: greetingName,
                       notes: notes,
+                      totalCount: totalCount,
                       onRecord: () => _openRecording(context),
                     ),
                   ),
@@ -88,8 +95,8 @@ class HomePage extends StatelessWidget {
                     ),
                     sliver: SliverToBoxAdapter(
                       child: HomeNotesSearchSection(
-                        notes: notes,
-                        notesCount: notes.length,
+                        notesCount: totalCount,
+                        onSearch: _searchNotes,
                         onOpenNote: (noteId) =>
                             _openNoteDetail(context, noteId),
                       ),
@@ -102,9 +109,7 @@ class HomePage extends StatelessWidget {
                       child: AppSectionHeader(
                         eyebrow: 'Library',
                         title: 'Recent notes',
-                        subtitle: notes.length == 1
-                            ? '1 saved'
-                            : '${notes.length} saved',
+                        subtitle: _savedSubtitle(totalCount, notes.length),
                         padding: const EdgeInsets.fromLTRB(
                           AppSpacing.lg,
                           AppSpacing.xl,
@@ -169,6 +174,16 @@ class HomePage extends StatelessWidget {
     );
   }
 
+  Future<List<AudioNote>> _searchNotes(String query) async {
+    final result = await getIt<SearchNotesByTitleUseCase>()(
+      SearchNotesByTitleParams(query: query),
+    );
+    return result.fold(
+      (failure) => throw Exception(failure.message),
+      (notes) => notes,
+    );
+  }
+
   Future<void> _openRecording(BuildContext context) async {
     final added = await Navigator.of(context).push<bool>(
       MaterialPageRoute(
@@ -182,6 +197,11 @@ class HomePage extends StatelessWidget {
       );
     }
   }
+}
+
+String _savedSubtitle(int? totalCount, int loadedCount) {
+  final n = totalCount ?? loadedCount;
+  return n == 1 ? '1 saved' : '$n saved';
 }
 
 Future<void> _openNoteDetail(BuildContext context, String noteId) async {
@@ -222,11 +242,13 @@ class _HomeHero extends StatelessWidget {
   const _HomeHero({
     required this.name,
     required this.notes,
+    required this.totalCount,
     required this.onRecord,
   });
 
   final String name;
   final List<AudioNote> notes;
+  final int? totalCount;
   final VoidCallback onRecord;
 
   @override
@@ -282,7 +304,7 @@ class _HomeHero extends StatelessWidget {
             // Inline stat chips (only when there's something to show).
             if (notes.isNotEmpty) ...[
               const SizedBox(height: AppSpacing.lg),
-              _StatsChips(notes: notes),
+              _StatsChips(notes: notes, totalCount: totalCount),
             ],
 
             // Hero CTA card.
@@ -337,13 +359,14 @@ class _Avatar extends StatelessWidget {
 // ─── Stats ───────────────────────────────────────────────────────────────────
 
 class _StatsChips extends StatelessWidget {
-  const _StatsChips({required this.notes});
+  const _StatsChips({required this.notes, required this.totalCount});
 
   final List<AudioNote> notes;
+  final int? totalCount;
 
   @override
   Widget build(BuildContext context) {
-    final total = notes.length;
+    final total = totalCount ?? notes.length;
     final ready =
         notes.where((n) => n.status == AudioNoteStatus.completed).length;
     final processing =

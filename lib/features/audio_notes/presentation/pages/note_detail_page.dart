@@ -52,7 +52,14 @@ class _NoteDetailView extends StatelessWidget {
               SnackBar(content: Text(m)),
             );
           },
-          deleted: () => Navigator.of(context).pop(true),
+          deleted: () {
+            // Pop after this frame so we never paint `deleted` as an empty
+            // scaffold while the bloc may still transition (e.g. watch race).
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              if (!context.mounted) return;
+              Navigator.of(context).maybePop(true);
+            });
+          },
           orElse: () {},
         );
       },
@@ -108,7 +115,7 @@ class _NoteDetailView extends StatelessWidget {
               analysis: analysis,
               localAudioExists: localAudioExists,
             ),
-            deleted: () => const SizedBox.shrink(),
+            deleted: () => const Center(child: CircularProgressIndicator()),
             failure: (m) => Center(
               child: Padding(
                 padding: const EdgeInsets.all(AppSpacing.xl),
@@ -438,6 +445,11 @@ class _SummaryTab extends StatefulWidget {
 }
 
 class _SummaryTabState extends State<_SummaryTab> {
+  // Hoisted out of `build` so the pattern-parsing cost is paid once per
+  // class load rather than on every BLoC emit (including bursty realtime
+  // updates during transcription/analysis).
+  static final _dateFmt = DateFormat('MMM d, yyyy • h:mm a');
+
   Set<String> _selectedTagIds = {};
 
   @override
@@ -490,7 +502,7 @@ class _SummaryTabState extends State<_SummaryTab> {
   Widget build(BuildContext context) {
     final t = context.obsidian;
     final theme = Theme.of(context);
-    final dateFmt = DateFormat('MMM d, yyyy • h:mm a');
+    final dateFmt = _dateFmt;
 
     return ListView(
       padding: const EdgeInsets.fromLTRB(
@@ -720,25 +732,46 @@ class _AnalysisTab extends StatelessWidget {
     final hasFollowUp = analysis!.followUpQuestions != null &&
         analysis!.followUpQuestions!.isNotEmpty;
 
-    return ListView(
-      padding: const EdgeInsets.fromLTRB(
-        AppSpacing.lg,
-        AppSpacing.base,
-        AppSpacing.lg,
-        AppSpacing.xxxl,
-      ),
-      children: [
-        for (var i = 0; i < cards.length; i++) ...[
-          _CollapsibleAnalysisCard(entry: cards[i]),
-          if (i < cards.length - 1) const SizedBox(height: AppSpacing.sm),
-        ],
-        if (hasFollowUp) ...[
-          const SizedBox(height: AppSpacing.lg),
-          _FollowUpQuestionsCard(
-            questions: analysis!.followUpQuestions!,
-            onAnswerByVoice: onAnswerByVoice,
+    // CustomScrollView + slivers so the analysis cards are virtualised
+    // (only visible ones lay out) instead of being eagerly composed
+    // every time the parent BLoC emits — important since realtime
+    // updates rebuild this whole tree on each row UPDATE.
+    return CustomScrollView(
+      slivers: [
+        SliverPadding(
+          padding: const EdgeInsets.fromLTRB(
+            AppSpacing.lg,
+            AppSpacing.base,
+            AppSpacing.lg,
+            0,
           ),
-        ],
+          sliver: SliverList.separated(
+            itemCount: cards.length,
+            separatorBuilder: (_, _) => const SizedBox(height: AppSpacing.sm),
+            itemBuilder: (_, i) =>
+                _CollapsibleAnalysisCard(entry: cards[i]),
+          ),
+        ),
+        if (hasFollowUp) ...[
+          const SliverToBoxAdapter(child: SizedBox(height: AppSpacing.lg)),
+          SliverPadding(
+            padding: const EdgeInsets.fromLTRB(
+              AppSpacing.lg,
+              0,
+              AppSpacing.lg,
+              AppSpacing.xxxl,
+            ),
+            sliver: SliverToBoxAdapter(
+              child: _FollowUpQuestionsCard(
+                questions: analysis!.followUpQuestions!,
+                onAnswerByVoice: onAnswerByVoice,
+              ),
+            ),
+          ),
+        ] else
+          const SliverToBoxAdapter(
+            child: SizedBox(height: AppSpacing.xxxl),
+          ),
       ],
     );
   }
@@ -967,11 +1000,6 @@ class _FollowUpQuestionsCard extends StatelessWidget {
                       color: t.primary,
                     ),
                     tooltip: 'Answer by voice',
-                    constraints: const BoxConstraints(
-                      minWidth: 36,
-                      minHeight: 36,
-                    ),
-                    padding: EdgeInsets.zero,
                   ),
               ],
             ),
@@ -1074,9 +1102,9 @@ class _AudioPlayerCard extends StatelessWidget {
                 color: t.onSurfaceVariant.withValues(alpha: 0.3),
                 shape: BoxShape.circle,
               ),
-              child: const Icon(
+              child: Icon(
                 Icons.play_arrow_rounded,
-                color: Colors.white,
+                color: t.onPrimaryButton,
               ),
             ),
             const SizedBox(width: AppSpacing.md),
@@ -1141,18 +1169,18 @@ class _AudioPlayerCard extends StatelessWidget {
                     shape: BoxShape.circle,
                   ),
                   child: isLoading
-                      ? const Padding(
-                          padding: EdgeInsets.all(14),
+                      ? Padding(
+                          padding: const EdgeInsets.all(14),
                           child: CircularProgressIndicator(
                             strokeWidth: 2,
-                            color: Colors.white,
+                            color: t.onPrimaryButton,
                           ),
                         )
                       : Icon(
                           isPlaying
                               ? Icons.pause_rounded
                               : Icons.play_arrow_rounded,
-                          color: Colors.white,
+                          color: t.onPrimaryButton,
                         ),
                 ),
               ),

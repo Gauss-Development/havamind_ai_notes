@@ -31,6 +31,8 @@ flutter test
 flutter test test/audio_notes_list_bloc_test.dart
 ```
 
+Store release (signing, AAB/IPA, env, Play/App Store checklists): see [docs/RELEASE.md](docs/RELEASE.md).
+
 ## Architecture
 
 Clean Architecture with feature-first organization. Each feature under `lib/features/` is self-contained with three layers:

@@ -176,7 +176,13 @@ class _PaywallContentState extends State<PaywallContent> {
   }
 
   Future<void> _onContinue(Package package) async {
-    setState(() => _purchasing = true);
+    // Synchronous guard before the first `await` — without this, two quick
+    // taps can both pass the `_purchasing == false` check (the flag is only
+    // observed after `setState` schedules a rebuild) and fire parallel
+    // purchases in the cubit.
+    if (_purchasing) return;
+    _purchasing = true;
+    setState(() {});
     final outcome = await context.read<SubscriptionCubit>().purchase(package);
     if (!mounted) return;
     setState(() => _purchasing = false);

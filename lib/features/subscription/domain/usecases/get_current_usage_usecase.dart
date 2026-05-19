@@ -68,7 +68,7 @@ class GetCurrentUsageUseCase implements UseCase<UsageInfo, NoParams> {
         status.period == SubscriptionPeriod.monthly &&
         status.expirationDate != null) {
       final end = status.expirationDate!;
-      final start = DateTime(end.year, end.month - 1, end.day);
+      final start = _subtractOneMonth(end);
       return (start, end);
     }
 
@@ -76,5 +76,24 @@ class GetCurrentUsageUseCase implements UseCase<UsageInfo, NoParams> {
     final start = DateTime(now.year, now.month);
     final end = DateTime(now.year, now.month + 1);
     return (start, end);
+  }
+
+  /// Subtracts exactly one calendar month, clamping the day to the last
+  /// valid day of the target month (so Mar 31 → Feb 28/29, not Mar 3).
+  DateTime _subtractOneMonth(DateTime d) {
+    final prevYear = d.month == 1 ? d.year - 1 : d.year;
+    final prevMonth = d.month == 1 ? 12 : d.month - 1;
+    final lastDayOfPrevMonth = DateTime(prevYear, prevMonth + 1, 0).day;
+    final day = d.day > lastDayOfPrevMonth ? lastDayOfPrevMonth : d.day;
+    return DateTime(
+      prevYear,
+      prevMonth,
+      day,
+      d.hour,
+      d.minute,
+      d.second,
+      d.millisecond,
+      d.microsecond,
+    );
   }
 }

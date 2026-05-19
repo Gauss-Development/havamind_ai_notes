@@ -5,11 +5,17 @@ class EnvironmentConfig {
     required this.supabaseUrl,
     required this.supabaseAnonKey,
     required this.revenueCatApiKey,
+    required this.privacyPolicyUrl,
+    required this.termsOfServiceUrl,
   });
 
   final String supabaseUrl;
   final String supabaseAnonKey;
   final String revenueCatApiKey;
+  /// Public privacy policy (HTTPS). Optional; Profile shows Legal when set.
+  final String privacyPolicyUrl;
+  /// Terms of service (HTTPS). Optional.
+  final String termsOfServiceUrl;
 
   static late final EnvironmentConfig instance;
 
@@ -44,6 +50,8 @@ class EnvironmentConfig {
       supabaseUrl: read('SUPABASE_URL'),
       supabaseAnonKey: read('SUPABASE_ANON_KEY'),
       revenueCatApiKey: read('REVENUECAT_API_KEY'),
+      privacyPolicyUrl: read('PRIVACY_POLICY_URL'),
+      termsOfServiceUrl: read('TERMS_OF_SERVICE_URL'),
     );
   }
 
@@ -53,6 +61,14 @@ class EnvironmentConfig {
         'Environment is not configured. Set SUPABASE_URL and '
         'SUPABASE_ANON_KEY in assets/env/.env.[flavor], assets/env/.env, '
         'or pass --dart-define.',
+      );
+    }
+    if (revenueCatApiKey.isEmpty) {
+      throw StateError(
+        'REVENUECAT_API_KEY is not configured. Without it RevenueCat '
+        'silently misconfigures and every purchase fails at the moment '
+        'the user taps Subscribe. Set it in '
+        'assets/env/.env.[flavor], assets/env/.env, or pass --dart-define.',
       );
     }
   }

@@ -21,6 +21,8 @@
 		97C146FE1CF9000F007C117D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FD1CF9000F007C117D /* Assets.xcassets */; };
 		97C147011CF9000F007C117D /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FF1CF9000F007C117D /* LaunchScreen.storyboard */; };
 		A27124C15773DC34C4E8C3DC /* productionLaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 1F240BB3589D93F597850301 /* productionLaunchScreen.storyboard */; };
+		E8F1A2000000000000000011 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = E8F1A2000000000000000010 /* PrivacyInfo.xcprivacy */; };
+		E8F1A2000000000000000015 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = E8F1A2000000000000000014 /* InfoPlist.strings */; };
 		AE38E0461CB1E6C375B5C113 /* productionProfile.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = D63292F12AF5CDF253156B6C /* productionProfile.xcconfig */; };
 		D49AA9DFA4223EDD5F3E2435 /* developmentRelease.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = AEFA7E4FFB1AEB70BA957772 /* developmentRelease.xcconfig */; };
 		F20E74CBEEB0D9F18C1E19CE /* developmentLaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A5337252D9D19171F80D9FA5 /* developmentLaunchScreen.storyboard */; };
@@ -89,6 +91,9 @@
 		D1DB5D6091288D524F23042C /* Pods-Runner.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.release.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.release.xcconfig"; sourceTree = "<group>"; };
 		D63292F12AF5CDF253156B6C /* productionProfile.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = productionProfile.xcconfig; path = Flutter/productionProfile.xcconfig; sourceTree = "<group>"; };
 		F156315B70C60C0CA19DA2B0 /* productionDebug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = productionDebug.xcconfig; path = Flutter/productionDebug.xcconfig; sourceTree = "<group>"; };
+		E8F1A2000000000000000010 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
+		E8F1A2000000000000000012 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		E8F1A2000000000000000013 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -194,6 +199,8 @@
 				97C146FD1CF9000F007C117D /* Assets.xcassets */,
 				97C146FF1CF9000F007C117D /* LaunchScreen.storyboard */,
 				97C147021CF9000F007C117D /* Info.plist */,
+				E8F1A2000000000000000010 /* PrivacyInfo.xcprivacy */,
+				E8F1A2000000000000000014 /* InfoPlist.strings */,
 				1498D2321E8E86230040F4C2 /* GeneratedPluginRegistrant.h */,
 				1498D2331E8E89220040F4C2 /* GeneratedPluginRegistrant.m */,
 				74858FAE1ED2DC5600515810 /* AppDelegate.swift */,
@@ -274,6 +281,7 @@
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				en,
+				ru,
 				Base,
 			);
 			mainGroup = 97C146E51CF9000F007C117D;
@@ -303,6 +311,8 @@
 				3B3967161E833CAA004F5970 /* AppFrameworkInfo.plist in Resources */,
 				97C146FE1CF9000F007C117D /* Assets.xcassets in Resources */,
 				97C146FC1CF9000F007C117D /* Main.storyboard in Resources */,
+				E8F1A2000000000000000011 /* PrivacyInfo.xcprivacy in Resources */,
+				E8F1A2000000000000000015 /* InfoPlist.strings in Resources */,
 				46A09DC5F6A0A0FF61D4FC8A /* developmentDebug.xcconfig in Resources */,
 				FC9C727AC72FE867D4DB55BE /* developmentProfile.xcconfig in Resources */,
 				D49AA9DFA4223EDD5F3E2435 /* developmentRelease.xcconfig in Resources */,
@@ -472,6 +482,15 @@
 				97C147001CF9000F007C117D /* Base */,
 			);
 			name = LaunchScreen.storyboard;
+			sourceTree = "<group>";
+		};
+		E8F1A2000000000000000014 /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				E8F1A2000000000000000012 /* en */,
+				E8F1A2000000000000000013 /* ru */,
+			);
+			name = InfoPlist.strings;
 			sourceTree = "<group>";
 		};
 /* End PBXVariantGroup section */

@@ -3,9 +3,11 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sample/core/di/injection.dart';
 import 'package:sample/core/widgets/obsidian_floating_nav_bar.dart';
 import 'package:sample/features/audio_notes/presentation/bloc/audio_notes_list_bloc.dart';
+import 'package:sample/features/audio_notes/presentation/cubit/notes_count_cubit.dart';
 import 'package:sample/features/audio_notes/presentation/pages/notes_list_page.dart';
 import 'package:sample/features/auth/domain/entities/user_profile.dart';
 import 'package:sample/features/favorites/presentation/bloc/favorites_bloc.dart';
+import 'package:sample/features/subscription/presentation/cubit/subscription_cubit.dart';
 import 'package:sample/features/tags/presentation/bloc/tags_cubit.dart';
 import 'package:sample/features/favorites/presentation/pages/favorites_page.dart';
 import 'package:sample/features/home/presentation/pages/home_page.dart';
@@ -25,6 +27,8 @@ class _DashboardPageState extends State<DashboardPage> {
   late final AudioNotesListBloc _audioNotesListBloc;
   late final FavoritesBloc _favoritesBloc;
   late final TagsCubit _tagsCubit;
+  late final NotesCountCubit _notesCountCubit;
+  late final SubscriptionCubit _subscriptionCubit;
 
   @override
   void initState() {
@@ -34,6 +38,13 @@ class _DashboardPageState extends State<DashboardPage> {
     _favoritesBloc = getIt<FavoritesBloc>()
       ..add(const FavoritesEvent.started());
     _tagsCubit = getIt<TagsCubit>()..load();
+    // Refreshes on construction so the count is ready by first paint.
+    _notesCountCubit = getIt<NotesCountCubit>();
+    // Load early — the RC status callback mirrors the tier into
+    // `profiles.subscription_tier`, which the Edge Function usage gate
+    // reads server-side. Without this, the first recording attempt by
+    // a freshly signed-in paid user gets gated as if they were free.
+    _subscriptionCubit = getIt<SubscriptionCubit>()..loadStatus();
   }
 
   @override
@@ -41,6 +52,8 @@ class _DashboardPageState extends State<DashboardPage> {
     _audioNotesListBloc.close();
     _favoritesBloc.close();
     _tagsCubit.close();
+    _notesCountCubit.close();
+    // SubscriptionCubit is a lazySingleton; do not close it here.
     super.dispose();
   }
 
@@ -74,22 +87,35 @@ class _DashboardPageState extends State<DashboardPage> {
         BlocProvider<AudioNotesListBloc>.value(value: _audioNotesListBloc),
         BlocProvider<FavoritesBloc>.value(value: _favoritesBloc),
         BlocProvider<TagsCubit>.value(value: _tagsCubit),
+        BlocProvider<NotesCountCubit>.value(value: _notesCountCubit),
+        BlocProvider<SubscriptionCubit>.value(value: _subscriptionCubit),
       ],
-      child: Scaffold(
-        body: IndexedStack(
-          index: _currentIndex,
-          children: [
-            HomePage(profile: widget.profile),
-            NotesListPage(profile: widget.profile),
-            const FavoritesPage(),
-            ProfilePage(profile: widget.profile),
-          ],
-        ),
-        extendBody: true,
-        bottomNavigationBar: ObsidianFloatingNavBar(
-          items: _items,
-          currentIndex: _currentIndex,
-          onTap: (i) => setState(() => _currentIndex = i),
+      child: BlocListener<AudioNotesListBloc, AudioNotesListState>(
+        // Mounted at dashboard root so the total count stays accurate
+        // regardless of which tab is currently visible (delete from Notes
+        // list, record from any tab, refresh, etc.). Freezed equality
+        // suppresses duplicate fires for no-op reloads.
+        listenWhen: (prev, curr) =>
+            curr.maybeWhen(loaded: (_, _, _) => true, orElse: () => false),
+        listener: (context, state) {
+          context.read<NotesCountCubit>().refresh();
+        },
+        child: Scaffold(
+          body: IndexedStack(
+            index: _currentIndex,
+            children: [
+              HomePage(profile: widget.profile),
+              NotesListPage(profile: widget.profile),
+              const FavoritesPage(),
+              ProfilePage(profile: widget.profile),
+            ],
+          ),
+          extendBody: true,
+          bottomNavigationBar: ObsidianFloatingNavBar(
+            items: _items,
+            currentIndex: _currentIndex,
+            onTap: (i) => setState(() => _currentIndex = i),
+          ),
         ),
       ),
     );

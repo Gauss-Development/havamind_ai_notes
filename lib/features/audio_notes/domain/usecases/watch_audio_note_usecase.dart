@@ -6,7 +6,7 @@ class WatchAudioNoteUseCase {
 
   final AudioNotesRepository _repository;
 
-  Stream<AudioNote> call(String noteId) {
+  Stream<AudioNote?> call(String noteId) {
     return _repository.watchNote(noteId);
   }
 }

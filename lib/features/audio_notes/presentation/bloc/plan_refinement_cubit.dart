@@ -208,12 +208,32 @@ class PlanRefinementCubit extends Cubit<PlanRefinementState> {
     final filePath = state.filePath;
     if (noteId == null || filePath == null) return;
 
+    // Enforce the per-plan refinement-round cap on the client. The server
+    // is authoritative — `refine-plan` re-checks `MAX_REFINEMENT_ROUNDS`
+    // against `plan_versions.plan_id = startup_analyses.id`. The client
+    // mirrors that count via `audio_note_id`, which is set on the same
+    // rows (and indexed by `plan_versions_audio_note_idx`). Using the
+    // `analysis.id` key here would require fetching the analysis first;
+    // the audio_note_id index gives us the exact same count in one hop.
+    final countResult =
+        await _repository.countRefinementRoundsForNote(noteId);
+    final currentRounds = countResult.fold((_) => 0, (count) => count);
+    if (currentRounds >= kMaxRefinementRounds) {
+      emit(state.copyWith(
+        status: PlanRefinementStatus.failure,
+        error:
+            'Maximum of $kMaxRefinementRounds refinement rounds reached for this plan.',
+      ));
+      return;
+    }
+
     emit(state.copyWith(status: PlanRefinementStatus.refining));
 
     final result = await _repository.refinePlanByVoice(
       noteId: noteId,
       localFilePath: filePath,
       followUpQuestionId: state.followUpQuestionId,
+      followUpQuestionText: state.followUpQuestionText,
     );
 
     result.fold(
@@ -231,7 +251,18 @@ class PlanRefinementCubit extends Cubit<PlanRefinementState> {
   @override
   Future<void> close() async {
     _timer?.cancel();
-    await _recording.dispose();
+    // Don't dispose the recorder — it's shared across consumers (see DI).
+    // Just cancel any in-flight recording so the mic is released cleanly.
+    if (state.status == PlanRefinementStatus.recording) {
+      try {
+        await _recording.cancelRecording();
+        final path = state.filePath;
+        if (path != null) {
+          final f = File(path);
+          if (await f.exists()) await f.delete();
+        }
+      } catch (_) {}
+    }
     return super.close();
   }
 }

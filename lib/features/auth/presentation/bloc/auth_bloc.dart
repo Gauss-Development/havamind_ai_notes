@@ -58,6 +58,11 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   /// True while Supabase OAuth is in progress (browser open, session not yet restored).
   bool _oauthPending = false;
 
+  /// Guards against the OAuth flow leaving the bloc stuck in `loading`
+  /// forever if the user closes the browser without completing sign-in.
+  Timer? _oauthTimeoutTimer;
+  static const _oauthTimeout = Duration(seconds: 90);
+
   Future<void> _onStarted(_Started event, Emitter<AuthState> emit) async {
     emit(const AuthState.loading());
     final result = await _getInitialSession(const NoParams());
@@ -90,10 +95,12 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         if (_oauthPending) {
           return;
         }
+        _oauthTimeoutTimer?.cancel();
         emit(const AuthState.unauthenticated());
       },
       signedIn: (profile) {
         _oauthPending = false;
+        _oauthTimeoutTimer?.cancel();
         emit(AuthState.authenticated(profile));
       },
     );
@@ -105,9 +112,20 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   ) async {
     emit(const AuthState.loading());
     _oauthPending = true;
+    _oauthTimeoutTimer?.cancel();
+    _oauthTimeoutTimer = Timer(_oauthTimeout, () {
+      // Browser was opened but the user never made it back. Don't strand
+      // the UI on a perma-loading screen — synthesize a signedOut so the
+      // existing handler routes us to the login screen with a retry path.
+      if (_oauthPending && !isClosed) {
+        _oauthPending = false;
+        add(const AuthEvent.snapshotReceived(AuthSnapshot.signedOut()));
+      }
+    });
     final result = await _signInWithGoogle(const NoParams());
     result.fold((f) {
       _oauthPending = false;
+      _oauthTimeoutTimer?.cancel();
       emit(AuthState.unauthenticated(errorMessage: f.message));
     }, (_) {});
   }
@@ -117,6 +135,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     Emitter<AuthState> emit,
   ) async {
     _oauthPending = false;
+    _oauthTimeoutTimer?.cancel();
     emit(const AuthState.loading());
     final result = await _signOut(const NoParams());
     result.fold(
@@ -127,6 +146,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
   @override
   Future<void> close() async {
+    _oauthTimeoutTimer?.cancel();
     await _authSubscription?.cancel();
     return super.close();
   }

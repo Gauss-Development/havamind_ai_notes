@@ -21,6 +21,13 @@ class UnexpectedFailure extends Failure {
   const UnexpectedFailure(super.message);
 }
 
+/// Distinct from [UnexpectedFailure] so the UI can route deletion-after-
+/// load scenarios (note watched in real-time, then removed from another
+/// device) to a `deleted` state instead of stranding on an opaque error.
+class NotFoundFailure extends Failure {
+  const NotFoundFailure(super.message);
+}
+
 class PermissionFailure extends Failure {
   const PermissionFailure(super.message);
 }

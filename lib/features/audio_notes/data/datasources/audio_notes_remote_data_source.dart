@@ -73,6 +73,45 @@ class AudioNotesRemoteDataSource {
         .toList();
   }
 
+  /// Server-side title search. Uses Postgres `ILIKE` with escaped wildcards.
+  Future<List<AudioNote>> searchByTitle({
+    required String query,
+    int limit = 20,
+  }) async {
+    final userId = _client.auth.currentUser?.id;
+    if (userId == null) {
+      throw Exception('Not signed in');
+    }
+    final pattern = '%${_escapeIlike(query)}%';
+    final rows = await _client
+        .from('audio_notes')
+        .select()
+        .eq('user_id', userId)
+        .ilike('title', pattern)
+        .order('created_at', ascending: false)
+        .limit(limit);
+    return (rows as List<dynamic>)
+        .map(
+          (e) => AudioNoteMapper.fromRow(Map<String, dynamic>.from(e as Map)),
+        )
+        .toList();
+  }
+
+  /// Total count of notes for the current user (head-only request).
+  Future<int> countForCurrentUser() async {
+    final userId = _client.auth.currentUser?.id;
+    if (userId == null) {
+      throw Exception('Not signed in');
+    }
+    return _client
+        .from('audio_notes')
+        .count(CountOption.exact)
+        .eq('user_id', userId);
+  }
+
+  String _escapeIlike(String input) =>
+      input.replaceAll(r'\', r'\\').replaceAll('%', r'\%').replaceAll('_', r'\_');
+
   Future<AudioNote> fetchById(String id) async {
     final row = await _client
         .from('audio_notes')
@@ -285,6 +324,7 @@ class AudioNotesRemoteDataSource {
         .from('audio_notes')
         .select('duration_seconds')
         .eq('user_id', userId)
+        .neq('status', AudioNoteStatus.failed.dbValue)
         .gte('created_at', from.toUtc().toIso8601String())
         .lt('created_at', to.toUtc().toIso8601String());
     final list = rows as List<dynamic>;
@@ -293,6 +333,16 @@ class AudioNotesRemoteDataSource {
       total += ((row as Map)['duration_seconds'] as num).toInt();
     }
     return total;
+  }
+
+  /// Counts how many refinement rounds exist for an `audio_notes.id`.
+  /// Uses the `plan_versions_audio_note_idx` index and a HEAD-only count
+  /// so the payload is a single number, not the full version list.
+  Future<int> countRefinementRoundsForNote(String audioNoteId) async {
+    return _client
+        .from('plan_versions')
+        .count(CountOption.exact)
+        .eq('audio_note_id', audioNoteId);
   }
 
   Future<List<PlanVersion>> listPlanVersions(String planId) async {
@@ -343,6 +393,7 @@ class AudioNotesRemoteDataSource {
     required String planId,
     required String audioPath,
     String? followUpQuestionId,
+    String? followUpQuestionText,
   }) async {
     try {
       final body = <String, dynamic>{
@@ -351,6 +402,12 @@ class AudioNotesRemoteDataSource {
       };
       if (followUpQuestionId != null) {
         body['followUpQuestionId'] = followUpQuestionId;
+      }
+      if (followUpQuestionText != null) {
+        // Authoritative text snapshot taken at tap-time. If the AI rewrites
+        // the questions list before we submit, the index becomes stale —
+        // the server will prefer this text and skip the index lookup.
+        body['followUpQuestionText'] = followUpQuestionText;
       }
       final res = await _client.functions.invoke(
         kRefinePlanEdgeFunction,
@@ -366,13 +423,17 @@ class AudioNotesRemoteDataSource {
     }
   }
 
-  Stream<AudioNote> watchNote(String noteId) {
+  /// Returns `null` rows when the watched note no longer exists (deleted
+  /// remotely). The bloc treats `null` as a "deleted" signal instead of a
+  /// stream-killing exception so realtime updates keep working after a
+  /// soft transition like restore.
+  Stream<AudioNote?> watchNote(String noteId) {
     return _client
         .from('audio_notes')
         .stream(primaryKey: ['id'])
         .eq('id', noteId)
         .map((rows) {
-          if (rows.isEmpty) throw Exception('Note not found');
+          if (rows.isEmpty) return null;
           return AudioNoteMapper.fromRow(Map<String, dynamic>.from(rows.first));
         });
   }

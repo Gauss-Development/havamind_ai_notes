@@ -10,6 +10,15 @@ const corsHeaders: Record<string, string> = {
 const TRANSCRIBE_MODEL = "gpt-4o-mini-transcribe";
 const CHAT_MODEL = "gpt-4o-mini";
 
+// Tier → monthly recording-time budget, in seconds.
+// MUST stay in sync with kFreeMonthlyLimitSeconds / kBasicMonthlyLimitSeconds /
+// kProMonthlyLimitSeconds in lib/core/constants/audio_notes_constants.dart.
+const TIER_MONTHLY_LIMIT_SECONDS: Record<string, number> = {
+  free: 300,
+  basic: 1200,
+  pro: 3600,
+};
+
 type AnalysisJson = {
   summary: string;
   startup_title: string;
@@ -29,6 +38,40 @@ function extractTranscriptText(trJson: unknown): string {
   if (trJson && typeof trJson === "object" && "text" in trJson) {
     const t = (trJson as { text?: unknown }).text;
     if (typeof t === "string" && t.trim()) return t.trim();
+  }
+  return "";
+}
+
+const MAX_NOTE_TITLE_LENGTH = 200;
+const NOT_SPECIFIED_RE = /^not\s*specified$/i;
+
+/** Collapse whitespace and cap length for `audio_notes.title`. */
+function clampNoteTitle(raw: string): string {
+  const t = raw.replace(/\s+/g, " ").trim();
+  if (!t) return "";
+  if (t.length <= MAX_NOTE_TITLE_LENGTH) return t;
+  return `${t.slice(0, MAX_NOTE_TITLE_LENGTH - 3).trimEnd()}...`;
+}
+
+/**
+ * Prefer AI `startup_title`, then summary, then a short transcript snippet so
+ * the list/detail headline matches the idea instead of the draft "Voice Note …".
+ */
+function deriveNoteTitle(
+  parsed: AnalysisJson,
+  transcriptText: string,
+): string {
+  const startup = (parsed.startup_title ?? "").trim();
+  if (startup && !NOT_SPECIFIED_RE.test(startup)) {
+    return clampNoteTitle(startup);
+  }
+  const summary = (parsed.summary ?? "").trim();
+  if (summary && !NOT_SPECIFIED_RE.test(summary)) {
+    return clampNoteTitle(summary);
+  }
+  const tr = transcriptText.replace(/\s+/g, " ").trim();
+  if (tr) {
+    return clampNoteTitle(tr.length > 140 ? `${tr.slice(0, 137)}...` : tr);
   }
   return "";
 }
@@ -87,7 +130,7 @@ Deno.serve(async (req: Request) => {
 
   const { data: note, error: noteErr } = await supabase
     .from("audio_notes")
-    .select("id, user_id, audio_path, status")
+    .select("id, user_id, audio_path, status, duration_seconds")
     .eq("id", audioNoteId)
     .maybeSingle();
 
@@ -96,6 +139,73 @@ Deno.serve(async (req: Request) => {
   }
   if (note.user_id !== user.id) {
     return jsonResponse({ error: "Forbidden" }, 403);
+  }
+
+  // ── Server-side usage gate ────────────────────────────────────────────
+  // Mirrors the client-side check in `GetCurrentUsageUseCase`. Without it
+  // the free tier limit is enforced only by the Flutter app and a curl
+  // user (or one whose client state went stale) could bypass it. Logic:
+  // "block if everything BUT this in-flight note already exceeds the
+  // limit"; lets a final recording finish if the user was still under
+  // quota when they started it.
+  const { data: profile, error: profileErr } = await supabase
+    .from("profiles")
+    .select("subscription_tier")
+    .eq("id", user.id)
+    .maybeSingle();
+  if (profileErr) {
+    return jsonResponse({ error: "Could not verify subscription" }, 500);
+  }
+  const tier = (profile?.subscription_tier ?? "free") as string;
+  const limitSeconds = TIER_MONTHLY_LIMIT_SECONDS[tier] ??
+    TIER_MONTHLY_LIMIT_SECONDS.free;
+
+  const now = new Date();
+  const periodStart = new Date(
+    Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), 1),
+  ).toISOString();
+  const periodEnd = new Date(
+    Date.UTC(now.getUTCFullYear(), now.getUTCMonth() + 1, 1),
+  ).toISOString();
+
+  const { data: usageRows, error: usageErr } = await supabase
+    .from("audio_notes")
+    .select("duration_seconds")
+    .eq("user_id", user.id)
+    .neq("status", "failed")
+    .neq("id", audioNoteId)
+    .gte("created_at", periodStart)
+    .lt("created_at", periodEnd);
+  if (usageErr) {
+    return jsonResponse({ error: "Could not verify usage" }, 500);
+  }
+  const previouslyUsed = (usageRows ?? []).reduce(
+    (sum: number, row: { duration_seconds: number | null }) =>
+      sum + (Number(row.duration_seconds) || 0),
+    0,
+  );
+  if (previouslyUsed >= limitSeconds) {
+    // Mark this note as failed so it stops cluttering the user's list as
+    // "Uploaded — processing forever". The client can offer a delete or
+    // upgrade flow on top of the error code.
+    await supabase
+      .from("audio_notes")
+      .update({
+        status: "failed",
+        last_processing_error:
+          "Monthly recording limit reached. Upgrade to continue.",
+      })
+      .eq("id", audioNoteId);
+    return jsonResponse(
+      {
+        error: "Monthly recording limit reached. Upgrade to continue.",
+        code: "USAGE_LIMIT_REACHED",
+        tier,
+        limit_seconds: limitSeconds,
+        used_seconds: previouslyUsed,
+      },
+      429,
+    );
   }
 
   try {
@@ -114,6 +224,19 @@ Deno.serve(async (req: Request) => {
 
     const ab = await fileData.arrayBuffer();
     const bytes = new Uint8Array(ab);
+
+    // Whisper API rejects payloads above 25 MB with HTTP 413 and a
+    // generic error blob. Pre-check here so the user sees a clear,
+    // actionable message instead of "Request Entity Too Large" surfaced
+    // from OpenAI.
+    const MAX_WHISPER_BYTES = 25 * 1024 * 1024;
+    if (bytes.byteLength > MAX_WHISPER_BYTES) {
+      throw new Error(
+        "Recording is too long for transcription. Please record a " +
+          "shorter clip (under ~10 minutes / 25 MB).",
+      );
+    }
+
     const fileName = note.audio_path.split("/").pop() ?? "recording.m4a";
 
     const form = new FormData();
@@ -180,7 +303,8 @@ Based on the transcription, return strictly JSON with this structure:
 }
 
 Rules:
-- if data is missing, use "not specified"
+- if data is missing, use "not specified" (except startup_title — see below)
+- startup_title: a short, human-readable headline for this note (same language as the transcription, roughly 6–12 words). Describe the concrete idea or topic (e.g. a startup angle, product, or plan). Never use "not specified" here unless the transcription truly has no topic at all.
 - follow_up_questions is always an array of strings (can be empty)
 - market_potential_score — integer 0-100, market potential assessment
 - technical_complexity_score — integer 0-100, technical complexity assessment
@@ -241,9 +365,15 @@ ${transcriptText}`;
     );
     if (upAnErr) throw new Error(upAnErr.message);
 
+    const listTitle = deriveNoteTitle(parsed, transcriptText);
+
     const { error: doneErr } = await supabase
       .from("audio_notes")
-      .update({ status: "completed", last_processing_error: null })
+      .update({
+        status: "completed",
+        last_processing_error: null,
+        ...(listTitle ? { title: listTitle } : {}),
+      })
       .eq("id", audioNoteId);
     if (doneErr) throw new Error(doneErr.message);
 

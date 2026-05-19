@@ -23,7 +23,12 @@ class SubscriptionLoaded extends SubscriptionState {
   final SubscriptionStatus status;
   final UsageInfo? usageInfo;
 
-  bool get isPro => status.isActive;
+  /// True if the user has any paid plan (Basic or Pro). Use this to gate
+  /// "paid features" UI shells (e.g., showing the active-subscription card).
+  bool get isPaidPlan => status.isActive;
+
+  /// True only for the Pro tier. Use this to gate Pro-exclusive UI/limits.
+  bool get isPro => status.tier == SubscriptionTier.pro;
 
   @override
   List<Object?> get props => [status, usageInfo];

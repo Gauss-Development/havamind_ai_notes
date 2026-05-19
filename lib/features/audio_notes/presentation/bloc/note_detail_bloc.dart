@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:sample/core/error/failure.dart';
 import 'package:sample/features/audio_notes/domain/entities/audio_note.dart';
 import 'package:sample/features/audio_notes/domain/entities/audio_note_status.dart';
 import 'package:sample/features/audio_notes/domain/entities/audio_note_transcript.dart';
@@ -91,22 +92,52 @@ class NoteDetailBloc extends Bloc<NoteDetailEvent, NoteDetailState> {
   final RequestProcessingUseCase _requestProcessing;
   final WatchAudioNoteUseCase _watchNote;
   final String _noteId;
-  StreamSubscription<AudioNote>? _watchSub;
+  StreamSubscription<AudioNote?>? _watchSub;
+
+  // Cache for `_localAudioFileExists`. The file-existence check fires
+  // on every realtime row UPDATE; without caching, every event triggers
+  // a filesystem syscall even though the audioPath rarely changes after
+  // the first upload.
+  String? _lastCheckedAudioPath;
+  bool _lastLocalAudioExists = false;
 
   void _startWatching() {
     _watchSub?.cancel();
-    _watchSub = _watchNote(
-      _noteId,
-    ).listen((note) => add(NoteDetailEvent.noteUpdated(note)), onError: (_) {});
+    _watchSub = _watchNote(_noteId).listen(
+      (note) {
+        if (note == null) {
+          // Empty rows on a row-level `.stream()` subscription means the
+          // watched note was deleted remotely. Re-issue load so the
+          // `_onLoad` not-found branch can emit the `deleted` state.
+          add(NoteDetailEvent.loadRequested(_noteId));
+        } else {
+          add(NoteDetailEvent.noteUpdated(note));
+        }
+      },
+      onError: (_) {},
+    );
   }
 
   Future<void> _onLoad(
     _LoadRequested event,
     Emitter<NoteDetailState> emit,
   ) async {
+    // Always tear down the previous row subscription before a reload so a
+    // stale realtime channel cannot enqueue another `loadRequested` after we
+    // emit `deleted` (e.g. user delete vs. watch-null race).
+    await _watchSub?.cancel();
+    _watchSub = null;
     emit(const NoteDetailState.loading());
     final result = await _getAudioNote(GetAudioNoteParams(event.noteId));
-    await result.fold((f) async => emit(NoteDetailState.failure(f.message)), (
+    await result.fold((f) async {
+      // Distinguish "the note was deleted between load and now" (drives
+      // a `deleted` state so the UI pops) from generic errors.
+      if (f is NotFoundFailure) {
+        emit(const NoteDetailState.deleted());
+      } else {
+        emit(NoteDetailState.failure(f.message));
+      }
+    }, (
       note,
     ) async {
       AudioNoteTranscript? transcript;
@@ -133,21 +164,45 @@ class NoteDetailBloc extends Bloc<NoteDetailEvent, NoteDetailState> {
     final note = event.note;
     AudioNoteTranscript? transcript;
     StartupAnalysis? analysis;
+    var wasCompletedBefore = false;
 
-    if (note.status == AudioNoteStatus.completed) {
+    state.maybeWhen(
+      loaded: (currentNote, t, a, _) {
+        transcript = t;
+        analysis = a;
+        wasCompletedBefore = currentNote.status == AudioNoteStatus.completed;
+      },
+      orElse: () {},
+    );
+
+    // Only refetch transcript/analysis on the transition INTO completed
+    // (or if we somehow landed in completed state without cached data).
+    // Without this guard, every Supabase row UPDATE (e.g. updated_at bumps
+    // from refinement edits) would cause two extra network calls per event.
+    final needsFetch = note.status == AudioNoteStatus.completed &&
+        (!wasCompletedBefore || transcript == null || analysis == null);
+
+    if (needsFetch) {
       final tRes = await _getTranscript(note.id);
       tRes.fold((_) {}, (t) => transcript = t);
       final aRes = await _getAnalysis(note.id);
       aRes.fold((_) {}, (a) => analysis = a);
-    } else {
-      // Preserve existing transcript/analysis from current state
-      state.maybeWhen(
-        loaded: (_, t, a, _) {
-          transcript = t;
-          analysis = a;
-        },
-        orElse: () {},
-      );
+
+      // Replica/visibility race: the edge function commits
+      // `status='completed'` and `upsert(startup_analyses)` as two
+      // separate statements. If we won the race we may see "completed"
+      // before the analysis row is readable. Retry once after a short
+      // pause so the UI doesn't strand on "No analysis available".
+      if (analysis == null) {
+        await Future<void>.delayed(const Duration(seconds: 2));
+        if (isClosed) return;
+        final aRes2 = await _getAnalysis(note.id);
+        aRes2.fold((_) {}, (a) => analysis = a);
+        if (transcript == null) {
+          final tRes2 = await _getTranscript(note.id);
+          tRes2.fold((_) {}, (t) => transcript = t);
+        }
+      }
     }
 
     final localAudioExists = await _localAudioFileExists(note.audioPath);
@@ -158,6 +213,11 @@ class NoteDetailBloc extends Bloc<NoteDetailEvent, NoteDetailState> {
     _DeleteRequested event,
     Emitter<NoteDetailState> emit,
   ) async {
+    // Stop watching before the row disappears so we do not enqueue
+    // `loadRequested` in the middle of delete and overwrite `deleted`
+    // with `loading` (blank / stuck detail shell until the reload finishes).
+    await _watchSub?.cancel();
+    _watchSub = null;
     emit(const NoteDetailState.loading());
     final result = await _deleteAudioNote(DeleteAudioNoteParams(_noteId));
     result.fold(
@@ -211,7 +271,13 @@ class NoteDetailBloc extends Bloc<NoteDetailEvent, NoteDetailState> {
         final result = await _deleteLocalAudioFile(note.id);
         result.fold(
           (f) => emit(NoteDetailState.failure(f.message)),
-          (_) => emit(_buildLoaded(note, transcript, analysis, false)),
+          (_) {
+            // Invalidate the existence cache so the next realtime update
+            // doesn't return stale `true` from the just-deleted path.
+            _lastCheckedAudioPath = note.audioPath;
+            _lastLocalAudioExists = false;
+            emit(_buildLoaded(note, transcript, analysis, false));
+          },
         );
       },
       orElse: () async {},
@@ -370,9 +436,19 @@ class NoteDetailBloc extends Bloc<NoteDetailEvent, NoteDetailState> {
   }
 
   Future<bool> _localAudioFileExists(String audioPath) async {
+    if (_lastCheckedAudioPath == audioPath) {
+      return _lastLocalAudioExists;
+    }
     final localPath = _normalizeLocalPath(audioPath);
-    if (localPath == null) return false;
-    return File(localPath).exists();
+    bool exists;
+    if (localPath == null) {
+      exists = false;
+    } else {
+      exists = await File(localPath).exists();
+    }
+    _lastCheckedAudioPath = audioPath;
+    _lastLocalAudioExists = exists;
+    return exists;
   }
 
   String? _normalizeLocalPath(String value) {

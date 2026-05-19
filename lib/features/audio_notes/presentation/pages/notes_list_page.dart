@@ -126,11 +126,11 @@ class _NotesListViewState extends State<_NotesListView> {
     // with the floating Record CTA. Uses a stack of hint rows to give
     // the surface real content even when zero notes exist.
     return ListView(
-      padding: const EdgeInsets.fromLTRB(
+      padding: EdgeInsets.fromLTRB(
         AppSpacing.base,
         AppSpacing.lg,
         AppSpacing.base,
-        120,
+        obsidianFabBottomPadding(context) + AppSpacing.lg,
       ),
       children: [
         Container(
@@ -146,9 +146,6 @@ class _NotesListViewState extends State<_NotesListView> {
               ],
             ),
             borderRadius: BorderRadius.circular(ObsidianUiTokens.radiusLg),
-            border: Border.all(
-              color: t.primary.withValues(alpha: 0.22),
-            ),
           ),
           child: Icon(
             Icons.auto_stories_rounded,
@@ -215,11 +212,11 @@ class _NotesListViewState extends State<_NotesListView> {
         await Future<void>.delayed(const Duration(milliseconds: 350));
       },
       child: ListView.builder(
-        padding: const EdgeInsets.fromLTRB(
+        padding: EdgeInsets.fromLTRB(
           AppSpacing.base,
           0,
           AppSpacing.base,
-          120,
+          obsidianFabBottomPadding(context) + AppSpacing.lg,
         ),
         itemCount: groups.length,
         itemBuilder: (context, index) {
@@ -356,11 +353,8 @@ class _EmptyHint extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(AppSpacing.base),
       decoration: BoxDecoration(
-        color: tokens.surfaceContainer,
+        color: tokens.surfaceContainerHigh,
         borderRadius: BorderRadius.circular(ObsidianUiTokens.radiusLg),
-        border: Border.all(
-          color: tokens.outlineVariant.withValues(alpha: 0.5),
-        ),
       ),
       child: Row(
         children: [

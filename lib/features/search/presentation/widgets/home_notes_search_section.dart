@@ -1,23 +1,31 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:sample/core/theme/app_spacing.dart';
 import 'package:sample/core/theme/obsidian_ui_tokens.dart';
 import 'package:sample/features/audio_notes/domain/entities/audio_note.dart';
 import 'package:sample/features/audio_notes/domain/entities/audio_note_status.dart';
-import 'package:sample/features/search/domain/usecases/rank_items_by_title_usecase.dart';
 
 typedef OpenNoteById = Future<void> Function(String noteId);
+typedef SearchNotesFn = Future<List<AudioNote>> Function(String query);
 
 class HomeNotesSearchSection extends StatefulWidget {
   const HomeNotesSearchSection({
     super.key,
-    required this.notes,
     required this.notesCount,
+    required this.onSearch,
     required this.onOpenNote,
   });
 
-  final List<AudioNote> notes;
-  final int notesCount;
+  /// Total notes the user owns (may be `null` until the count resolves).
+  /// Used only for the input placeholder.
+  final int? notesCount;
+
+  /// Called every time the (debounced, non-empty) query changes. Must
+  /// return matching notes; the caller is responsible for ranking/limits.
+  final SearchNotesFn onSearch;
+
   final OpenNoteById onOpenNote;
 
   @override
@@ -26,20 +34,20 @@ class HomeNotesSearchSection extends StatefulWidget {
 
 class _HomeNotesSearchSectionState extends State<HomeNotesSearchSection> {
   static const int _suggestionsLimit = 5;
+  static const Duration _debounceDuration = Duration(milliseconds: 280);
 
-  final RankItemsByTitleUseCase _rankItemsByTitle =
-      const RankItemsByTitleUseCase();
   late final TextEditingController _searchController;
   late final FocusNode _searchFocusNode;
+  Timer? _debounceTimer;
   String _query = '';
 
-  // Memoized ranking. We recompute only when the trimmed query or the
-  // identity of the notes list changes — never on focus events or on
-  // unrelated parent rebuilds. This keeps keystroke latency flat even
-  // when the underlying note list is large.
-  String? _cachedQuery;
-  List<AudioNote>? _cachedNotesRef;
-  List<AudioNote> _cachedRanked = const <AudioNote>[];
+  // Async search state. `_results` stays null until the first response
+  // for the active query lands; `_isSearching` flips on while we wait so
+  // the suggestion panel can show a spinner instead of "no matches".
+  List<AudioNote>? _results;
+  bool _isSearching = false;
+  String? _errorMessage;
+  int _requestSeq = 0; // guards against out-of-order responses
 
   @override
   void initState() {
@@ -50,6 +58,7 @@ class _HomeNotesSearchSectionState extends State<HomeNotesSearchSection> {
 
   @override
   void dispose() {
+    _debounceTimer?.cancel();
     _searchFocusNode.dispose();
     _searchController.dispose();
     super.dispose();
@@ -59,10 +68,10 @@ class _HomeNotesSearchSectionState extends State<HomeNotesSearchSection> {
   Widget build(BuildContext context) {
     final trimmedQuery = _query.trim();
     final hasQuery = trimmedQuery.isNotEmpty;
-    final allRanked = hasQuery ? _rankedFor(trimmedQuery) : const <AudioNote>[];
-    final matches = allRanked.length <= _suggestionsLimit
-        ? allRanked
-        : allRanked.sublist(0, _suggestionsLimit);
+    final allResults = _results ?? const <AudioNote>[];
+    final matches = allResults.length <= _suggestionsLimit
+        ? allResults
+        : allResults.sublist(0, _suggestionsLimit);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -73,15 +82,10 @@ class _HomeNotesSearchSectionState extends State<HomeNotesSearchSection> {
           focusNode: _searchFocusNode,
           onTapSearchBar: _requestSearchFocus,
           onTapOutside: _unfocusSearch,
-          onChanged: (value) {
-            if (value == _query) return;
-            setState(() => _query = value);
-          },
+          onChanged: _onQueryChanged,
           onClear: () {
             _searchController.clear();
-            if (_query.isNotEmpty) {
-              setState(() => _query = '');
-            }
+            _onQueryChanged('');
             _requestSearchFocus();
           },
         ),
@@ -93,8 +97,10 @@ class _HomeNotesSearchSectionState extends State<HomeNotesSearchSection> {
             alignment: Alignment.topCenter,
             child: _SearchSuggestions(
               query: trimmedQuery,
+              isLoading: _isSearching && _results == null,
+              errorMessage: _errorMessage,
               results: matches,
-              totalMatches: allRanked.length,
+              totalMatches: allResults.length,
               onOpenNote: widget.onOpenNote,
             ),
           ),
@@ -105,20 +111,48 @@ class _HomeNotesSearchSectionState extends State<HomeNotesSearchSection> {
     );
   }
 
-  List<AudioNote> _rankedFor(String trimmedQuery) {
-    if (identical(_cachedNotesRef, widget.notes) &&
-        _cachedQuery == trimmedQuery) {
-      return _cachedRanked;
+  void _onQueryChanged(String value) {
+    if (value == _query) return;
+    setState(() => _query = value);
+
+    _debounceTimer?.cancel();
+
+    final trimmed = value.trim();
+    if (trimmed.isEmpty) {
+      // Clearing the input shouldn't leave a stale spinner on screen.
+      _requestSeq++;
+      setState(() {
+        _results = null;
+        _isSearching = false;
+        _errorMessage = null;
+      });
+      return;
     }
-    _cachedQuery = trimmedQuery;
-    _cachedNotesRef = widget.notes;
-    _cachedRanked = _rankItemsByTitle<AudioNote>(
-      items: widget.notes,
-      query: trimmedQuery,
-      titleOf: (note) => note.title,
-      createdAtOf: (note) => note.createdAt,
-    );
-    return _cachedRanked;
+
+    _debounceTimer = Timer(_debounceDuration, () => _runSearch(trimmed));
+  }
+
+  Future<void> _runSearch(String query) async {
+    final seq = ++_requestSeq;
+    setState(() {
+      _isSearching = true;
+      _errorMessage = null;
+    });
+    try {
+      final list = await widget.onSearch(query);
+      if (!mounted || seq != _requestSeq) return;
+      setState(() {
+        _results = list;
+        _isSearching = false;
+      });
+    } catch (e) {
+      if (!mounted || seq != _requestSeq) return;
+      setState(() {
+        _errorMessage = e.toString();
+        _isSearching = false;
+        _results = null;
+      });
+    }
   }
 
   void _requestSearchFocus() {
@@ -143,7 +177,7 @@ class _SearchBar extends StatelessWidget {
     required this.onClear,
   });
 
-  final int notesCount;
+  final int? notesCount;
   final TextEditingController controller;
   final FocusNode focusNode;
   final VoidCallback onTapSearchBar;
@@ -168,6 +202,10 @@ class _SearchBar extends StatelessWidget {
       builder: (context, _) {
         final focused = focusNode.hasFocus;
         final hasValue = controller.text.trim().isNotEmpty;
+        final count = notesCount;
+        final hint = (count == null || count == 0)
+            ? 'Search your notes...'
+            : 'Search $count notes...';
 
         return GestureDetector(
           onTap: onTapSearchBar,
@@ -209,9 +247,7 @@ class _SearchBar extends StatelessWidget {
                       decoration: InputDecoration(
                         isCollapsed: true,
                         border: InputBorder.none,
-                        hintText: notesCount == 0
-                            ? 'Search your notes...'
-                            : 'Search $notesCount notes...',
+                        hintText: hint,
                         hintStyle: hintStyle,
                       ),
                     ),
@@ -220,17 +256,19 @@ class _SearchBar extends StatelessWidget {
                 AnimatedSwitcher(
                   duration: const Duration(milliseconds: 150),
                   child: hasValue
-                      ? GestureDetector(
+                      ? IconButton(
                           key: const ValueKey('clear_search'),
-                          onTap: onClear,
-                          behavior: HitTestBehavior.opaque,
-                          child: Padding(
-                            padding: const EdgeInsets.all(4),
-                            child: Icon(
-                              Icons.cancel_rounded,
-                              size: 20,
-                              color: t.onSurfaceVariant.withValues(alpha: 0.6),
-                            ),
+                          onPressed: onClear,
+                          tooltip: 'Clear search',
+                          padding: EdgeInsets.zero,
+                          constraints: const BoxConstraints(
+                            minWidth: AppTapTarget.minSize,
+                            minHeight: AppTapTarget.minSize,
+                          ),
+                          icon: Icon(
+                            Icons.cancel_rounded,
+                            size: 20,
+                            color: t.onSurfaceVariant.withValues(alpha: 0.6),
                           ),
                         )
                       : const SizedBox.shrink(key: ValueKey('no_clear')),
@@ -249,12 +287,16 @@ class _SearchBar extends StatelessWidget {
 class _SearchSuggestions extends StatelessWidget {
   const _SearchSuggestions({
     required this.query,
+    required this.isLoading,
+    required this.errorMessage,
     required this.results,
     required this.totalMatches,
     required this.onOpenNote,
   });
 
   final String query;
+  final bool isLoading;
+  final String? errorMessage;
   final List<AudioNote> results;
   final int totalMatches;
   final OpenNoteById onOpenNote;
@@ -279,7 +321,16 @@ class _SearchSuggestions extends StatelessWidget {
               children: [
                 Text('Results', style: theme.textTheme.titleSmall),
                 const Spacer(),
-                if (totalMatches > 0)
+                if (isLoading)
+                  SizedBox(
+                    width: 14,
+                    height: 14,
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2,
+                      color: t.primary,
+                    ),
+                  )
+                else if (totalMatches > 0)
                   Text(
                     '$totalMatches found',
                     style: theme.textTheme.bodySmall?.copyWith(
@@ -290,30 +341,22 @@ class _SearchSuggestions extends StatelessWidget {
               ],
             ),
             const SizedBox(height: AppSpacing.sm),
-            if (results.isEmpty)
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: AppSpacing.base),
-                child: Center(
-                  child: Column(
-                    children: [
-                      Icon(
-                        Icons.search_off_rounded,
-                        size: 32,
-                        color: t.onSurfaceVariant.withValues(alpha: 0.4),
-                      ),
-                      const SizedBox(height: AppSpacing.sm),
-                      Text(
-                        'No matches found',
-                        style: theme.textTheme.titleSmall,
-                      ),
-                      const SizedBox(height: AppSpacing.xs),
-                      Text(
-                        'Try a shorter phrase or check spelling.',
-                        style: theme.textTheme.bodySmall,
-                      ),
-                    ],
-                  ),
-                ),
+            if (errorMessage != null)
+              _SuggestionsMessage(
+                icon: Icons.error_outline_rounded,
+                title: 'Search failed',
+                subtitle: errorMessage!,
+              )
+            else if (isLoading && results.isEmpty)
+              const Padding(
+                padding: EdgeInsets.symmetric(vertical: AppSpacing.lg),
+                child: Center(child: CircularProgressIndicator()),
+              )
+            else if (results.isEmpty)
+              const _SuggestionsMessage(
+                icon: Icons.search_off_rounded,
+                title: 'No matches found',
+                subtitle: 'Try a shorter phrase or check spelling.',
               )
             else
               Column(
@@ -325,13 +368,46 @@ class _SearchSuggestions extends StatelessWidget {
                       onOpenNote: onOpenNote,
                     ),
                     if (i < results.length - 1)
-                      Divider(
-                        height: 1,
-                        color: t.outlineVariant.withValues(alpha: 0.15),
-                      ),
+                      const SizedBox(height: AppSpacing.xs),
                   ],
                 ],
               ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _SuggestionsMessage extends StatelessWidget {
+  const _SuggestionsMessage({
+    required this.icon,
+    required this.title,
+    required this.subtitle,
+  });
+
+  final IconData icon;
+  final String title;
+  final String subtitle;
+
+  @override
+  Widget build(BuildContext context) {
+    final t = context.obsidian;
+    final theme = Theme.of(context);
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: AppSpacing.base),
+      child: Center(
+        child: Column(
+          children: [
+            Icon(
+              icon,
+              size: 32,
+              color: t.onSurfaceVariant.withValues(alpha: 0.4),
+            ),
+            const SizedBox(height: AppSpacing.sm),
+            Text(title, style: theme.textTheme.titleSmall),
+            const SizedBox(height: AppSpacing.xs),
+            Text(subtitle, style: theme.textTheme.bodySmall),
           ],
         ),
       ),
@@ -346,6 +422,10 @@ class _SearchSuggestionTile extends StatelessWidget {
     required this.onOpenNote,
   });
 
+  // One DateFormat per class load instead of one per tile build. Suggestion
+  // tiles are rebuilt on every keystroke; cumulative cost matters here.
+  static final _dateFmt = DateFormat.MMMd();
+
   final AudioNote note;
   final String query;
   final OpenNoteById onOpenNote;
@@ -359,7 +439,7 @@ class _SearchSuggestionTile extends StatelessWidget {
       color: t.primary,
       backgroundColor: t.primaryContainer.withValues(alpha: 0.35),
     );
-    final dateStr = DateFormat.MMMd().format(note.createdAt);
+    final dateStr = _dateFmt.format(note.createdAt);
 
     return Material(
       color: Colors.transparent,

@@ -29,6 +29,17 @@ class AudioRecordingService {
   }
 
   Future<void> startRecording(String path) async {
+    // Singleton-recorder guard: if another consumer (e.g. RecordingPage
+    // and a parallel RefinementRecordingPage from a double-tap) is still
+    // recording, the second `start` would either throw deep inside the
+    // platform plugin or silently overwrite the active file. Fail fast
+    // here with a user-facing message instead.
+    if (await _recorder.isRecording()) {
+      throw StateError(
+        'Microphone is already in use by another recording. '
+        'Finish or cancel that recording before starting a new one.',
+      );
+    }
     await _recorder.start(
       const RecordConfig(encoder: AudioEncoder.aacLc),
       path: path,

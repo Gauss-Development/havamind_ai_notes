@@ -12,6 +12,13 @@ abstract class AudioNotesRepository {
     List<String>? tagIds,
   });
 
+  Future<Either<Failure, List<AudioNote>>> searchNotesByTitle({
+    required String query,
+    int limit = 20,
+  });
+
+  Future<Either<Failure, int>> countNotes();
+
   Future<Either<Failure, AudioNote>> getNote(String id);
 
   Future<Either<Failure, AudioNote>> saveRecording({
@@ -52,6 +59,11 @@ abstract class AudioNotesRepository {
 
   Future<Either<Failure, List<PlanVersion>>> listPlanVersions(String planId);
 
+  /// Refinement-round count for an `audio_notes.id`. Used by the client
+  /// to short-circuit the refinement UI before the server enforces the
+  /// authoritative `kMaxRefinementRounds` cap.
+  Future<Either<Failure, int>> countRefinementRoundsForNote(String audioNoteId);
+
   Future<Either<Failure, Map<String, dynamic>>> restorePlanVersion(
     String versionId,
   );
@@ -60,7 +72,9 @@ abstract class AudioNotesRepository {
     required String noteId,
     required String localFilePath,
     String? followUpQuestionId,
+    String? followUpQuestionText,
   });
 
-  Stream<AudioNote> watchNote(String noteId);
+  /// Emits `null` once when the watched note has been deleted remotely.
+  Stream<AudioNote?> watchNote(String noteId);
 }

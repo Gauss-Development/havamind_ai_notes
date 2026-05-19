@@ -49,7 +49,7 @@ class SubscriptionStatusCard extends StatelessWidget {
         }
 
         if (state is SubscriptionLoaded) {
-          return state.isPro
+          return state.isPaidPlan
               ? _ProActiveCard(
                   status: state.status,
                   usageInfo: state.usageInfo,
@@ -85,13 +85,7 @@ class _CardShell extends StatelessWidget {
         color: t.surfaceContainerLowest,
         borderRadius: BorderRadius.circular(ObsidianUiTokens.radiusMd),
         border: Border.all(color: t.ghostBorder(0.12)),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
-            blurRadius: 16,
-            offset: const Offset(0, 6),
-          ),
-        ],
+        boxShadow: t.elevationMd,
       ),
       clipBehavior: Clip.antiAlias,
       child: child,
@@ -155,7 +149,7 @@ class _ProActiveCard extends StatelessWidget {
                   ),
                   child: Icon(
                     tierIcon,
-                    color: Colors.white,
+                    color: t.onPrimaryButton,
                     size: 24,
                   ),
                 ),
@@ -186,10 +180,8 @@ class _ProActiveCard extends StatelessWidget {
           ),
 
           // ── Usage indicator ──
-          if (usageInfo != null) ...[
-            _divider(t),
+          if (usageInfo != null)
             UsageCircularIndicator(usageInfo: usageInfo!),
-          ],
 
           // ── Billing issue / cancelled banner ──
           if (status.hasBillingIssue)
@@ -246,15 +238,12 @@ class _ProActiveCard extends StatelessWidget {
               ),
             ),
 
-          _divider(t),
-
           // ── Actions ──
           _ActionRow(
             icon: Icons.info_outline_rounded,
             label: 'Subscription Details',
             onTap: () => _openDetails(context),
           ),
-          _divider(t),
           _ActionRow(
             icon: Icons.settings_rounded,
             label: status.isCancelled
@@ -266,14 +255,6 @@ class _ProActiveCard extends StatelessWidget {
           ),
         ],
       ),
-    );
-  }
-
-  Widget _divider(ObsidianUiTokens t) {
-    return Divider(
-      height: 1,
-      thickness: 1,
-      color: t.outlineVariant.withValues(alpha: 0.1),
     );
   }
 
@@ -500,14 +481,8 @@ class _FreeCard extends StatelessWidget {
               ],
             ),
           ),
-          if (usageInfo != null) ...[
-            Divider(
-              height: 1,
-              thickness: 1,
-              color: t.outlineVariant.withValues(alpha: 0.1),
-            ),
+          if (usageInfo != null)
             UsageCircularIndicator(usageInfo: usageInfo!),
-          ],
           Padding(
             padding: const EdgeInsets.fromLTRB(
               AppSpacing.lg,

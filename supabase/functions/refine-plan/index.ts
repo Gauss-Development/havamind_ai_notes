@@ -367,6 +367,7 @@ Deno.serve(async (req: Request) => {
     transcription?: string;
     audioPath?: string;
     followUpQuestionId?: string;
+    followUpQuestionText?: string;
   };
   try {
     body = await req.json();
@@ -374,7 +375,7 @@ Deno.serve(async (req: Request) => {
     return jsonResponse({ error: "Invalid JSON body" }, 400);
   }
 
-  const { planId, followUpQuestionId } = body;
+  const { planId, followUpQuestionId, followUpQuestionText } = body;
   let { transcription } = body;
   const { audioPath } = body;
 
@@ -500,8 +501,13 @@ Deno.serve(async (req: Request) => {
   }
 
   // ── Resolve follow-up question text ─────────────────────────────
+  // Prefer the client-snapshotted text (stable across AI rewrites of the
+  // questions array between tap and submit). Fall back to the index for
+  // older clients that didn't yet send the text.
   let followUpQuestion: string | null = null;
-  if (followUpQuestionId && analysis.follow_up_questions) {
+  if (followUpQuestionText && followUpQuestionText.trim().length > 0) {
+    followUpQuestion = followUpQuestionText.trim();
+  } else if (followUpQuestionId && analysis.follow_up_questions) {
     const questions = analysis.follow_up_questions as string[];
     const idx = parseInt(followUpQuestionId, 10);
     if (!isNaN(idx) && idx >= 0 && idx < questions.length) {

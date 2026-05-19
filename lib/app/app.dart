@@ -53,13 +53,33 @@ class _AuthGate extends StatelessWidget {
   Widget build(BuildContext context) {
     final surface = Theme.of(context).colorScheme.surface;
     return BlocListener<AuthBloc, AuthState>(
-      listener: (context, state) {
+      listener: (context, state) async {
         final repo = getIt<SubscriptionRepository>();
-        state.when(
-          unknown: () {},
-          loading: () {},
-          unauthenticated: (_) => repo.logOut(),
-          authenticated: (profile) => repo.logIn(profile.id),
+        // We deliberately don't block on these — auth state changes shouldn't
+        // be stalled by RevenueCat I/O — but we DO await the Future so that
+        // PlatformException paths run their Left branch instead of being
+        // swallowed as unhandled errors on the zone.
+        await state.when(
+          unknown: () async {},
+          loading: () async {},
+          unauthenticated: (_) async {
+            final result = await repo.logOut();
+            result.fold(
+              (failure) => debugPrint(
+                'RevenueCat logOut failed: ${failure.message}',
+              ),
+              (_) {},
+            );
+          },
+          authenticated: (profile) async {
+            final result = await repo.logIn(profile.id);
+            result.fold(
+              (failure) => debugPrint(
+                'RevenueCat logIn failed: ${failure.message}',
+              ),
+              (_) {},
+            );
+          },
         );
       },
       child: BlocBuilder<AuthBloc, AuthState>(

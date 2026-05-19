@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:sample/core/di/injection.dart';
+import 'package:sample/core/config/environment_config.dart';
 import 'package:sample/core/theme/app_spacing.dart';
 import 'package:sample/core/theme/app_theme_cubit.dart';
 import 'package:sample/core/theme/obsidian_ui_tokens.dart';
 import 'package:sample/features/auth/domain/entities/user_profile.dart';
 import 'package:sample/features/auth/presentation/bloc/auth_bloc.dart';
-import 'package:sample/features/subscription/presentation/cubit/subscription_cubit.dart';
 import 'package:sample/features/subscription/presentation/widgets/subscription_status_card.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class ProfilePage extends StatelessWidget {
   const ProfilePage({super.key, required this.profile});
@@ -19,41 +19,40 @@ class ProfilePage extends StatelessWidget {
     final t = context.obsidian;
     final theme = Theme.of(context);
 
-    return BlocProvider(
-      create: (_) => getIt<SubscriptionCubit>()..loadStatus(),
-      child: Scaffold(
-        backgroundColor: t.surface,
-        appBar: AppBar(
-          title: Text('Profile', style: theme.textTheme.headlineLarge),
-        ),
-        body: SafeArea(
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.fromLTRB(
-              AppSpacing.lg,
-              AppSpacing.xl,
-              AppSpacing.lg,
-              120,
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                _UserHeader(profile: profile),
-                const SizedBox(height: AppSpacing.xxl),
-                const _SectionLabel(text: 'SUBSCRIPTION'),
-                const SizedBox(height: AppSpacing.md),
-                SubscriptionStatusCard(
-                  accountDisplayName: profile.displayName,
-                  accountEmail: profile.email,
-                  memberSince: profile.createdAt,
-                ),
-                const SizedBox(height: AppSpacing.xxl),
-                const _SectionLabel(text: 'PREFERENCES'),
-                const SizedBox(height: AppSpacing.md),
-                const _PreferencesCard(),
-                const SizedBox(height: AppSpacing.xxl),
-                const _LogOutButton(),
-              ],
-            ),
+    return Scaffold(
+      backgroundColor: t.surface,
+      appBar: AppBar(
+        title: Text('Profile', style: theme.textTheme.headlineLarge),
+      ),
+      body: SafeArea(
+        child: SingleChildScrollView(
+          padding: EdgeInsets.fromLTRB(
+            AppSpacing.lg,
+            AppSpacing.xl,
+            AppSpacing.lg,
+            obsidianFabBottomPadding(context) + AppSpacing.lg,
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              _UserHeader(profile: profile),
+              const SizedBox(height: AppSpacing.xxl),
+              const _SectionLabel(text: 'SUBSCRIPTION'),
+              const SizedBox(height: AppSpacing.md),
+              SubscriptionStatusCard(
+                accountDisplayName: profile.displayName,
+                accountEmail: profile.email,
+                memberSince: profile.createdAt,
+              ),
+              const SizedBox(height: AppSpacing.xxl),
+              const _SectionLabel(text: 'PREFERENCES'),
+              const SizedBox(height: AppSpacing.md),
+              const _PreferencesCard(),
+              const SizedBox(height: AppSpacing.xxl),
+              const _LegalLinksCard(),
+              const SizedBox(height: AppSpacing.xxl),
+              const _LogOutButton(),
+            ],
           ),
         ),
       ),
@@ -154,23 +153,7 @@ class _PreferencesCard extends StatelessWidget {
         border: Border.all(color: t.ghostBorder(0.12)),
       ),
       clipBehavior: Clip.antiAlias,
-      child: Column(
-        children: [
-          _AppearanceRow(),
-          _divider(t),
-          _NotificationsRow(),
-          _divider(t),
-          _LanguageRow(),
-        ],
-      ),
-    );
-  }
-
-  Widget _divider(ObsidianUiTokens t) {
-    return Divider(
-      height: 1,
-      thickness: 1,
-      color: t.outlineVariant.withValues(alpha: 0.1),
+      child: const _AppearanceRow(),
     );
   }
 }
@@ -267,7 +250,7 @@ class _PillButton extends StatelessWidget {
           boxShadow: selected
               ? [
                   BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.06),
+                    color: t.primary.withValues(alpha: 0.08),
                     blurRadius: 4,
                     offset: const Offset(0, 1),
                   ),
@@ -279,63 +262,6 @@ class _PillButton extends StatelessWidget {
           style: theme.textTheme.labelMedium?.copyWith(
             fontWeight: FontWeight.w700,
             color: selected ? t.primary : t.onSurfaceVariant,
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _NotificationsRow extends StatefulWidget {
-  const _NotificationsRow();
-
-  @override
-  State<_NotificationsRow> createState() => _NotificationsRowState();
-}
-
-class _NotificationsRowState extends State<_NotificationsRow> {
-  bool _enabled = true;
-
-  @override
-  Widget build(BuildContext context) {
-    final t = context.obsidian;
-    return _PreferenceRow(
-      icon: Icons.notifications_rounded,
-      iconBg: t.primaryContainer,
-      iconColor: t.primary,
-      title: 'Notifications',
-      subtitle: _enabled ? 'Smart alerts only' : 'Disabled',
-      trailing: Switch(
-        value: _enabled,
-        onChanged: (v) => setState(() => _enabled = v),
-        activeThumbColor: Colors.white,
-        activeTrackColor: t.primary,
-        inactiveThumbColor: Colors.white,
-        inactiveTrackColor: t.outlineVariant,
-      ),
-    );
-  }
-}
-
-class _LanguageRow extends StatelessWidget {
-  const _LanguageRow();
-
-  @override
-  Widget build(BuildContext context) {
-    final t = context.obsidian;
-    return Material(
-      color: Colors.transparent,
-      child: InkWell(
-        onTap: () {},
-        child: _PreferenceRow(
-          icon: Icons.translate_rounded,
-          iconBg: t.primaryContainer,
-          iconColor: t.primary,
-          title: 'Language',
-          subtitle: 'English (US)',
-          trailing: Icon(
-            Icons.chevron_right_rounded,
-            color: t.outlineVariant,
           ),
         ),
       ),
@@ -390,6 +316,132 @@ class _PreferenceRow extends StatelessWidget {
           ),
           trailing,
         ],
+      ),
+    );
+  }
+}
+
+// ─── Legal (store URLs from env) ─────────────────────────────────────────────
+
+class _LegalLinksCard extends StatelessWidget {
+  const _LegalLinksCard();
+
+  @override
+  Widget build(BuildContext context) {
+    final cfg = EnvironmentConfig.instance;
+    final privacy = cfg.privacyPolicyUrl.trim();
+    final terms = cfg.termsOfServiceUrl.trim();
+    if (privacy.isEmpty && terms.isEmpty) {
+      return const SizedBox.shrink();
+    }
+
+    final t = context.obsidian;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        const _SectionLabel(text: 'LEGAL'),
+        const SizedBox(height: AppSpacing.md),
+        Container(
+          decoration: BoxDecoration(
+            color: t.surfaceContainerLowest,
+            borderRadius: BorderRadius.circular(ObsidianUiTokens.radiusMd),
+            border: Border.all(color: t.ghostBorder(0.12)),
+          ),
+          clipBehavior: Clip.antiAlias,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              if (privacy.isNotEmpty)
+                _LegalLinkTile(
+                  icon: Icons.description_outlined,
+                  label: 'Privacy Policy',
+                  onTap: () => _openExternalUrl(context, privacy),
+                ),
+              if (privacy.isNotEmpty && terms.isNotEmpty)
+                const SizedBox(height: AppSpacing.xs),
+              if (terms.isNotEmpty)
+                _LegalLinkTile(
+                  icon: Icons.gavel_outlined,
+                  label: 'Terms of Service',
+                  onTap: () => _openExternalUrl(context, terms),
+                ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  Future<void> _openExternalUrl(BuildContext context, String url) async {
+    final uri = Uri.tryParse(url);
+    if (uri == null || !(uri.isScheme('https') || uri.isScheme('http'))) {
+      if (!context.mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Invalid link')),
+      );
+      return;
+    }
+    final ok = await launchUrl(uri, mode: LaunchMode.externalApplication);
+    if (!context.mounted) return;
+    if (!ok) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Could not open link')),
+      );
+    }
+  }
+}
+
+class _LegalLinkTile extends StatelessWidget {
+  const _LegalLinkTile({
+    required this.icon,
+    required this.label,
+    required this.onTap,
+  });
+
+  final IconData icon;
+  final String label;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final t = context.obsidian;
+    final theme = Theme.of(context);
+
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onTap,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(
+            horizontal: AppSpacing.lg,
+            vertical: AppSpacing.base,
+          ),
+          child: Row(
+            children: [
+              Container(
+                width: 40,
+                height: 40,
+                decoration: BoxDecoration(
+                  color: t.primaryContainer,
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(icon, color: t.primary, size: 22),
+              ),
+              const SizedBox(width: AppSpacing.md),
+              Expanded(
+                child: Text(
+                  label,
+                  style: theme.textTheme.titleSmall,
+                ),
+              ),
+              Icon(
+                Icons.open_in_new_rounded,
+                size: 18,
+                color: t.onSurfaceVariant,
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }

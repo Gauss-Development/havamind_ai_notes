@@ -208,7 +208,28 @@ class RecordingBloc extends Bloc<RecordingEvent, RecordingState> {
   @override
   Future<void> close() async {
     _timer?.cancel();
-    await _recording.dispose();
+    // Don't dispose the recorder — it's shared across consumers (see DI).
+    // Just release the mic and clean up any local file so the user's
+    // documents directory doesn't accumulate orphan recordings when the
+    // page is closed mid-session.
+    await state.maybeWhen(
+      recording: (_, filePath) async {
+        try {
+          await _recording.cancelRecording();
+          final f = File(filePath);
+          if (await f.exists()) await f.delete();
+        } catch (_) {}
+      },
+      readyToSave: (filePath, _) async {
+        // Stop was already called; nothing to cancel — just remove the
+        // stranded file the user never got around to saving.
+        try {
+          final f = File(filePath);
+          if (await f.exists()) await f.delete();
+        } catch (_) {}
+      },
+      orElse: () async {},
+    );
     return super.close();
   }
 }

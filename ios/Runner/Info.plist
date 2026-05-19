@@ -5,7 +5,7 @@
     <key>CADisableMinimumFrameDurationOnPhone</key>
     <true/>
     <key>NSMicrophoneUsageDescription</key>
-    <string>Приложению нужен доступ к микрофону для записи аудиозаметок.</string>
+    <string>Hava Mind needs microphone access to record audio notes.</string>
     <key>CFBundleDevelopmentRegion</key>
     <string>$(DEVELOPMENT_LANGUAGE)</string>
     <key>CFBundleDisplayName</key>
