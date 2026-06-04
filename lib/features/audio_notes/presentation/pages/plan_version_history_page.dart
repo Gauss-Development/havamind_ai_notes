@@ -7,6 +7,7 @@ import 'package:sample/core/theme/obsidian_ui_tokens.dart';
 import 'package:sample/features/audio_notes/domain/entities/plan_version.dart';
 import 'package:sample/features/audio_notes/presentation/bloc/plan_version_history_cubit.dart';
 import 'package:sample/features/audio_notes/presentation/pages/plan_version_preview_page.dart';
+import 'package:sample/l10n/generated/app_localizations.dart';
 
 class PlanVersionHistoryPage extends StatelessWidget {
   const PlanVersionHistoryPage({
@@ -35,12 +36,13 @@ class _VersionHistoryView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
     final t = context.obsidian;
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Version History', style: theme.textTheme.titleMedium),
+        title: Text(l10n.versionHistory, style: theme.textTheme.titleMedium),
         centerTitle: true,
       ),
       body: BlocConsumer<PlanVersionHistoryCubit, PlanVersionHistoryState>(
@@ -49,7 +51,8 @@ class _VersionHistoryView extends StatelessWidget {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
                 content: Text(
-                    'Restored from round ${state.restoredRound}'),
+                  l10n.versionRestoredFromRound(state.restoredRound!),
+                ),
               ),
             );
             Navigator.of(context).pop(true);
@@ -68,7 +71,7 @@ class _VersionHistoryView extends StatelessWidget {
           if (state.versions.isEmpty) {
             return Center(
               child: Text(
-                'No version history yet',
+                l10n.noVersionHistory,
                 style: theme.textTheme.bodyMedium?.copyWith(
                   color: t.onSurfaceVariant,
                 ),
@@ -76,6 +79,7 @@ class _VersionHistoryView extends StatelessWidget {
             );
           }
 
+          final versions = state.versions;
           return ListView.builder(
             padding: const EdgeInsets.fromLTRB(
               AppSpacing.lg,
@@ -83,15 +87,19 @@ class _VersionHistoryView extends StatelessWidget {
               AppSpacing.lg,
               AppSpacing.xxxl,
             ),
-            itemCount: state.versions.length,
+            itemCount: versions.length,
             itemBuilder: (context, index) {
-              final version = state.versions[index];
-              final isLatest = index == state.versions.length - 1;
+              final version = versions[index];
+              final isLatest = index == versions.length - 1;
               return _VersionTimelineItem(
                 version: version,
                 isLatest: isLatest,
-                isLast: index == state.versions.length - 1,
-                onTap: () => _openPreview(context, version),
+                isLast: index == versions.length - 1,
+                onTap: () => _openPreview(
+                  context,
+                  version: version,
+                  previousVersion: index > 0 ? versions[index - 1] : null,
+                ),
               );
             },
           );
@@ -101,15 +109,19 @@ class _VersionHistoryView extends StatelessWidget {
   }
 
   Future<void> _openPreview(
-    BuildContext context,
-    PlanVersion version,
-  ) async {
+    BuildContext context, {
+    required PlanVersion version,
+    PlanVersion? previousVersion,
+  }) async {
     final cubit = context.read<PlanVersionHistoryCubit>();
     final restored = await Navigator.of(context).push<bool>(
       MaterialPageRoute(
         builder: (_) => BlocProvider.value(
           value: cubit,
-          child: PlanVersionPreviewPage(version: version),
+          child: PlanVersionPreviewPage(
+            version: version,
+            previousVersion: previousVersion,
+          ),
         ),
       ),
     );
@@ -134,6 +146,7 @@ class _VersionTimelineItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final t = context.obsidian;
     final theme = Theme.of(context);
     final dateFmt = DateFormat('MMM d, h:mm a');
@@ -200,7 +213,7 @@ class _VersionTimelineItem extends StatelessWidget {
                       Row(
                         children: [
                           Text(
-                            'Round ${version.roundNumber}',
+                            l10n.versionRound(version.roundNumber),
                             style: theme.textTheme.titleSmall?.copyWith(
                               fontWeight: FontWeight.w700,
                               color:
@@ -220,7 +233,7 @@ class _VersionTimelineItem extends StatelessWidget {
                                     ObsidianUiTokens.radiusXs),
                               ),
                               child: Text(
-                                'CURRENT',
+                                l10n.versionCurrent,
                                 style:
                                     theme.textTheme.labelSmall?.copyWith(
                                   color: t.primary,

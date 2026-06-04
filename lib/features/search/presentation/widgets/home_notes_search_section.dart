@@ -4,11 +4,12 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:sample/core/theme/app_spacing.dart';
 import 'package:sample/core/theme/obsidian_ui_tokens.dart';
-import 'package:sample/features/audio_notes/domain/entities/audio_note.dart';
 import 'package:sample/features/audio_notes/domain/entities/audio_note_status.dart';
+import 'package:sample/features/audio_notes/domain/entities/note_search_hit.dart';
+import 'package:sample/l10n/generated/app_localizations.dart';
 
 typedef OpenNoteById = Future<void> Function(String noteId);
-typedef SearchNotesFn = Future<List<AudioNote>> Function(String query);
+typedef SearchNotesFn = Future<List<NoteSearchHit>> Function(String query);
 
 class HomeNotesSearchSection extends StatefulWidget {
   const HomeNotesSearchSection({
@@ -34,7 +35,7 @@ class HomeNotesSearchSection extends StatefulWidget {
 
 class _HomeNotesSearchSectionState extends State<HomeNotesSearchSection> {
   static const int _suggestionsLimit = 5;
-  static const Duration _debounceDuration = Duration(milliseconds: 280);
+  static const Duration _debounceDuration = Duration(milliseconds: 400);
 
   late final TextEditingController _searchController;
   late final FocusNode _searchFocusNode;
@@ -44,7 +45,7 @@ class _HomeNotesSearchSectionState extends State<HomeNotesSearchSection> {
   // Async search state. `_results` stays null until the first response
   // for the active query lands; `_isSearching` flips on while we wait so
   // the suggestion panel can show a spinner instead of "no matches".
-  List<AudioNote>? _results;
+  List<NoteSearchHit>? _results;
   bool _isSearching = false;
   String? _errorMessage;
   int _requestSeq = 0; // guards against out-of-order responses
@@ -68,7 +69,7 @@ class _HomeNotesSearchSectionState extends State<HomeNotesSearchSection> {
   Widget build(BuildContext context) {
     final trimmedQuery = _query.trim();
     final hasQuery = trimmedQuery.isNotEmpty;
-    final allResults = _results ?? const <AudioNote>[];
+    final allResults = _results ?? const <NoteSearchHit>[];
     final matches = allResults.length <= _suggestionsLimit
         ? allResults
         : allResults.sublist(0, _suggestionsLimit);
@@ -113,7 +114,6 @@ class _HomeNotesSearchSectionState extends State<HomeNotesSearchSection> {
 
   void _onQueryChanged(String value) {
     if (value == _query) return;
-    setState(() => _query = value);
 
     _debounceTimer?.cancel();
 
@@ -122,12 +122,19 @@ class _HomeNotesSearchSectionState extends State<HomeNotesSearchSection> {
       // Clearing the input shouldn't leave a stale spinner on screen.
       _requestSeq++;
       setState(() {
+        _query = value;
         _results = null;
         _isSearching = false;
         _errorMessage = null;
       });
       return;
     }
+
+    // Update visible query immediately; network search runs only after debounce.
+    setState(() {
+      _query = value;
+      _errorMessage = null;
+    });
 
     _debounceTimer = Timer(_debounceDuration, () => _runSearch(trimmed));
   }
@@ -187,6 +194,7 @@ class _SearchBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final t = context.obsidian;
     final theme = Theme.of(context);
     final barRadius = BorderRadius.circular(ObsidianUiTokens.radiusFull);
@@ -204,8 +212,8 @@ class _SearchBar extends StatelessWidget {
         final hasValue = controller.text.trim().isNotEmpty;
         final count = notesCount;
         final hint = (count == null || count == 0)
-            ? 'Search your notes...'
-            : 'Search $count notes...';
+            ? l10n.searchNotes
+            : l10n.searchNNotesPlaceholder(count);
 
         return GestureDetector(
           onTap: onTapSearchBar,
@@ -233,7 +241,7 @@ class _SearchBar extends StatelessWidget {
                 const SizedBox(width: AppSpacing.sm),
                 Expanded(
                   child: Semantics(
-                    label: 'Search notes by title',
+                    label: l10n.searchNotesSemantics,
                     textField: true,
                     child: TextField(
                       controller: controller,
@@ -259,7 +267,7 @@ class _SearchBar extends StatelessWidget {
                       ? IconButton(
                           key: const ValueKey('clear_search'),
                           onPressed: onClear,
-                          tooltip: 'Clear search',
+                          tooltip: l10n.clearSearch,
                           padding: EdgeInsets.zero,
                           constraints: const BoxConstraints(
                             minWidth: AppTapTarget.minSize,
@@ -297,12 +305,13 @@ class _SearchSuggestions extends StatelessWidget {
   final String query;
   final bool isLoading;
   final String? errorMessage;
-  final List<AudioNote> results;
+  final List<NoteSearchHit> results;
   final int totalMatches;
   final OpenNoteById onOpenNote;
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final t = context.obsidian;
     final theme = Theme.of(context);
 
@@ -319,7 +328,7 @@ class _SearchSuggestions extends StatelessWidget {
           children: [
             Row(
               children: [
-                Text('Results', style: theme.textTheme.titleSmall),
+                Text(l10n.results, style: theme.textTheme.titleSmall),
                 const Spacer(),
                 if (isLoading)
                   SizedBox(
@@ -332,7 +341,7 @@ class _SearchSuggestions extends StatelessWidget {
                   )
                 else if (totalMatches > 0)
                   Text(
-                    '$totalMatches found',
+                    l10n.found(totalMatches),
                     style: theme.textTheme.bodySmall?.copyWith(
                       color: t.primary,
                       fontWeight: FontWeight.w700,
@@ -344,7 +353,7 @@ class _SearchSuggestions extends StatelessWidget {
             if (errorMessage != null)
               _SuggestionsMessage(
                 icon: Icons.error_outline_rounded,
-                title: 'Search failed',
+                title: l10n.searchFailed,
                 subtitle: errorMessage!,
               )
             else if (isLoading && results.isEmpty)
@@ -353,17 +362,17 @@ class _SearchSuggestions extends StatelessWidget {
                 child: Center(child: CircularProgressIndicator()),
               )
             else if (results.isEmpty)
-              const _SuggestionsMessage(
+              _SuggestionsMessage(
                 icon: Icons.search_off_rounded,
-                title: 'No matches found',
-                subtitle: 'Try a shorter phrase or check spelling.',
+                title: l10n.noMatchesFound,
+                subtitle: l10n.noMatchesHint,
               )
             else
               Column(
                 children: [
                   for (var i = 0; i < results.length; i++) ...[
                     _SearchSuggestionTile(
-                      note: results[i],
+                      hit: results[i],
                       query: query,
                       onOpenNote: onOpenNote,
                     ),
@@ -417,7 +426,7 @@ class _SuggestionsMessage extends StatelessWidget {
 
 class _SearchSuggestionTile extends StatelessWidget {
   const _SearchSuggestionTile({
-    required this.note,
+    required this.hit,
     required this.query,
     required this.onOpenNote,
   });
@@ -426,20 +435,33 @@ class _SearchSuggestionTile extends StatelessWidget {
   // tiles are rebuilt on every keystroke; cumulative cost matters here.
   static final _dateFmt = DateFormat.MMMd();
 
-  final AudioNote note;
+  final NoteSearchHit hit;
   final String query;
   final OpenNoteById onOpenNote;
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final t = context.obsidian;
     final theme = Theme.of(context);
+    final note = hit.note;
     final baseTitleStyle = theme.textTheme.titleSmall!;
     final matchStyle = baseTitleStyle.copyWith(
       color: t.primary,
       backgroundColor: t.primaryContainer.withValues(alpha: 0.35),
     );
+    final excerptStyle = theme.textTheme.bodySmall?.copyWith(
+      color: t.onSurfaceVariant,
+    );
+    final excerptMatchStyle = excerptStyle?.copyWith(
+      color: t.primary,
+      backgroundColor: t.primaryContainer.withValues(alpha: 0.35),
+      fontWeight: FontWeight.w600,
+    );
     final dateStr = _dateFmt.format(note.createdAt);
+    final showExcerpt = hit.matchType == NoteSearchMatchType.transcript &&
+        hit.excerpt != null &&
+        hit.excerpt!.trim().isNotEmpty;
 
     return Material(
       color: Colors.transparent,
@@ -476,8 +498,8 @@ class _SearchSuggestionTile extends StatelessWidget {
                     Text.rich(
                       TextSpan(
                         style: baseTitleStyle,
-                        children: _highlightTitleSpans(
-                          title: note.title,
+                        children: _highlightSpans(
+                          text: note.title,
                           query: query,
                           matchStyle: matchStyle,
                         ),
@@ -487,11 +509,34 @@ class _SearchSuggestionTile extends StatelessWidget {
                     ),
                     const SizedBox(height: 2),
                     Text(
-                      '$dateStr · ${_statusLabel(note.status)}',
+                      '$dateStr · ${_statusLabel(l10n, note.status)}',
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: theme.textTheme.bodySmall,
                     ),
+                    if (showExcerpt) ...[
+                      const SizedBox(height: AppSpacing.xs),
+                      Text(
+                        l10n.searchMatchInTranscript,
+                        style: theme.textTheme.labelSmall?.copyWith(
+                          color: t.primary,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                      const SizedBox(height: 2),
+                      Text.rich(
+                        TextSpan(
+                          style: excerptStyle,
+                          children: _highlightSpans(
+                            text: hit.excerpt!,
+                            query: query,
+                            matchStyle: excerptMatchStyle ?? matchStyle,
+                          ),
+                        ),
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ],
                   ],
                 ),
               ),
@@ -511,38 +556,40 @@ class _SearchSuggestionTile extends StatelessWidget {
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
-List<TextSpan> _highlightTitleSpans({
-  required String title,
+List<TextSpan> _highlightSpans({
+  required String text,
   required String query,
   required TextStyle matchStyle,
 }) {
   final q = query.trim();
-  if (q.isEmpty) return [TextSpan(text: title)];
+  if (q.isEmpty) return [TextSpan(text: text)];
 
-  final lowerTitle = title.toLowerCase();
+  final lowerText = text.toLowerCase();
   final lowerQ = q.toLowerCase();
-  final idx = lowerTitle.indexOf(lowerQ);
-  if (idx < 0) return [TextSpan(text: title)];
+  final idx = lowerText.indexOf(lowerQ);
+  if (idx < 0) return [TextSpan(text: text)];
 
   final end = idx + q.length;
   return [
-    TextSpan(text: title.substring(0, idx)),
-    TextSpan(text: title.substring(idx, end), style: matchStyle),
-    TextSpan(text: title.substring(end)),
+    TextSpan(text: text.substring(0, idx)),
+    TextSpan(text: text.substring(idx, end), style: matchStyle),
+    TextSpan(text: text.substring(end)),
   ];
 }
 
-String _statusLabel(AudioNoteStatus status) {
+String _statusLabel(AppLocalizations l10n, AudioNoteStatus status) {
   switch (status) {
     case AudioNoteStatus.completed:
-      return 'Ready';
+      return l10n.statusReady;
     case AudioNoteStatus.failed:
-      return 'Needs attention';
+      return l10n.statusFailed;
     case AudioNoteStatus.processingTranscription:
+      return l10n.statusTranscribing;
     case AudioNoteStatus.processingAnalysis:
+      return l10n.statusAnalyzing;
     case AudioNoteStatus.uploaded:
-      return 'Processing';
+      return l10n.statusUploaded;
     case AudioNoteStatus.draft:
-      return 'Draft';
+      return l10n.statusDraft;
   }
 }

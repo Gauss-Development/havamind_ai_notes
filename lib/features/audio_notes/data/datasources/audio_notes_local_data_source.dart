@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sample/features/audio_notes/domain/entities/audio_note.dart';
 import 'package:sample/features/audio_notes/domain/entities/audio_note_status.dart';
+import 'package:sample/features/audio_notes/domain/entities/recording_template.dart';
 
 const _kCachedNotesKey = 'cached_audio_notes';
 
@@ -48,6 +49,7 @@ class AudioNotesLocalDataSource {
     'status': note.status.name,
     'createdAt': note.createdAt.toIso8601String(),
     'updatedAt': note.updatedAt.toIso8601String(),
+    'templateId': note.templateId,
     'lastProcessingError': note.lastProcessingError,
   };
 
@@ -63,6 +65,9 @@ class AudioNotesLocalDataSource {
     ),
     createdAt: DateTime.parse(json['createdAt'] as String),
     updatedAt: DateTime.parse(json['updatedAt'] as String),
+    templateId: RecordingTemplateIds.normalize(
+      json['templateId'] as String?,
+    ),
     lastProcessingError: json['lastProcessingError'] as String?,
   );
 }

@@ -12,11 +12,14 @@ import 'package:sample/core/widgets/obsidian_gradient_button.dart';
 import 'package:sample/core/widgets/obsidian_note_list_tile.dart';
 import 'package:sample/features/audio_notes/domain/entities/audio_note.dart';
 import 'package:sample/features/audio_notes/domain/entities/audio_note_status.dart';
-import 'package:sample/features/audio_notes/domain/usecases/search_notes_by_title_usecase.dart';
+import 'package:sample/features/audio_notes/domain/entities/note_search_hit.dart';
+import 'package:sample/features/audio_notes/domain/usecases/search_notes_usecase.dart';
 import 'package:sample/features/audio_notes/presentation/bloc/audio_notes_list_bloc.dart';
 import 'package:sample/features/audio_notes/presentation/cubit/notes_count_cubit.dart';
+import 'package:sample/features/audio_notes/presentation/cubit/plan_readiness_home_cubit.dart';
+import 'package:sample/features/audio_notes/presentation/widgets/plan_readiness_nudge_card.dart';
 import 'package:sample/features/audio_notes/presentation/pages/note_detail_page.dart';
-import 'package:sample/features/audio_notes/presentation/pages/recording_page.dart';
+import 'package:sample/features/audio_notes/presentation/utils/recording_flow.dart';
 import 'package:sample/features/audio_notes/presentation/widgets/audio_note_duration_formatter.dart';
 import 'package:sample/features/auth/domain/entities/user_profile.dart';
 import 'package:sample/features/favorites/presentation/bloc/favorites_bloc.dart';
@@ -174,23 +177,18 @@ class HomePage extends StatelessWidget {
     );
   }
 
-  Future<List<AudioNote>> _searchNotes(String query) async {
-    final result = await getIt<SearchNotesByTitleUseCase>()(
-      SearchNotesByTitleParams(query: query),
+  Future<List<NoteSearchHit>> _searchNotes(String query) async {
+    final result = await getIt<SearchNotesUseCase>()(
+      SearchNotesParams(query: query),
     );
     return result.fold(
       (failure) => throw Exception(failure.message),
-      (notes) => notes,
+      (hits) => hits,
     );
   }
 
   Future<void> _openRecording(BuildContext context) async {
-    final added = await Navigator.of(context).push<bool>(
-      MaterialPageRoute(
-        fullscreenDialog: true,
-        builder: (_) => const RecordingPage(),
-      ),
-    );
+    final added = await openRecordingFlow(context);
     if (context.mounted && added == true) {
       context.read<AudioNotesListBloc>().add(
         const AudioNotesListEvent.refreshed(),
@@ -306,6 +304,20 @@ class _HomeHero extends StatelessWidget {
               const SizedBox(height: AppSpacing.lg),
               _StatsChips(notes: notes, totalCount: totalCount),
             ],
+
+            BlocBuilder<PlanReadinessHomeCubit, PlanReadinessNudge?>(
+              buildWhen: (previous, current) => previous != current,
+              builder: (context, nudge) {
+                if (nudge == null) return const SizedBox.shrink();
+                return Padding(
+                  padding: const EdgeInsets.only(top: AppSpacing.lg),
+                  child: PlanReadinessNudgeCard(
+                    nudge: nudge,
+                    onTap: () => _openNoteDetail(context, nudge.noteId),
+                  ),
+                );
+              },
+            ),
 
             // Hero CTA card.
             const SizedBox(height: AppSpacing.lg),

@@ -9,6 +9,7 @@ import 'package:sample/core/constants/audio_notes_constants.dart';
 import 'package:sample/core/usecases/usecase.dart';
 import 'package:sample/features/audio_notes/data/services/audio_recording_service.dart';
 import 'package:sample/features/audio_notes/domain/entities/audio_note.dart';
+import 'package:sample/features/audio_notes/domain/entities/recording_template.dart';
 import 'package:sample/features/audio_notes/domain/usecases/process_local_audio_note_usecase.dart';
 import 'package:sample/features/subscription/domain/usecases/get_current_usage_usecase.dart';
 
@@ -21,11 +22,15 @@ class RecordingEvent with _$RecordingEvent {
   const factory RecordingEvent.cancelPressed() = _CancelPressed;
   const factory RecordingEvent.savePressed() = _SavePressed;
   const factory RecordingEvent.tick() = _Tick;
+  const factory RecordingEvent.templateSelected(String templateId) =
+      _TemplateSelected;
 }
 
 @freezed
 class RecordingState with _$RecordingState {
-  const factory RecordingState.idle() = _Idle;
+  const factory RecordingState.idle({
+    @Default(RecordingTemplateIds.founderPitch) String templateId,
+  }) = _Idle;
   const factory RecordingState.recording({
     required int elapsedSeconds,
     required String filePath,
@@ -48,15 +53,26 @@ class RecordingBloc extends Bloc<RecordingEvent, RecordingState> {
     required AudioRecordingService recordingService,
     required ProcessLocalAudioNoteUseCase processLocalAudioNote,
     required GetCurrentUsageUseCase getCurrentUsage,
-  }) : _recording = recordingService,
-       _processLocalAudioNote = processLocalAudioNote,
-       _getCurrentUsage = getCurrentUsage,
-       super(const RecordingState.idle()) {
+    String? initialTemplateId,
+  })  : _recording = recordingService,
+        _processLocalAudioNote = processLocalAudioNote,
+        _getCurrentUsage = getCurrentUsage,
+        _templateId = RecordingTemplateIds.normalize(
+          initialTemplateId ?? RecordingTemplateIds.founderPitch,
+        ),
+        super(
+          RecordingState.idle(
+            templateId: RecordingTemplateIds.normalize(
+              initialTemplateId ?? RecordingTemplateIds.founderPitch,
+            ),
+          ),
+        ) {
     on<_StartPressed>(_onStart);
     on<_StopPressed>(_onStop);
     on<_CancelPressed>(_onCancel);
     on<_SavePressed>(_onSave);
     on<_Tick>(_onTick);
+    on<_TemplateSelected>(_onTemplateSelected);
   }
 
   final AudioRecordingService _recording;
@@ -64,6 +80,22 @@ class RecordingBloc extends Bloc<RecordingEvent, RecordingState> {
   final GetCurrentUsageUseCase _getCurrentUsage;
   Timer? _timer;
   int _effectiveMaxSeconds = kMaxRecordingDurationSeconds;
+  String _templateId;
+
+  String get selectedTemplateId => _templateId;
+
+  RecordingState _idleState() => RecordingState.idle(templateId: _templateId);
+
+  void _onTemplateSelected(
+    _TemplateSelected event,
+    Emitter<RecordingState> emit,
+  ) {
+    _templateId = RecordingTemplateIds.normalize(event.templateId);
+    state.maybeWhen(
+      idle: (_) => emit(_idleState()),
+      orElse: () {},
+    );
+  }
 
   Future<void> _onStart(
     _StartPressed event,
@@ -71,9 +103,14 @@ class RecordingBloc extends Bloc<RecordingEvent, RecordingState> {
   ) async {
     final usageResult = await _getCurrentUsage(const NoParams());
     final usageInfo = usageResult.fold((_) => null, (info) => info);
+    state.maybeWhen(
+      idle: (templateId) => _templateId = templateId,
+      orElse: () {},
+    );
+
     if (usageInfo != null && usageInfo.isExhausted) {
       emit(const RecordingState.limitReached());
-      emit(const RecordingState.idle());
+      emit(_idleState());
       return;
     }
 
@@ -91,7 +128,7 @@ class RecordingBloc extends Bloc<RecordingEvent, RecordingState> {
           ? 'Microphone access is disabled. Enable it in Settings → Audio Notes → Microphone.'
           : 'Microphone access denied';
       emit(RecordingState.failure(msg));
-      emit(const RecordingState.idle());
+      emit(_idleState());
       if (status.isPermanentlyDenied) {
         await openAppSettings();
       }
@@ -103,7 +140,7 @@ class RecordingBloc extends Bloc<RecordingEvent, RecordingState> {
       await _recording.startRecording(path);
     } catch (e) {
       emit(RecordingState.failure(e.toString()));
-      emit(const RecordingState.idle());
+      emit(_idleState());
       return;
     }
 
@@ -151,7 +188,7 @@ class RecordingBloc extends Bloc<RecordingEvent, RecordingState> {
       await _recording.stopRecording();
     } catch (e) {
       emit(RecordingState.failure(e.toString()));
-      emit(const RecordingState.idle());
+      emit(_idleState());
       return;
     }
     emit(
@@ -183,7 +220,7 @@ class RecordingBloc extends Bloc<RecordingEvent, RecordingState> {
       },
       orElse: () async {},
     );
-    emit(const RecordingState.idle());
+    emit(_idleState());
   }
 
   Future<void> _onSave(_SavePressed event, Emitter<RecordingState> emit) async {
@@ -194,11 +231,12 @@ class RecordingBloc extends Bloc<RecordingEvent, RecordingState> {
           ProcessLocalAudioNoteParams(
             localFilePath: filePath,
             durationSeconds: durationSeconds,
+            templateId: _templateId,
           ),
         );
         result.fold((f) {
           emit(RecordingState.failure(f.message));
-          emit(const RecordingState.idle());
+          emit(_idleState());
         }, (note) => emit(RecordingState.success(note)));
       },
       orElse: () async {},

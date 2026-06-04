@@ -56,6 +56,18 @@ class AppLocalizationsRu extends AppLocalizations {
   String get searchNotes => 'Поиск заметок...';
 
   @override
+  String get searchNotesSemantics => 'Поиск по названию или транскрипту';
+
+  @override
+  String get clearSearch => 'Очистить поиск';
+
+  @override
+  String get searchFailed => 'Ошибка поиска';
+
+  @override
+  String get searchMatchInTranscript => 'В транскрипте';
+
+  @override
   String searchNNotesPlaceholder(int count) {
     return 'Поиск по $count записям...';
   }
@@ -400,4 +412,338 @@ class AppLocalizationsRu extends AppLocalizations {
   @override
   String get paywallNoActivePurchases =>
       'Нет активных покупок для восстановления.';
+
+  @override
+  String get planGapsTitle => 'ЗАПОЛНИТЕ ПРОБЕЛЫ';
+
+  @override
+  String get planGapsHint =>
+      'В этих разделах не хватает деталей. Нажмите на микрофон и ответьте короткой голосовой заметкой.';
+
+  @override
+  String get planReadinessTitle => 'ГОТОВНОСТЬ ПЛАНА';
+
+  @override
+  String planReadinessPercent(int percent) {
+    return '$percent%';
+  }
+
+  @override
+  String planReadinessSections(int completed, int total) {
+    return '$completed из $total разделов';
+  }
+
+  @override
+  String get planReadinessComplete => 'Все ключевые разделы заполнены.';
+
+  @override
+  String get planReadinessHint =>
+      'Запишите короткие дополнения, чтобы усилить слабые разделы.';
+
+  @override
+  String get planReadinessHomeTitle => 'УСИЛЬТЕ ПЛАН';
+
+  @override
+  String planReadinessHomeBody(String title, int percent, int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '# раздела',
+      many: '# разделов',
+      few: '# раздела',
+      one: '# раздел',
+    );
+    return '«$title» заполнен на $percent% — ещё $_temp0 без деталей.';
+  }
+
+  @override
+  String get planReadinessUntitledNote => 'Без названия';
+
+  @override
+  String get answerByVoice => 'Ответить голосом';
+
+  @override
+  String get planGapAskProblem =>
+      'Какую ключевую проблему вы решаете и кто от неё страдает больше всего?';
+
+  @override
+  String get planGapAskSolution =>
+      'Как ваш продукт решает эту проблему и чем отличается от альтернатив?';
+
+  @override
+  String get planGapAskTargetAudience =>
+      'Кто ваш идеальный клиент или ранний последователь?';
+
+  @override
+  String get planGapAskBusinessModel =>
+      'Как вы будете зарабатывать — цена, модель или источники дохода?';
+
+  @override
+  String get planGapAskKeyMetrics =>
+      'Какие метрики покажут, что вы движетесь в правильном направлении?';
+
+  @override
+  String get planGapAskAdvantages =>
+      'В чём ваше нечестное преимущество или отличие от конкурентов?';
+
+  @override
+  String get planGapAskRisksGaps =>
+      'Какие главные риски или пробелы в плане прямо сейчас?';
+
+  @override
+  String get planGapAskShortSummary =>
+      'Кратко опишите стартап за одну минуту — elevator pitch.';
+
+  @override
+  String get planGapAskStartupTitle =>
+      'Как бы вы назвали этот стартап или продукт?';
+
+  @override
+  String get continueRecording => 'Продолжить запись';
+
+  @override
+  String get founderPitchGuideTitle => 'Гид для питча';
+
+  @override
+  String get founderPitchGuideSubtitle =>
+      'Говорите свободно — раскройте эти темы, и мы превратим заметку в структурированный план.';
+
+  @override
+  String get hideGuide => 'Скрыть подсказки';
+
+  @override
+  String get recordingGuideShowAllTopics => 'Показать все темы';
+
+  @override
+  String get recordingGuideShowLess => 'Свернуть';
+
+  @override
+  String tryCoveringTitle(String title) {
+    return 'Попробуйте раскрыть: $title';
+  }
+
+  @override
+  String get founderPromptProblemTitle => 'Проблема';
+
+  @override
+  String get founderPromptProblemHint => 'Какую боль вы решаете и для кого?';
+
+  @override
+  String get founderPromptAudienceTitle => 'Аудитория';
+
+  @override
+  String get founderPromptAudienceHint =>
+      'Кто ваш идеальный клиент или ранний пользователь?';
+
+  @override
+  String get founderPromptSolutionTitle => 'Решение';
+
+  @override
+  String get founderPromptSolutionHint => 'Как продукт решает проблему иначе?';
+
+  @override
+  String get founderPromptMonetizationTitle => 'Монетизация';
+
+  @override
+  String get founderPromptMonetizationHint =>
+      'Как будете зарабатывать — цена или модель?';
+
+  @override
+  String get founderPromptTractionTitle => 'Движение и следующие шаги';
+
+  @override
+  String get founderPromptTractionHint =>
+      'Что уже пробовали и какой ближайший шаг?';
+
+  @override
+  String get recordingTemplateFounderPitch => 'Питч';
+
+  @override
+  String get recordingTemplateCustomerDiscovery => 'Customer discovery';
+
+  @override
+  String get recordingTemplateInvestorUpdate => 'Апдейт инвесторам';
+
+  @override
+  String get recordingOnboardingTitle => 'Перед записью';
+
+  @override
+  String get recordingOnboardingSubtitle =>
+      'Выберите шаблон и пробегитесь по подсказкам — так заметка получится структурированной.';
+
+  @override
+  String get recordingOnboardingTemplateLabel => 'Тип записи';
+
+  @override
+  String get recordingOnboardingContinue => 'Перейти к записи';
+
+  @override
+  String get recordingOnboardingSkip => 'Пропустить';
+
+  @override
+  String get customerDiscoveryGuideTitle => 'Гид customer discovery';
+
+  @override
+  String get customerDiscoveryGuideSubtitle =>
+      'Зафиксируйте, что узнали от пользователей — мы структурируем инсайты и следующие интервью.';
+
+  @override
+  String get customerDiscoveryPromptWorkflowTitle => 'Ход интервью';
+
+  @override
+  String get customerDiscoveryPromptWorkflowHint =>
+      'С кем говорили и что спрашивали?';
+
+  @override
+  String get customerDiscoveryPromptPainTitle => 'Боль и срочность';
+
+  @override
+  String get customerDiscoveryPromptPainHint =>
+      'Какая проблема всплыла и насколько она острая сейчас?';
+
+  @override
+  String get customerDiscoveryPromptSubjectTitle => 'С кем говорили';
+
+  @override
+  String get customerDiscoveryPromptSubjectHint =>
+      'Роль, сегмент или тип компании собеседника.';
+
+  @override
+  String get customerDiscoveryPromptInsightTitle => 'Ключевой инсайт';
+
+  @override
+  String get customerDiscoveryPromptInsightHint =>
+      'Что удивило или изменило ваше понимание?';
+
+  @override
+  String get customerDiscoveryPromptNextTitle => 'Следующие интервью';
+
+  @override
+  String get customerDiscoveryPromptNextHint =>
+      'С кем ещё поговорить и что проверить дальше?';
+
+  @override
+  String get investorUpdateGuideTitle => 'Гид для апдейта';
+
+  @override
+  String get investorUpdateGuideSubtitle =>
+      'Честно опишите прогресс — мы оформим апдейт с метриками и запросом.';
+
+  @override
+  String get investorUpdatePromptHighlightsTitle => 'Главное';
+
+  @override
+  String get investorUpdatePromptHighlightsHint =>
+      'Что вышло, закрылось или сдвинуло метрики за период?';
+
+  @override
+  String get investorUpdatePromptMetricsTitle => 'Метрики';
+
+  @override
+  String get investorUpdatePromptMetricsHint =>
+      'Выручка, пользователи, рост, burn — цифры, которыми можно делиться.';
+
+  @override
+  String get investorUpdatePromptProductTitle => 'Продукт';
+
+  @override
+  String get investorUpdatePromptProductHint =>
+      'Что изменилось в продукте или на roadmap?';
+
+  @override
+  String get investorUpdatePromptChallengesTitle => 'Сложности';
+
+  @override
+  String get investorUpdatePromptChallengesHint =>
+      'Блокеры, промахи или риски, о которых стоит знать инвесторам.';
+
+  @override
+  String get investorUpdatePromptAskTitle => 'Запрос';
+
+  @override
+  String get investorUpdatePromptAskHint =>
+      'Какая помощь, интро или решение нужны от инвесторов?';
+
+  @override
+  String get exportPlan => 'Экспорт плана…';
+
+  @override
+  String get exportPlanSubtitle =>
+      'Скопируйте или отправьте оформленную версию анализа.';
+
+  @override
+  String get exportOnePager => 'One-pager';
+
+  @override
+  String get exportOnePagerHint => 'Markdown для документов или Notion.';
+
+  @override
+  String get exportPitchBullets => 'Пitch-буллеты';
+
+  @override
+  String get exportPitchBulletsHint =>
+      'Короткий список для деков или сообщений.';
+
+  @override
+  String get exportEmailIntro => 'Email-интро';
+
+  @override
+  String get exportEmailIntroHint => 'Тёплый абзац для письма.';
+
+  @override
+  String get versionHistory => 'История версий';
+
+  @override
+  String get noVersionHistory => 'История версий пока пуста';
+
+  @override
+  String versionRound(int round) {
+    return 'Раунд $round';
+  }
+
+  @override
+  String get versionCurrent => 'ТЕКУЩАЯ';
+
+  @override
+  String versionRestoredFromRound(int round) {
+    return 'Восстановлено из раунда $round';
+  }
+
+  @override
+  String get versionChangesTitle => 'Что изменилось';
+
+  @override
+  String get versionFieldUpdated => 'Обновлено';
+
+  @override
+  String get versionFieldNew => 'Новое';
+
+  @override
+  String get versionFieldBefore => 'Было';
+
+  @override
+  String get versionFieldAfter => 'Стало';
+
+  @override
+  String get versionRestoreTitle => 'Восстановить версию?';
+
+  @override
+  String versionRestoreMessage(int round) {
+    return 'Будет создана новая версия на основе раунда $round. История не удалится.';
+  }
+
+  @override
+  String get restore => 'Восстановить';
+
+  @override
+  String get makeCurrentVersion => 'Сделать текущей версией';
+
+  @override
+  String get restoring => 'Восстановление…';
+
+  @override
+  String get planFieldStartupTitle => 'НАЗВАНИЕ СТАРТАПА';
+
+  @override
+  String get planFieldSummary => 'РЕЗЮМЕ';
 }

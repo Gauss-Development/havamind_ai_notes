@@ -15,6 +15,10 @@
   "recentNotes": "Недавние записи",
   "notesCount": "{count} записей",
   "searchNotes": "Поиск заметок...",
+  "searchNotesSemantics": "Поиск по названию или транскрипту",
+  "clearSearch": "Очистить поиск",
+  "searchFailed": "Ошибка поиска",
+  "searchMatchInTranscript": "В транскрипте",
   "searchNNotesPlaceholder": "Поиск по {count} записям...",
   "results": "Результаты",
   "found": "{count} найдено",
@@ -128,5 +132,149 @@
   "paywallTermsLine": "Подписка продлевается автоматически. Отменить можно в настройках аккаунта.",
   "paywallCouldNotLoad": "Не удалось загрузить тарифы. Попробуйте снова.",
   "paywallTryAgain": "Попробовать снова",
-  "paywallNoActivePurchases": "Нет активных покупок для восстановления."
+  "paywallNoActivePurchases": "Нет активных покупок для восстановления.",
+  "planGapsTitle": "ЗАПОЛНИТЕ ПРОБЕЛЫ",
+  "planGapsHint": "В этих разделах не хватает деталей. Нажмите на микрофон и ответьте короткой голосовой заметкой.",
+  "planReadinessTitle": "ГОТОВНОСТЬ ПЛАНА",
+  "planReadinessPercent": "{percent}%",
+  "@planReadinessPercent": {
+    "placeholders": {
+      "percent": {
+        "type": "int"
+      }
+    }
+  },
+  "planReadinessSections": "{completed} из {total} разделов",
+  "@planReadinessSections": {
+    "placeholders": {
+      "completed": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "planReadinessComplete": "Все ключевые разделы заполнены.",
+  "planReadinessHint": "Запишите короткие дополнения, чтобы усилить слабые разделы.",
+  "planReadinessHomeTitle": "УСИЛЬТЕ ПЛАН",
+  "planReadinessHomeBody": "«{title}» заполнен на {percent}% — ещё {count, plural, one{# раздел} few{# раздела} many{# разделов} other{# раздела}} без деталей.",
+  "@planReadinessHomeBody": {
+    "placeholders": {
+      "title": {
+        "type": "String"
+      },
+      "percent": {
+        "type": "int"
+      },
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "planReadinessUntitledNote": "Без названия",
+  "answerByVoice": "Ответить голосом",
+  "planGapAskProblem": "Какую ключевую проблему вы решаете и кто от неё страдает больше всего?",
+  "planGapAskSolution": "Как ваш продукт решает эту проблему и чем отличается от альтернатив?",
+  "planGapAskTargetAudience": "Кто ваш идеальный клиент или ранний последователь?",
+  "planGapAskBusinessModel": "Как вы будете зарабатывать — цена, модель или источники дохода?",
+  "planGapAskKeyMetrics": "Какие метрики покажут, что вы движетесь в правильном направлении?",
+  "planGapAskAdvantages": "В чём ваше нечестное преимущество или отличие от конкурентов?",
+  "planGapAskRisksGaps": "Какие главные риски или пробелы в плане прямо сейчас?",
+  "planGapAskShortSummary": "Кратко опишите стартап за одну минуту — elevator pitch.",
+  "planGapAskStartupTitle": "Как бы вы назвали этот стартап или продукт?",
+  "continueRecording": "Продолжить запись",
+  "founderPitchGuideTitle": "Гид для питча",
+  "founderPitchGuideSubtitle": "Говорите свободно — раскройте эти темы, и мы превратим заметку в структурированный план.",
+  "hideGuide": "Скрыть подсказки",
+  "recordingGuideShowAllTopics": "Показать все темы",
+  "recordingGuideShowLess": "Свернуть",
+  "tryCoveringTitle": "Попробуйте раскрыть: {title}",
+  "@tryCoveringTitle": {
+    "placeholders": {
+      "title": { "type": "String" }
+    }
+  },
+  "founderPromptProblemTitle": "Проблема",
+  "founderPromptProblemHint": "Какую боль вы решаете и для кого?",
+  "founderPromptAudienceTitle": "Аудитория",
+  "founderPromptAudienceHint": "Кто ваш идеальный клиент или ранний пользователь?",
+  "founderPromptSolutionTitle": "Решение",
+  "founderPromptSolutionHint": "Как продукт решает проблему иначе?",
+  "founderPromptMonetizationTitle": "Монетизация",
+  "founderPromptMonetizationHint": "Как будете зарабатывать — цена или модель?",
+  "founderPromptTractionTitle": "Движение и следующие шаги",
+  "founderPromptTractionHint": "Что уже пробовали и какой ближайший шаг?",
+  "recordingTemplateFounderPitch": "Питч",
+  "recordingTemplateCustomerDiscovery": "Customer discovery",
+  "recordingTemplateInvestorUpdate": "Апдейт инвесторам",
+  "recordingOnboardingTitle": "Перед записью",
+  "recordingOnboardingSubtitle": "Выберите шаблон и пробегитесь по подсказкам — так заметка получится структурированной.",
+  "recordingOnboardingTemplateLabel": "Тип записи",
+  "recordingOnboardingContinue": "Перейти к записи",
+  "recordingOnboardingSkip": "Пропустить",
+  "customerDiscoveryGuideTitle": "Гид customer discovery",
+  "customerDiscoveryGuideSubtitle": "Зафиксируйте, что узнали от пользователей — мы структурируем инсайты и следующие интервью.",
+  "customerDiscoveryPromptWorkflowTitle": "Ход интервью",
+  "customerDiscoveryPromptWorkflowHint": "С кем говорили и что спрашивали?",
+  "customerDiscoveryPromptPainTitle": "Боль и срочность",
+  "customerDiscoveryPromptPainHint": "Какая проблема всплыла и насколько она острая сейчас?",
+  "customerDiscoveryPromptSubjectTitle": "С кем говорили",
+  "customerDiscoveryPromptSubjectHint": "Роль, сегмент или тип компании собеседника.",
+  "customerDiscoveryPromptInsightTitle": "Ключевой инсайт",
+  "customerDiscoveryPromptInsightHint": "Что удивило или изменило ваше понимание?",
+  "customerDiscoveryPromptNextTitle": "Следующие интервью",
+  "customerDiscoveryPromptNextHint": "С кем ещё поговорить и что проверить дальше?",
+  "investorUpdateGuideTitle": "Гид для апдейта",
+  "investorUpdateGuideSubtitle": "Честно опишите прогресс — мы оформим апдейт с метриками и запросом.",
+  "investorUpdatePromptHighlightsTitle": "Главное",
+  "investorUpdatePromptHighlightsHint": "Что вышло, закрылось или сдвинуло метрики за период?",
+  "investorUpdatePromptMetricsTitle": "Метрики",
+  "investorUpdatePromptMetricsHint": "Выручка, пользователи, рост, burn — цифры, которыми можно делиться.",
+  "investorUpdatePromptProductTitle": "Продукт",
+  "investorUpdatePromptProductHint": "Что изменилось в продукте или на roadmap?",
+  "investorUpdatePromptChallengesTitle": "Сложности",
+  "investorUpdatePromptChallengesHint": "Блокеры, промахи или риски, о которых стоит знать инвесторам.",
+  "investorUpdatePromptAskTitle": "Запрос",
+  "investorUpdatePromptAskHint": "Какая помощь, интро или решение нужны от инвесторов?",
+  "exportPlan": "Экспорт плана…",
+  "exportPlanSubtitle": "Скопируйте или отправьте оформленную версию анализа.",
+  "exportOnePager": "One-pager",
+  "exportOnePagerHint": "Markdown для документов или Notion.",
+  "exportPitchBullets": "Пitch-буллеты",
+  "exportPitchBulletsHint": "Короткий список для деков или сообщений.",
+  "exportEmailIntro": "Email-интро",
+  "exportEmailIntroHint": "Тёплый абзац для письма.",
+  "versionHistory": "История версий",
+  "noVersionHistory": "История версий пока пуста",
+  "versionRound": "Раунд {round}",
+  "@versionRound": {
+    "placeholders": {
+      "round": { "type": "int" }
+    }
+  },
+  "versionCurrent": "ТЕКУЩАЯ",
+  "versionRestoredFromRound": "Восстановлено из раунда {round}",
+  "@versionRestoredFromRound": {
+    "placeholders": {
+      "round": { "type": "int" }
+    }
+  },
+  "versionChangesTitle": "Что изменилось",
+  "versionFieldUpdated": "Обновлено",
+  "versionFieldNew": "Новое",
+  "versionFieldBefore": "Было",
+  "versionFieldAfter": "Стало",
+  "versionRestoreTitle": "Восстановить версию?",
+  "versionRestoreMessage": "Будет создана новая версия на основе раунда {round}. История не удалится.",
+  "@versionRestoreMessage": {
+    "placeholders": {
+      "round": { "type": "int" }
+    }
+  },
+  "restore": "Восстановить",
+  "makeCurrentVersion": "Сделать текущей версией",
+  "restoring": "Восстановление…",
+  "planFieldStartupTitle": "НАЗВАНИЕ СТАРТАПА",
+  "planFieldSummary": "РЕЗЮМЕ"
 }

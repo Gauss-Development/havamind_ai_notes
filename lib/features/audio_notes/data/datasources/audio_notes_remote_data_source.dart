@@ -6,6 +6,8 @@ import 'package:sample/features/audio_notes/data/models/audio_note_mapper.dart';
 import 'package:sample/features/audio_notes/data/models/audio_note_transcript_mapper.dart';
 import 'package:sample/features/audio_notes/data/models/startup_analysis_mapper.dart';
 import 'package:sample/features/audio_notes/domain/entities/audio_note.dart';
+import 'package:sample/features/audio_notes/domain/entities/note_search_hit.dart';
+import 'package:sample/features/search/domain/utils/transcript_excerpt.dart';
 import 'package:sample/features/audio_notes/domain/entities/audio_note_status.dart';
 import 'package:sample/features/audio_notes/domain/entities/audio_note_transcript.dart';
 import 'package:sample/features/audio_notes/domain/entities/startup_analysis.dart';
@@ -97,6 +99,54 @@ class AudioNotesRemoteDataSource {
         .toList();
   }
 
+  /// Full-text search across note titles and transcript bodies (RPC).
+  Future<List<NoteSearchHit>> searchNotes({
+    required String query,
+    int limit = 20,
+  }) async {
+    final userId = _client.auth.currentUser?.id;
+    if (userId == null) {
+      throw Exception('Not signed in');
+    }
+
+    final trimmed = query.trim();
+    if (trimmed.isEmpty) {
+      return const [];
+    }
+
+    final response = await _client.rpc(
+      'search_audio_notes',
+      params: {
+        'p_query': trimmed,
+        'p_limit': limit,
+      },
+    );
+
+    return (response as List<dynamic>)
+        .map(
+          (e) => _mapSearchHit(Map<String, dynamic>.from(e as Map)),
+        )
+        .toList();
+  }
+
+  NoteSearchHit _mapSearchHit(Map<String, dynamic> row) {
+    final matchTypeRaw = row['match_type'] as String? ?? 'title';
+    final matchType = matchTypeRaw == 'transcript'
+        ? NoteSearchMatchType.transcript
+        : NoteSearchMatchType.title;
+
+    final excerptRaw = row['match_excerpt'] as String?;
+    final excerpt = excerptRaw == null || excerptRaw.trim().isEmpty
+        ? null
+        : stripTsHeadlineHtml(excerptRaw);
+
+    return NoteSearchHit(
+      note: AudioNoteMapper.fromRow(row),
+      matchType: matchType,
+      excerpt: excerpt,
+    );
+  }
+
   /// Total count of notes for the current user (head-only request).
   Future<int> countForCurrentUser() async {
     final userId = _client.auth.currentUser?.id;
@@ -130,6 +180,7 @@ class AudioNotesRemoteDataSource {
     required String title,
     required String audioPath,
     required int durationSeconds,
+    required String templateId,
   }) async {
     await _client.from('audio_notes').insert({
       'id': id,
@@ -137,6 +188,7 @@ class AudioNotesRemoteDataSource {
       'title': title,
       'audio_path': audioPath,
       'duration_seconds': durationSeconds,
+      'template_id': templateId,
       'status': AudioNoteStatus.draft.dbValue,
     });
   }

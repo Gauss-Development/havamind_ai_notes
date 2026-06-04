@@ -7,24 +7,40 @@ class RecordingTagPill extends StatelessWidget {
     required this.label,
     required this.background,
     required this.foreground,
+    this.selected = false,
+    this.onTap,
   });
 
   final String label;
   final Color background;
   final Color foreground;
+  final bool selected;
+  final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
-      decoration: BoxDecoration(
-        color: background,
+    final t = context.appTokens;
+    final bg = selected ? t.primary : background;
+    final fg = selected ? t.onPrimaryButton : foreground;
+
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onTap,
         borderRadius: BorderRadius.circular(ObsidianUiTokens.radiusFull),
-      ),
-      child: Text(
-        label,
-        style: Theme.of(context).textTheme.labelSmall?.copyWith(
-          color: foreground,
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+          decoration: BoxDecoration(
+            color: bg,
+            borderRadius: BorderRadius.circular(ObsidianUiTokens.radiusFull),
+          ),
+          child: Text(
+            label,
+            style: Theme.of(context).textTheme.labelSmall?.copyWith(
+              color: fg,
+              fontWeight: selected ? FontWeight.w700 : FontWeight.w500,
+            ),
+          ),
         ),
       ),
     );

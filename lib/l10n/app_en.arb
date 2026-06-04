@@ -20,6 +20,10 @@
     }
   },
   "searchNotes": "Search your notes...",
+  "searchNotesSemantics": "Search notes by title or transcript",
+  "clearSearch": "Clear search",
+  "searchFailed": "Search failed",
+  "searchMatchInTranscript": "In transcript",
   "searchNNotesPlaceholder": "Search {count} notes...",
   "@searchNNotesPlaceholder": {
     "placeholders": {
@@ -148,5 +152,149 @@
   "paywallTermsLine": "Subscription auto-renews. Cancel anytime in your account settings.",
   "paywallCouldNotLoad": "Could not load plans. Please try again.",
   "paywallTryAgain": "Try again",
-  "paywallNoActivePurchases": "No active purchases to restore."
+  "paywallNoActivePurchases": "No active purchases to restore.",
+  "planGapsTitle": "FILL IN THE GAPS",
+  "planGapsHint": "These sections need more detail. Tap the mic to answer with a short voice note.",
+  "planReadinessTitle": "PLAN READINESS",
+  "planReadinessPercent": "{percent}%",
+  "@planReadinessPercent": {
+    "placeholders": {
+      "percent": {
+        "type": "int"
+      }
+    }
+  },
+  "planReadinessSections": "{completed} of {total} sections",
+  "@planReadinessSections": {
+    "placeholders": {
+      "completed": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "planReadinessComplete": "All core sections are filled in.",
+  "planReadinessHint": "Record short follow-ups to strengthen weak sections.",
+  "planReadinessHomeTitle": "STRENGTHEN YOUR PLAN",
+  "planReadinessHomeBody": "{title} is {percent}% complete — {count, plural, =1{1 section} other{{count} sections}} still need detail.",
+  "@planReadinessHomeBody": {
+    "placeholders": {
+      "title": {
+        "type": "String"
+      },
+      "percent": {
+        "type": "int"
+      },
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "planReadinessUntitledNote": "Untitled note",
+  "answerByVoice": "Answer by voice",
+  "planGapAskProblem": "What is the core problem you are solving, and who feels it most?",
+  "planGapAskSolution": "How does your product solve this problem in a unique way?",
+  "planGapAskTargetAudience": "Who is your ideal customer or early adopter?",
+  "planGapAskBusinessModel": "How will you make money — pricing, model, or revenue streams?",
+  "planGapAskKeyMetrics": "What metrics will you track to know you are making progress?",
+  "planGapAskAdvantages": "What is your unfair advantage or differentiator?",
+  "planGapAskRisksGaps": "What are the biggest risks or gaps in your plan right now?",
+  "planGapAskShortSummary": "Give a one-minute elevator pitch summary of your startup.",
+  "planGapAskStartupTitle": "What would you call this startup or product?",
+  "continueRecording": "Continue recording",
+  "founderPitchGuideTitle": "Founder pitch guide",
+  "founderPitchGuideSubtitle": "Speak freely — hit these points and we will turn your memo into a structured plan.",
+  "hideGuide": "Hide guide",
+  "recordingGuideShowAllTopics": "Show all topics",
+  "recordingGuideShowLess": "Show less",
+  "tryCoveringTitle": "Try covering: {title}",
+  "@tryCoveringTitle": {
+    "placeholders": {
+      "title": { "type": "String" }
+    }
+  },
+  "founderPromptProblemTitle": "Problem",
+  "founderPromptProblemHint": "What pain are you solving, and for whom?",
+  "founderPromptAudienceTitle": "Audience",
+  "founderPromptAudienceHint": "Who is your ideal customer or early adopter?",
+  "founderPromptSolutionTitle": "Solution",
+  "founderPromptSolutionHint": "How does your product solve it differently?",
+  "founderPromptMonetizationTitle": "Monetization",
+  "founderPromptMonetizationHint": "How will you make money — pricing or model?",
+  "founderPromptTractionTitle": "Traction & next steps",
+  "founderPromptTractionHint": "What have you tried, and what is the immediate next move?",
+  "recordingTemplateFounderPitch": "Founder pitch",
+  "recordingTemplateCustomerDiscovery": "Customer discovery",
+  "recordingTemplateInvestorUpdate": "Investor update",
+  "recordingOnboardingTitle": "Before you record",
+  "recordingOnboardingSubtitle": "Pick a template and skim the prompts so your note lands with the right structure.",
+  "recordingOnboardingTemplateLabel": "Recording type",
+  "recordingOnboardingContinue": "Continue to recording",
+  "recordingOnboardingSkip": "Skip",
+  "customerDiscoveryGuideTitle": "Customer discovery guide",
+  "customerDiscoveryGuideSubtitle": "Capture what you learned from users — we will structure it into insights and next interviews.",
+  "customerDiscoveryPromptWorkflowTitle": "Interview flow",
+  "customerDiscoveryPromptWorkflowHint": "Who did you talk to and what did you ask?",
+  "customerDiscoveryPromptPainTitle": "Pain & urgency",
+  "customerDiscoveryPromptPainHint": "What problem came up, and how painful is it today?",
+  "customerDiscoveryPromptSubjectTitle": "Who you spoke with",
+  "customerDiscoveryPromptSubjectHint": "Role, segment, or company type of the interviewee.",
+  "customerDiscoveryPromptInsightTitle": "Key insight",
+  "customerDiscoveryPromptInsightHint": "What surprised you or changed your thinking?",
+  "customerDiscoveryPromptNextTitle": "Next interviews",
+  "customerDiscoveryPromptNextHint": "Who else should you talk to, and what will you validate next?",
+  "investorUpdateGuideTitle": "Investor update guide",
+  "investorUpdateGuideSubtitle": "Share progress honestly — we will turn your memo into a crisp update with metrics and asks.",
+  "investorUpdatePromptHighlightsTitle": "Highlights",
+  "investorUpdatePromptHighlightsHint": "What shipped, closed, or moved the needle this period?",
+  "investorUpdatePromptMetricsTitle": "Metrics",
+  "investorUpdatePromptMetricsHint": "Revenue, users, growth, burn — numbers you can share.",
+  "investorUpdatePromptProductTitle": "Product",
+  "investorUpdatePromptProductHint": "What changed in the product or roadmap?",
+  "investorUpdatePromptChallengesTitle": "Challenges",
+  "investorUpdatePromptChallengesHint": "Blockers, misses, or risks investors should know.",
+  "investorUpdatePromptAskTitle": "The ask",
+  "investorUpdatePromptAskHint": "What help, intro, or decision do you need from investors?",
+  "exportPlan": "Export plan…",
+  "exportPlanSubtitle": "Copy or share a formatted version of your analysis.",
+  "exportOnePager": "One-pager",
+  "exportOnePagerHint": "Markdown summary for docs or Notion.",
+  "exportPitchBullets": "Pitch bullets",
+  "exportPitchBulletsHint": "Short bullet list for decks or messages.",
+  "exportEmailIntro": "Email intro",
+  "exportEmailIntroHint": "Warm intro paragraph you can paste into email.",
+  "versionHistory": "Version history",
+  "noVersionHistory": "No version history yet",
+  "versionRound": "Round {round}",
+  "@versionRound": {
+    "placeholders": {
+      "round": { "type": "int" }
+    }
+  },
+  "versionCurrent": "CURRENT",
+  "versionRestoredFromRound": "Restored from round {round}",
+  "@versionRestoredFromRound": {
+    "placeholders": {
+      "round": { "type": "int" }
+    }
+  },
+  "versionChangesTitle": "What changed",
+  "versionFieldUpdated": "Updated",
+  "versionFieldNew": "New",
+  "versionFieldBefore": "Before",
+  "versionFieldAfter": "After",
+  "versionRestoreTitle": "Restore version?",
+  "versionRestoreMessage": "This will create a new version based on round {round}. No history will be lost.",
+  "@versionRestoreMessage": {
+    "placeholders": {
+      "round": { "type": "int" }
+    }
+  },
+  "restore": "Restore",
+  "makeCurrentVersion": "Make this the current version",
+  "restoring": "Restoring…",
+  "planFieldStartupTitle": "STARTUP TITLE",
+  "planFieldSummary": "SUMMARY"
 }

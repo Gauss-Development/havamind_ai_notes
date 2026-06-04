@@ -1,6 +1,7 @@
 import 'package:dartz/dartz.dart';
 import 'package:sample/core/error/failure.dart';
 import 'package:sample/features/audio_notes/domain/entities/audio_note.dart';
+import 'package:sample/features/audio_notes/domain/entities/note_search_hit.dart';
 import 'package:sample/features/audio_notes/domain/entities/audio_note_transcript.dart';
 import 'package:sample/features/audio_notes/domain/entities/plan_version.dart';
 import 'package:sample/features/audio_notes/domain/entities/startup_analysis.dart';
@@ -17,6 +18,11 @@ abstract class AudioNotesRepository {
     int limit = 20,
   });
 
+  Future<Either<Failure, List<NoteSearchHit>>> searchNotes({
+    required String query,
+    int limit = 20,
+  });
+
   Future<Either<Failure, int>> countNotes();
 
   Future<Either<Failure, AudioNote>> getNote(String id);
@@ -24,11 +30,13 @@ abstract class AudioNotesRepository {
   Future<Either<Failure, AudioNote>> saveRecording({
     required String localFilePath,
     required int durationSeconds,
+    required String templateId,
   });
 
   Future<Either<Failure, AudioNote>> processLocalAudioNote({
     required String localFilePath,
     required int durationSeconds,
+    required String templateId,
   });
 
   Future<Either<Failure, Unit>> deleteNote(String id);

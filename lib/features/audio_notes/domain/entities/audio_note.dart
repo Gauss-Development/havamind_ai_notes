@@ -1,5 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:sample/features/audio_notes/domain/entities/audio_note_status.dart';
+import 'package:sample/features/audio_notes/domain/entities/recording_template.dart';
 
 class AudioNote extends Equatable {
   const AudioNote({
@@ -11,6 +12,7 @@ class AudioNote extends Equatable {
     required this.status,
     required this.createdAt,
     required this.updatedAt,
+    this.templateId = RecordingTemplateIds.founderPitch,
     this.lastProcessingError,
   });
 
@@ -25,6 +27,9 @@ class AudioNote extends Equatable {
   final DateTime createdAt;
   final DateTime updatedAt;
 
+  /// Recording/analysis template (`founder_pitch`, `customer_discovery`, …).
+  final String templateId;
+
   /// Set when [status] is [AudioNoteStatus.failed] (Edge Function or client).
   final String? lastProcessingError;
 
@@ -38,6 +43,7 @@ class AudioNote extends Equatable {
     status,
     createdAt,
     updatedAt,
+    templateId,
     lastProcessingError,
   ];
 }

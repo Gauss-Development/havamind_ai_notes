@@ -7,7 +7,9 @@ bool isAuthSessionError(Object error) {
   if (error is AuthException) return true;
   if (error is PostgrestException) {
     final code = error.code ?? '';
-    if (code == 'PGRST301' || code == '42501') return true;
+    // PGRST301 = JWT expired/invalid. Do not treat 42501 (insufficient_privilege)
+    // as a session death — that is usually RLS/permission, not auth expiry.
+    if (code == 'PGRST301') return true;
     final msg = error.message.toLowerCase();
     return msg.contains('jwt') ||
         msg.contains('invalid refresh') ||

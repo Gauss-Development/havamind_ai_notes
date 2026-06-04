@@ -24,6 +24,7 @@ mixin _$RecordingEvent {
     required TResult Function() cancelPressed,
     required TResult Function() savePressed,
     required TResult Function() tick,
+    required TResult Function(String templateId) templateSelected,
   }) => throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
@@ -32,6 +33,7 @@ mixin _$RecordingEvent {
     TResult? Function()? cancelPressed,
     TResult? Function()? savePressed,
     TResult? Function()? tick,
+    TResult? Function(String templateId)? templateSelected,
   }) => throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
@@ -40,6 +42,7 @@ mixin _$RecordingEvent {
     TResult Function()? cancelPressed,
     TResult Function()? savePressed,
     TResult Function()? tick,
+    TResult Function(String templateId)? templateSelected,
     required TResult orElse(),
   }) => throw _privateConstructorUsedError;
   @optionalTypeArgs
@@ -49,6 +52,7 @@ mixin _$RecordingEvent {
     required TResult Function(_CancelPressed value) cancelPressed,
     required TResult Function(_SavePressed value) savePressed,
     required TResult Function(_Tick value) tick,
+    required TResult Function(_TemplateSelected value) templateSelected,
   }) => throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
@@ -57,6 +61,7 @@ mixin _$RecordingEvent {
     TResult? Function(_CancelPressed value)? cancelPressed,
     TResult? Function(_SavePressed value)? savePressed,
     TResult? Function(_Tick value)? tick,
+    TResult? Function(_TemplateSelected value)? templateSelected,
   }) => throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object?>({
@@ -65,6 +70,7 @@ mixin _$RecordingEvent {
     TResult Function(_CancelPressed value)? cancelPressed,
     TResult Function(_SavePressed value)? savePressed,
     TResult Function(_Tick value)? tick,
+    TResult Function(_TemplateSelected value)? templateSelected,
     required TResult orElse(),
   }) => throw _privateConstructorUsedError;
 }
@@ -139,6 +145,7 @@ class _$StartPressedImpl implements _StartPressed {
     required TResult Function() cancelPressed,
     required TResult Function() savePressed,
     required TResult Function() tick,
+    required TResult Function(String templateId) templateSelected,
   }) {
     return startPressed();
   }
@@ -151,6 +158,7 @@ class _$StartPressedImpl implements _StartPressed {
     TResult? Function()? cancelPressed,
     TResult? Function()? savePressed,
     TResult? Function()? tick,
+    TResult? Function(String templateId)? templateSelected,
   }) {
     return startPressed?.call();
   }
@@ -163,6 +171,7 @@ class _$StartPressedImpl implements _StartPressed {
     TResult Function()? cancelPressed,
     TResult Function()? savePressed,
     TResult Function()? tick,
+    TResult Function(String templateId)? templateSelected,
     required TResult orElse(),
   }) {
     if (startPressed != null) {
@@ -179,6 +188,7 @@ class _$StartPressedImpl implements _StartPressed {
     required TResult Function(_CancelPressed value) cancelPressed,
     required TResult Function(_SavePressed value) savePressed,
     required TResult Function(_Tick value) tick,
+    required TResult Function(_TemplateSelected value) templateSelected,
   }) {
     return startPressed(this);
   }
@@ -191,6 +201,7 @@ class _$StartPressedImpl implements _StartPressed {
     TResult? Function(_CancelPressed value)? cancelPressed,
     TResult? Function(_SavePressed value)? savePressed,
     TResult? Function(_Tick value)? tick,
+    TResult? Function(_TemplateSelected value)? templateSelected,
   }) {
     return startPressed?.call(this);
   }
@@ -203,6 +214,7 @@ class _$StartPressedImpl implements _StartPressed {
     TResult Function(_CancelPressed value)? cancelPressed,
     TResult Function(_SavePressed value)? savePressed,
     TResult Function(_Tick value)? tick,
+    TResult Function(_TemplateSelected value)? templateSelected,
     required TResult orElse(),
   }) {
     if (startPressed != null) {
@@ -264,6 +276,7 @@ class _$StopPressedImpl implements _StopPressed {
     required TResult Function() cancelPressed,
     required TResult Function() savePressed,
     required TResult Function() tick,
+    required TResult Function(String templateId) templateSelected,
   }) {
     return stopPressed();
   }
@@ -276,6 +289,7 @@ class _$StopPressedImpl implements _StopPressed {
     TResult? Function()? cancelPressed,
     TResult? Function()? savePressed,
     TResult? Function()? tick,
+    TResult? Function(String templateId)? templateSelected,
   }) {
     return stopPressed?.call();
   }
@@ -288,6 +302,7 @@ class _$StopPressedImpl implements _StopPressed {
     TResult Function()? cancelPressed,
     TResult Function()? savePressed,
     TResult Function()? tick,
+    TResult Function(String templateId)? templateSelected,
     required TResult orElse(),
   }) {
     if (stopPressed != null) {
@@ -304,6 +319,7 @@ class _$StopPressedImpl implements _StopPressed {
     required TResult Function(_CancelPressed value) cancelPressed,
     required TResult Function(_SavePressed value) savePressed,
     required TResult Function(_Tick value) tick,
+    required TResult Function(_TemplateSelected value) templateSelected,
   }) {
     return stopPressed(this);
   }
@@ -316,6 +332,7 @@ class _$StopPressedImpl implements _StopPressed {
     TResult? Function(_CancelPressed value)? cancelPressed,
     TResult? Function(_SavePressed value)? savePressed,
     TResult? Function(_Tick value)? tick,
+    TResult? Function(_TemplateSelected value)? templateSelected,
   }) {
     return stopPressed?.call(this);
   }
@@ -328,6 +345,7 @@ class _$StopPressedImpl implements _StopPressed {
     TResult Function(_CancelPressed value)? cancelPressed,
     TResult Function(_SavePressed value)? savePressed,
     TResult Function(_Tick value)? tick,
+    TResult Function(_TemplateSelected value)? templateSelected,
     required TResult orElse(),
   }) {
     if (stopPressed != null) {
@@ -389,6 +407,7 @@ class _$CancelPressedImpl implements _CancelPressed {
     required TResult Function() cancelPressed,
     required TResult Function() savePressed,
     required TResult Function() tick,
+    required TResult Function(String templateId) templateSelected,
   }) {
     return cancelPressed();
   }
@@ -401,6 +420,7 @@ class _$CancelPressedImpl implements _CancelPressed {
     TResult? Function()? cancelPressed,
     TResult? Function()? savePressed,
     TResult? Function()? tick,
+    TResult? Function(String templateId)? templateSelected,
   }) {
     return cancelPressed?.call();
   }
@@ -413,6 +433,7 @@ class _$CancelPressedImpl implements _CancelPressed {
     TResult Function()? cancelPressed,
     TResult Function()? savePressed,
     TResult Function()? tick,
+    TResult Function(String templateId)? templateSelected,
     required TResult orElse(),
   }) {
     if (cancelPressed != null) {
@@ -429,6 +450,7 @@ class _$CancelPressedImpl implements _CancelPressed {
     required TResult Function(_CancelPressed value) cancelPressed,
     required TResult Function(_SavePressed value) savePressed,
     required TResult Function(_Tick value) tick,
+    required TResult Function(_TemplateSelected value) templateSelected,
   }) {
     return cancelPressed(this);
   }
@@ -441,6 +463,7 @@ class _$CancelPressedImpl implements _CancelPressed {
     TResult? Function(_CancelPressed value)? cancelPressed,
     TResult? Function(_SavePressed value)? savePressed,
     TResult? Function(_Tick value)? tick,
+    TResult? Function(_TemplateSelected value)? templateSelected,
   }) {
     return cancelPressed?.call(this);
   }
@@ -453,6 +476,7 @@ class _$CancelPressedImpl implements _CancelPressed {
     TResult Function(_CancelPressed value)? cancelPressed,
     TResult Function(_SavePressed value)? savePressed,
     TResult Function(_Tick value)? tick,
+    TResult Function(_TemplateSelected value)? templateSelected,
     required TResult orElse(),
   }) {
     if (cancelPressed != null) {
@@ -514,6 +538,7 @@ class _$SavePressedImpl implements _SavePressed {
     required TResult Function() cancelPressed,
     required TResult Function() savePressed,
     required TResult Function() tick,
+    required TResult Function(String templateId) templateSelected,
   }) {
     return savePressed();
   }
@@ -526,6 +551,7 @@ class _$SavePressedImpl implements _SavePressed {
     TResult? Function()? cancelPressed,
     TResult? Function()? savePressed,
     TResult? Function()? tick,
+    TResult? Function(String templateId)? templateSelected,
   }) {
     return savePressed?.call();
   }
@@ -538,6 +564,7 @@ class _$SavePressedImpl implements _SavePressed {
     TResult Function()? cancelPressed,
     TResult Function()? savePressed,
     TResult Function()? tick,
+    TResult Function(String templateId)? templateSelected,
     required TResult orElse(),
   }) {
     if (savePressed != null) {
@@ -554,6 +581,7 @@ class _$SavePressedImpl implements _SavePressed {
     required TResult Function(_CancelPressed value) cancelPressed,
     required TResult Function(_SavePressed value) savePressed,
     required TResult Function(_Tick value) tick,
+    required TResult Function(_TemplateSelected value) templateSelected,
   }) {
     return savePressed(this);
   }
@@ -566,6 +594,7 @@ class _$SavePressedImpl implements _SavePressed {
     TResult? Function(_CancelPressed value)? cancelPressed,
     TResult? Function(_SavePressed value)? savePressed,
     TResult? Function(_Tick value)? tick,
+    TResult? Function(_TemplateSelected value)? templateSelected,
   }) {
     return savePressed?.call(this);
   }
@@ -578,6 +607,7 @@ class _$SavePressedImpl implements _SavePressed {
     TResult Function(_CancelPressed value)? cancelPressed,
     TResult Function(_SavePressed value)? savePressed,
     TResult Function(_Tick value)? tick,
+    TResult Function(_TemplateSelected value)? templateSelected,
     required TResult orElse(),
   }) {
     if (savePressed != null) {
@@ -637,6 +667,7 @@ class _$TickImpl implements _Tick {
     required TResult Function() cancelPressed,
     required TResult Function() savePressed,
     required TResult Function() tick,
+    required TResult Function(String templateId) templateSelected,
   }) {
     return tick();
   }
@@ -649,6 +680,7 @@ class _$TickImpl implements _Tick {
     TResult? Function()? cancelPressed,
     TResult? Function()? savePressed,
     TResult? Function()? tick,
+    TResult? Function(String templateId)? templateSelected,
   }) {
     return tick?.call();
   }
@@ -661,6 +693,7 @@ class _$TickImpl implements _Tick {
     TResult Function()? cancelPressed,
     TResult Function()? savePressed,
     TResult Function()? tick,
+    TResult Function(String templateId)? templateSelected,
     required TResult orElse(),
   }) {
     if (tick != null) {
@@ -677,6 +710,7 @@ class _$TickImpl implements _Tick {
     required TResult Function(_CancelPressed value) cancelPressed,
     required TResult Function(_SavePressed value) savePressed,
     required TResult Function(_Tick value) tick,
+    required TResult Function(_TemplateSelected value) templateSelected,
   }) {
     return tick(this);
   }
@@ -689,6 +723,7 @@ class _$TickImpl implements _Tick {
     TResult? Function(_CancelPressed value)? cancelPressed,
     TResult? Function(_SavePressed value)? savePressed,
     TResult? Function(_Tick value)? tick,
+    TResult? Function(_TemplateSelected value)? templateSelected,
   }) {
     return tick?.call(this);
   }
@@ -701,6 +736,7 @@ class _$TickImpl implements _Tick {
     TResult Function(_CancelPressed value)? cancelPressed,
     TResult Function(_SavePressed value)? savePressed,
     TResult Function(_Tick value)? tick,
+    TResult Function(_TemplateSelected value)? templateSelected,
     required TResult orElse(),
   }) {
     if (tick != null) {
@@ -715,10 +751,181 @@ abstract class _Tick implements RecordingEvent {
 }
 
 /// @nodoc
+abstract class _$$TemplateSelectedImplCopyWith<$Res> {
+  factory _$$TemplateSelectedImplCopyWith(
+    _$TemplateSelectedImpl value,
+    $Res Function(_$TemplateSelectedImpl) then,
+  ) = __$$TemplateSelectedImplCopyWithImpl<$Res>;
+  @useResult
+  $Res call({String templateId});
+}
+
+/// @nodoc
+class __$$TemplateSelectedImplCopyWithImpl<$Res>
+    extends _$RecordingEventCopyWithImpl<$Res, _$TemplateSelectedImpl>
+    implements _$$TemplateSelectedImplCopyWith<$Res> {
+  __$$TemplateSelectedImplCopyWithImpl(
+    _$TemplateSelectedImpl _value,
+    $Res Function(_$TemplateSelectedImpl) _then,
+  ) : super(_value, _then);
+
+  /// Create a copy of RecordingEvent
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({Object? templateId = null}) {
+    return _then(
+      _$TemplateSelectedImpl(
+        null == templateId
+            ? _value.templateId
+            : templateId // ignore: cast_nullable_to_non_nullable
+                  as String,
+      ),
+    );
+  }
+}
+
+/// @nodoc
+
+class _$TemplateSelectedImpl implements _TemplateSelected {
+  const _$TemplateSelectedImpl(this.templateId);
+
+  @override
+  final String templateId;
+
+  @override
+  String toString() {
+    return 'RecordingEvent.templateSelected(templateId: $templateId)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$TemplateSelectedImpl &&
+            (identical(other.templateId, templateId) ||
+                other.templateId == templateId));
+  }
+
+  @override
+  int get hashCode => Object.hash(runtimeType, templateId);
+
+  /// Create a copy of RecordingEvent
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$TemplateSelectedImplCopyWith<_$TemplateSelectedImpl> get copyWith =>
+      __$$TemplateSelectedImplCopyWithImpl<_$TemplateSelectedImpl>(
+        this,
+        _$identity,
+      );
+
+  @override
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>({
+    required TResult Function() startPressed,
+    required TResult Function() stopPressed,
+    required TResult Function() cancelPressed,
+    required TResult Function() savePressed,
+    required TResult Function() tick,
+    required TResult Function(String templateId) templateSelected,
+  }) {
+    return templateSelected(templateId);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult? Function()? startPressed,
+    TResult? Function()? stopPressed,
+    TResult? Function()? cancelPressed,
+    TResult? Function()? savePressed,
+    TResult? Function()? tick,
+    TResult? Function(String templateId)? templateSelected,
+  }) {
+    return templateSelected?.call(templateId);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function()? startPressed,
+    TResult Function()? stopPressed,
+    TResult Function()? cancelPressed,
+    TResult Function()? savePressed,
+    TResult Function()? tick,
+    TResult Function(String templateId)? templateSelected,
+    required TResult orElse(),
+  }) {
+    if (templateSelected != null) {
+      return templateSelected(templateId);
+    }
+    return orElse();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>({
+    required TResult Function(_StartPressed value) startPressed,
+    required TResult Function(_StopPressed value) stopPressed,
+    required TResult Function(_CancelPressed value) cancelPressed,
+    required TResult Function(_SavePressed value) savePressed,
+    required TResult Function(_Tick value) tick,
+    required TResult Function(_TemplateSelected value) templateSelected,
+  }) {
+    return templateSelected(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult? Function(_StartPressed value)? startPressed,
+    TResult? Function(_StopPressed value)? stopPressed,
+    TResult? Function(_CancelPressed value)? cancelPressed,
+    TResult? Function(_SavePressed value)? savePressed,
+    TResult? Function(_Tick value)? tick,
+    TResult? Function(_TemplateSelected value)? templateSelected,
+  }) {
+    return templateSelected?.call(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(_StartPressed value)? startPressed,
+    TResult Function(_StopPressed value)? stopPressed,
+    TResult Function(_CancelPressed value)? cancelPressed,
+    TResult Function(_SavePressed value)? savePressed,
+    TResult Function(_Tick value)? tick,
+    TResult Function(_TemplateSelected value)? templateSelected,
+    required TResult orElse(),
+  }) {
+    if (templateSelected != null) {
+      return templateSelected(this);
+    }
+    return orElse();
+  }
+}
+
+abstract class _TemplateSelected implements RecordingEvent {
+  const factory _TemplateSelected(final String templateId) =
+      _$TemplateSelectedImpl;
+
+  String get templateId;
+
+  /// Create a copy of RecordingEvent
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  _$$TemplateSelectedImplCopyWith<_$TemplateSelectedImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
 mixin _$RecordingState {
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
-    required TResult Function() idle,
+    required TResult Function(String templateId) idle,
     required TResult Function(int elapsedSeconds, String filePath) recording,
     required TResult Function(String filePath, int durationSeconds) readyToSave,
     required TResult Function() uploading,
@@ -728,7 +935,7 @@ mixin _$RecordingState {
   }) => throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
-    TResult? Function()? idle,
+    TResult? Function(String templateId)? idle,
     TResult? Function(int elapsedSeconds, String filePath)? recording,
     TResult? Function(String filePath, int durationSeconds)? readyToSave,
     TResult? Function()? uploading,
@@ -738,7 +945,7 @@ mixin _$RecordingState {
   }) => throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
-    TResult Function()? idle,
+    TResult Function(String templateId)? idle,
     TResult Function(int elapsedSeconds, String filePath)? recording,
     TResult Function(String filePath, int durationSeconds)? readyToSave,
     TResult Function()? uploading,
@@ -808,6 +1015,8 @@ abstract class _$$IdleImplCopyWith<$Res> {
     _$IdleImpl value,
     $Res Function(_$IdleImpl) then,
   ) = __$$IdleImplCopyWithImpl<$Res>;
+  @useResult
+  $Res call({String templateId});
 }
 
 /// @nodoc
@@ -819,31 +1028,58 @@ class __$$IdleImplCopyWithImpl<$Res>
 
   /// Create a copy of RecordingState
   /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({Object? templateId = null}) {
+    return _then(
+      _$IdleImpl(
+        templateId: null == templateId
+            ? _value.templateId
+            : templateId // ignore: cast_nullable_to_non_nullable
+                  as String,
+      ),
+    );
+  }
 }
 
 /// @nodoc
 
 class _$IdleImpl implements _Idle {
-  const _$IdleImpl();
+  const _$IdleImpl({this.templateId = RecordingTemplateIds.founderPitch});
+
+  @override
+  @JsonKey()
+  final String templateId;
 
   @override
   String toString() {
-    return 'RecordingState.idle()';
+    return 'RecordingState.idle(templateId: $templateId)';
   }
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
-        (other.runtimeType == runtimeType && other is _$IdleImpl);
+        (other.runtimeType == runtimeType &&
+            other is _$IdleImpl &&
+            (identical(other.templateId, templateId) ||
+                other.templateId == templateId));
   }
 
   @override
-  int get hashCode => runtimeType.hashCode;
+  int get hashCode => Object.hash(runtimeType, templateId);
+
+  /// Create a copy of RecordingState
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$IdleImplCopyWith<_$IdleImpl> get copyWith =>
+      __$$IdleImplCopyWithImpl<_$IdleImpl>(this, _$identity);
 
   @override
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
-    required TResult Function() idle,
+    required TResult Function(String templateId) idle,
     required TResult Function(int elapsedSeconds, String filePath) recording,
     required TResult Function(String filePath, int durationSeconds) readyToSave,
     required TResult Function() uploading,
@@ -851,13 +1087,13 @@ class _$IdleImpl implements _Idle {
     required TResult Function(String message) failure,
     required TResult Function() limitReached,
   }) {
-    return idle();
+    return idle(templateId);
   }
 
   @override
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
-    TResult? Function()? idle,
+    TResult? Function(String templateId)? idle,
     TResult? Function(int elapsedSeconds, String filePath)? recording,
     TResult? Function(String filePath, int durationSeconds)? readyToSave,
     TResult? Function()? uploading,
@@ -865,13 +1101,13 @@ class _$IdleImpl implements _Idle {
     TResult? Function(String message)? failure,
     TResult? Function()? limitReached,
   }) {
-    return idle?.call();
+    return idle?.call(templateId);
   }
 
   @override
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
-    TResult Function()? idle,
+    TResult Function(String templateId)? idle,
     TResult Function(int elapsedSeconds, String filePath)? recording,
     TResult Function(String filePath, int durationSeconds)? readyToSave,
     TResult Function()? uploading,
@@ -881,7 +1117,7 @@ class _$IdleImpl implements _Idle {
     required TResult orElse(),
   }) {
     if (idle != null) {
-      return idle();
+      return idle(templateId);
     }
     return orElse();
   }
@@ -934,7 +1170,15 @@ class _$IdleImpl implements _Idle {
 }
 
 abstract class _Idle implements RecordingState {
-  const factory _Idle() = _$IdleImpl;
+  const factory _Idle({final String templateId}) = _$IdleImpl;
+
+  String get templateId;
+
+  /// Create a copy of RecordingState
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  _$$IdleImplCopyWith<_$IdleImpl> get copyWith =>
+      throw _privateConstructorUsedError;
 }
 
 /// @nodoc
@@ -1016,7 +1260,7 @@ class _$RecordingImpl implements _Recording {
   @override
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
-    required TResult Function() idle,
+    required TResult Function(String templateId) idle,
     required TResult Function(int elapsedSeconds, String filePath) recording,
     required TResult Function(String filePath, int durationSeconds) readyToSave,
     required TResult Function() uploading,
@@ -1030,7 +1274,7 @@ class _$RecordingImpl implements _Recording {
   @override
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
-    TResult? Function()? idle,
+    TResult? Function(String templateId)? idle,
     TResult? Function(int elapsedSeconds, String filePath)? recording,
     TResult? Function(String filePath, int durationSeconds)? readyToSave,
     TResult? Function()? uploading,
@@ -1044,7 +1288,7 @@ class _$RecordingImpl implements _Recording {
   @override
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
-    TResult Function()? idle,
+    TResult Function(String templateId)? idle,
     TResult Function(int elapsedSeconds, String filePath)? recording,
     TResult Function(String filePath, int durationSeconds)? readyToSave,
     TResult Function()? uploading,
@@ -1204,7 +1448,7 @@ class _$ReadyToSaveImpl implements _ReadyToSave {
   @override
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
-    required TResult Function() idle,
+    required TResult Function(String templateId) idle,
     required TResult Function(int elapsedSeconds, String filePath) recording,
     required TResult Function(String filePath, int durationSeconds) readyToSave,
     required TResult Function() uploading,
@@ -1218,7 +1462,7 @@ class _$ReadyToSaveImpl implements _ReadyToSave {
   @override
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
-    TResult? Function()? idle,
+    TResult? Function(String templateId)? idle,
     TResult? Function(int elapsedSeconds, String filePath)? recording,
     TResult? Function(String filePath, int durationSeconds)? readyToSave,
     TResult? Function()? uploading,
@@ -1232,7 +1476,7 @@ class _$ReadyToSaveImpl implements _ReadyToSave {
   @override
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
-    TResult Function()? idle,
+    TResult Function(String templateId)? idle,
     TResult Function(int elapsedSeconds, String filePath)? recording,
     TResult Function(String filePath, int durationSeconds)? readyToSave,
     TResult Function()? uploading,
@@ -1353,7 +1597,7 @@ class _$UploadingImpl implements _Uploading {
   @override
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
-    required TResult Function() idle,
+    required TResult Function(String templateId) idle,
     required TResult Function(int elapsedSeconds, String filePath) recording,
     required TResult Function(String filePath, int durationSeconds) readyToSave,
     required TResult Function() uploading,
@@ -1367,7 +1611,7 @@ class _$UploadingImpl implements _Uploading {
   @override
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
-    TResult? Function()? idle,
+    TResult? Function(String templateId)? idle,
     TResult? Function(int elapsedSeconds, String filePath)? recording,
     TResult? Function(String filePath, int durationSeconds)? readyToSave,
     TResult? Function()? uploading,
@@ -1381,7 +1625,7 @@ class _$UploadingImpl implements _Uploading {
   @override
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
-    TResult Function()? idle,
+    TResult Function(String templateId)? idle,
     TResult Function(int elapsedSeconds, String filePath)? recording,
     TResult Function(String filePath, int durationSeconds)? readyToSave,
     TResult Function()? uploading,
@@ -1517,7 +1761,7 @@ class _$SuccessImpl implements _Success {
   @override
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
-    required TResult Function() idle,
+    required TResult Function(String templateId) idle,
     required TResult Function(int elapsedSeconds, String filePath) recording,
     required TResult Function(String filePath, int durationSeconds) readyToSave,
     required TResult Function() uploading,
@@ -1531,7 +1775,7 @@ class _$SuccessImpl implements _Success {
   @override
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
-    TResult? Function()? idle,
+    TResult? Function(String templateId)? idle,
     TResult? Function(int elapsedSeconds, String filePath)? recording,
     TResult? Function(String filePath, int durationSeconds)? readyToSave,
     TResult? Function()? uploading,
@@ -1545,7 +1789,7 @@ class _$SuccessImpl implements _Success {
   @override
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
-    TResult Function()? idle,
+    TResult Function(String templateId)? idle,
     TResult Function(int elapsedSeconds, String filePath)? recording,
     TResult Function(String filePath, int durationSeconds)? readyToSave,
     TResult Function()? uploading,
@@ -1689,7 +1933,7 @@ class _$FailureImpl implements _Failure {
   @override
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
-    required TResult Function() idle,
+    required TResult Function(String templateId) idle,
     required TResult Function(int elapsedSeconds, String filePath) recording,
     required TResult Function(String filePath, int durationSeconds) readyToSave,
     required TResult Function() uploading,
@@ -1703,7 +1947,7 @@ class _$FailureImpl implements _Failure {
   @override
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
-    TResult? Function()? idle,
+    TResult? Function(String templateId)? idle,
     TResult? Function(int elapsedSeconds, String filePath)? recording,
     TResult? Function(String filePath, int durationSeconds)? readyToSave,
     TResult? Function()? uploading,
@@ -1717,7 +1961,7 @@ class _$FailureImpl implements _Failure {
   @override
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
-    TResult Function()? idle,
+    TResult Function(String templateId)? idle,
     TResult Function(int elapsedSeconds, String filePath)? recording,
     TResult Function(String filePath, int durationSeconds)? readyToSave,
     TResult Function()? uploading,
@@ -1834,7 +2078,7 @@ class _$LimitReachedImpl implements _LimitReached {
   @override
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
-    required TResult Function() idle,
+    required TResult Function(String templateId) idle,
     required TResult Function(int elapsedSeconds, String filePath) recording,
     required TResult Function(String filePath, int durationSeconds) readyToSave,
     required TResult Function() uploading,
@@ -1848,7 +2092,7 @@ class _$LimitReachedImpl implements _LimitReached {
   @override
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
-    TResult? Function()? idle,
+    TResult? Function(String templateId)? idle,
     TResult? Function(int elapsedSeconds, String filePath)? recording,
     TResult? Function(String filePath, int durationSeconds)? readyToSave,
     TResult? Function()? uploading,
@@ -1862,7 +2106,7 @@ class _$LimitReachedImpl implements _LimitReached {
   @override
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
-    TResult Function()? idle,
+    TResult Function(String templateId)? idle,
     TResult Function(int elapsedSeconds, String filePath)? recording,
     TResult Function(String filePath, int durationSeconds)? readyToSave,
     TResult Function()? uploading,

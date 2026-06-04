@@ -9,6 +9,7 @@ import 'package:sample/features/audio_notes/data/datasources/audio_storage_data_
 import 'package:sample/features/audio_notes/data/repositories/audio_notes_repository_impl.dart';
 import 'package:sample/features/audio_notes/domain/entities/audio_note.dart';
 import 'package:sample/features/audio_notes/domain/entities/audio_note_status.dart';
+import 'package:sample/features/audio_notes/domain/entities/note_search_hit.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class _MockRemote extends Mock implements AudioNotesRemoteDataSource {}
@@ -83,6 +84,7 @@ void main() {
           title: any(named: 'title'),
           audioPath: any(named: 'audioPath'),
           durationSeconds: any(named: 'durationSeconds'),
+          templateId: any(named: 'templateId'),
         ),
       ).thenAnswer((_) async {});
 
@@ -106,6 +108,7 @@ void main() {
       final result = await repo.saveRecording(
         localFilePath: file.path,
         durationSeconds: 10,
+        templateId: 'founder_pitch',
       );
 
       expect(result.isRight(), true);
@@ -140,6 +143,7 @@ void main() {
           title: any(named: 'title'),
           audioPath: any(named: 'audioPath'),
           durationSeconds: any(named: 'durationSeconds'),
+          templateId: any(named: 'templateId'),
         ),
       ).thenAnswer((_) async {});
 
@@ -159,6 +163,7 @@ void main() {
       final result = await repo.saveRecording(
         localFilePath: file.path,
         durationSeconds: 5,
+        templateId: 'founder_pitch',
       );
 
       expect(result.isLeft(), true);
@@ -175,12 +180,51 @@ void main() {
       final result = await repo.saveRecording(
         localFilePath: '/tmp/missing.m4a',
         durationSeconds: 1,
+        templateId: 'founder_pitch',
       );
       expect(
         result,
         const Left<Failure, AudioNote>(
           AuthFailure('Authentication required'),
         ),
+      );
+    });
+  });
+
+  group('searchNotes', () {
+    test('returns hits from remote data source', () async {
+      final note = noteForId('note-search');
+      final hit = NoteSearchHit(
+        note: note,
+        matchType: NoteSearchMatchType.transcript,
+        excerpt: '…found in transcript…',
+      );
+
+      when(
+        () => remote.searchNotes(query: 'found', limit: 20),
+      ).thenAnswer((_) async => [hit]);
+
+      final result = await repo.searchNotes(query: 'found');
+
+      expect(result.isRight(), true);
+      result.fold(
+        (_) => fail('expected Right'),
+        (hits) => expect(hits, [hit]),
+      );
+      verify(() => remote.searchNotes(query: 'found', limit: 20)).called(1);
+    });
+
+    test('maps remote errors to UnexpectedFailure', () async {
+      when(
+        () => remote.searchNotes(query: any(named: 'query'), limit: any(named: 'limit')),
+      ).thenThrow(Exception('rpc failed'));
+
+      final result = await repo.searchNotes(query: 'test');
+
+      expect(result.isLeft(), true);
+      result.fold(
+        (f) => expect(f, isA<UnexpectedFailure>()),
+        (_) => fail('expected Left'),
       );
     });
   });

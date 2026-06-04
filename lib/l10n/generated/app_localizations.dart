@@ -188,6 +188,30 @@ abstract class AppLocalizations {
   /// **'Search your notes...'**
   String get searchNotes;
 
+  /// No description provided for @searchNotesSemantics.
+  ///
+  /// In en, this message translates to:
+  /// **'Search notes by title or transcript'**
+  String get searchNotesSemantics;
+
+  /// No description provided for @clearSearch.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear search'**
+  String get clearSearch;
+
+  /// No description provided for @searchFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Search failed'**
+  String get searchFailed;
+
+  /// No description provided for @searchMatchInTranscript.
+  ///
+  /// In en, this message translates to:
+  /// **'In transcript'**
+  String get searchMatchInTranscript;
+
   /// No description provided for @searchNNotesPlaceholder.
   ///
   /// In en, this message translates to:
@@ -835,6 +859,570 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'No active purchases to restore.'**
   String get paywallNoActivePurchases;
+
+  /// No description provided for @planGapsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'FILL IN THE GAPS'**
+  String get planGapsTitle;
+
+  /// No description provided for @planGapsHint.
+  ///
+  /// In en, this message translates to:
+  /// **'These sections need more detail. Tap the mic to answer with a short voice note.'**
+  String get planGapsHint;
+
+  /// No description provided for @planReadinessTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'PLAN READINESS'**
+  String get planReadinessTitle;
+
+  /// No description provided for @planReadinessPercent.
+  ///
+  /// In en, this message translates to:
+  /// **'{percent}%'**
+  String planReadinessPercent(int percent);
+
+  /// No description provided for @planReadinessSections.
+  ///
+  /// In en, this message translates to:
+  /// **'{completed} of {total} sections'**
+  String planReadinessSections(int completed, int total);
+
+  /// No description provided for @planReadinessComplete.
+  ///
+  /// In en, this message translates to:
+  /// **'All core sections are filled in.'**
+  String get planReadinessComplete;
+
+  /// No description provided for @planReadinessHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Record short follow-ups to strengthen weak sections.'**
+  String get planReadinessHint;
+
+  /// No description provided for @planReadinessHomeTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'STRENGTHEN YOUR PLAN'**
+  String get planReadinessHomeTitle;
+
+  /// No description provided for @planReadinessHomeBody.
+  ///
+  /// In en, this message translates to:
+  /// **'{title} is {percent}% complete — {count, plural, =1{1 section} other{{count} sections}} still need detail.'**
+  String planReadinessHomeBody(String title, int percent, int count);
+
+  /// No description provided for @planReadinessUntitledNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Untitled note'**
+  String get planReadinessUntitledNote;
+
+  /// No description provided for @answerByVoice.
+  ///
+  /// In en, this message translates to:
+  /// **'Answer by voice'**
+  String get answerByVoice;
+
+  /// No description provided for @planGapAskProblem.
+  ///
+  /// In en, this message translates to:
+  /// **'What is the core problem you are solving, and who feels it most?'**
+  String get planGapAskProblem;
+
+  /// No description provided for @planGapAskSolution.
+  ///
+  /// In en, this message translates to:
+  /// **'How does your product solve this problem in a unique way?'**
+  String get planGapAskSolution;
+
+  /// No description provided for @planGapAskTargetAudience.
+  ///
+  /// In en, this message translates to:
+  /// **'Who is your ideal customer or early adopter?'**
+  String get planGapAskTargetAudience;
+
+  /// No description provided for @planGapAskBusinessModel.
+  ///
+  /// In en, this message translates to:
+  /// **'How will you make money — pricing, model, or revenue streams?'**
+  String get planGapAskBusinessModel;
+
+  /// No description provided for @planGapAskKeyMetrics.
+  ///
+  /// In en, this message translates to:
+  /// **'What metrics will you track to know you are making progress?'**
+  String get planGapAskKeyMetrics;
+
+  /// No description provided for @planGapAskAdvantages.
+  ///
+  /// In en, this message translates to:
+  /// **'What is your unfair advantage or differentiator?'**
+  String get planGapAskAdvantages;
+
+  /// No description provided for @planGapAskRisksGaps.
+  ///
+  /// In en, this message translates to:
+  /// **'What are the biggest risks or gaps in your plan right now?'**
+  String get planGapAskRisksGaps;
+
+  /// No description provided for @planGapAskShortSummary.
+  ///
+  /// In en, this message translates to:
+  /// **'Give a one-minute elevator pitch summary of your startup.'**
+  String get planGapAskShortSummary;
+
+  /// No description provided for @planGapAskStartupTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'What would you call this startup or product?'**
+  String get planGapAskStartupTitle;
+
+  /// No description provided for @continueRecording.
+  ///
+  /// In en, this message translates to:
+  /// **'Continue recording'**
+  String get continueRecording;
+
+  /// No description provided for @founderPitchGuideTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Founder pitch guide'**
+  String get founderPitchGuideTitle;
+
+  /// No description provided for @founderPitchGuideSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Speak freely — hit these points and we will turn your memo into a structured plan.'**
+  String get founderPitchGuideSubtitle;
+
+  /// No description provided for @hideGuide.
+  ///
+  /// In en, this message translates to:
+  /// **'Hide guide'**
+  String get hideGuide;
+
+  /// No description provided for @recordingGuideShowAllTopics.
+  ///
+  /// In en, this message translates to:
+  /// **'Show all topics'**
+  String get recordingGuideShowAllTopics;
+
+  /// No description provided for @recordingGuideShowLess.
+  ///
+  /// In en, this message translates to:
+  /// **'Show less'**
+  String get recordingGuideShowLess;
+
+  /// No description provided for @tryCoveringTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Try covering: {title}'**
+  String tryCoveringTitle(String title);
+
+  /// No description provided for @founderPromptProblemTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Problem'**
+  String get founderPromptProblemTitle;
+
+  /// No description provided for @founderPromptProblemHint.
+  ///
+  /// In en, this message translates to:
+  /// **'What pain are you solving, and for whom?'**
+  String get founderPromptProblemHint;
+
+  /// No description provided for @founderPromptAudienceTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Audience'**
+  String get founderPromptAudienceTitle;
+
+  /// No description provided for @founderPromptAudienceHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Who is your ideal customer or early adopter?'**
+  String get founderPromptAudienceHint;
+
+  /// No description provided for @founderPromptSolutionTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Solution'**
+  String get founderPromptSolutionTitle;
+
+  /// No description provided for @founderPromptSolutionHint.
+  ///
+  /// In en, this message translates to:
+  /// **'How does your product solve it differently?'**
+  String get founderPromptSolutionHint;
+
+  /// No description provided for @founderPromptMonetizationTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Monetization'**
+  String get founderPromptMonetizationTitle;
+
+  /// No description provided for @founderPromptMonetizationHint.
+  ///
+  /// In en, this message translates to:
+  /// **'How will you make money — pricing or model?'**
+  String get founderPromptMonetizationHint;
+
+  /// No description provided for @founderPromptTractionTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Traction & next steps'**
+  String get founderPromptTractionTitle;
+
+  /// No description provided for @founderPromptTractionHint.
+  ///
+  /// In en, this message translates to:
+  /// **'What have you tried, and what is the immediate next move?'**
+  String get founderPromptTractionHint;
+
+  /// No description provided for @recordingTemplateFounderPitch.
+  ///
+  /// In en, this message translates to:
+  /// **'Founder pitch'**
+  String get recordingTemplateFounderPitch;
+
+  /// No description provided for @recordingTemplateCustomerDiscovery.
+  ///
+  /// In en, this message translates to:
+  /// **'Customer discovery'**
+  String get recordingTemplateCustomerDiscovery;
+
+  /// No description provided for @recordingTemplateInvestorUpdate.
+  ///
+  /// In en, this message translates to:
+  /// **'Investor update'**
+  String get recordingTemplateInvestorUpdate;
+
+  /// No description provided for @recordingOnboardingTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Before you record'**
+  String get recordingOnboardingTitle;
+
+  /// No description provided for @recordingOnboardingSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Pick a template and skim the prompts so your note lands with the right structure.'**
+  String get recordingOnboardingSubtitle;
+
+  /// No description provided for @recordingOnboardingTemplateLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Recording type'**
+  String get recordingOnboardingTemplateLabel;
+
+  /// No description provided for @recordingOnboardingContinue.
+  ///
+  /// In en, this message translates to:
+  /// **'Continue to recording'**
+  String get recordingOnboardingContinue;
+
+  /// No description provided for @recordingOnboardingSkip.
+  ///
+  /// In en, this message translates to:
+  /// **'Skip'**
+  String get recordingOnboardingSkip;
+
+  /// No description provided for @customerDiscoveryGuideTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Customer discovery guide'**
+  String get customerDiscoveryGuideTitle;
+
+  /// No description provided for @customerDiscoveryGuideSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Capture what you learned from users — we will structure it into insights and next interviews.'**
+  String get customerDiscoveryGuideSubtitle;
+
+  /// No description provided for @customerDiscoveryPromptWorkflowTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Interview flow'**
+  String get customerDiscoveryPromptWorkflowTitle;
+
+  /// No description provided for @customerDiscoveryPromptWorkflowHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Who did you talk to and what did you ask?'**
+  String get customerDiscoveryPromptWorkflowHint;
+
+  /// No description provided for @customerDiscoveryPromptPainTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Pain & urgency'**
+  String get customerDiscoveryPromptPainTitle;
+
+  /// No description provided for @customerDiscoveryPromptPainHint.
+  ///
+  /// In en, this message translates to:
+  /// **'What problem came up, and how painful is it today?'**
+  String get customerDiscoveryPromptPainHint;
+
+  /// No description provided for @customerDiscoveryPromptSubjectTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Who you spoke with'**
+  String get customerDiscoveryPromptSubjectTitle;
+
+  /// No description provided for @customerDiscoveryPromptSubjectHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Role, segment, or company type of the interviewee.'**
+  String get customerDiscoveryPromptSubjectHint;
+
+  /// No description provided for @customerDiscoveryPromptInsightTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Key insight'**
+  String get customerDiscoveryPromptInsightTitle;
+
+  /// No description provided for @customerDiscoveryPromptInsightHint.
+  ///
+  /// In en, this message translates to:
+  /// **'What surprised you or changed your thinking?'**
+  String get customerDiscoveryPromptInsightHint;
+
+  /// No description provided for @customerDiscoveryPromptNextTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Next interviews'**
+  String get customerDiscoveryPromptNextTitle;
+
+  /// No description provided for @customerDiscoveryPromptNextHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Who else should you talk to, and what will you validate next?'**
+  String get customerDiscoveryPromptNextHint;
+
+  /// No description provided for @investorUpdateGuideTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Investor update guide'**
+  String get investorUpdateGuideTitle;
+
+  /// No description provided for @investorUpdateGuideSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Share progress honestly — we will turn your memo into a crisp update with metrics and asks.'**
+  String get investorUpdateGuideSubtitle;
+
+  /// No description provided for @investorUpdatePromptHighlightsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Highlights'**
+  String get investorUpdatePromptHighlightsTitle;
+
+  /// No description provided for @investorUpdatePromptHighlightsHint.
+  ///
+  /// In en, this message translates to:
+  /// **'What shipped, closed, or moved the needle this period?'**
+  String get investorUpdatePromptHighlightsHint;
+
+  /// No description provided for @investorUpdatePromptMetricsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Metrics'**
+  String get investorUpdatePromptMetricsTitle;
+
+  /// No description provided for @investorUpdatePromptMetricsHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Revenue, users, growth, burn — numbers you can share.'**
+  String get investorUpdatePromptMetricsHint;
+
+  /// No description provided for @investorUpdatePromptProductTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Product'**
+  String get investorUpdatePromptProductTitle;
+
+  /// No description provided for @investorUpdatePromptProductHint.
+  ///
+  /// In en, this message translates to:
+  /// **'What changed in the product or roadmap?'**
+  String get investorUpdatePromptProductHint;
+
+  /// No description provided for @investorUpdatePromptChallengesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Challenges'**
+  String get investorUpdatePromptChallengesTitle;
+
+  /// No description provided for @investorUpdatePromptChallengesHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Blockers, misses, or risks investors should know.'**
+  String get investorUpdatePromptChallengesHint;
+
+  /// No description provided for @investorUpdatePromptAskTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'The ask'**
+  String get investorUpdatePromptAskTitle;
+
+  /// No description provided for @investorUpdatePromptAskHint.
+  ///
+  /// In en, this message translates to:
+  /// **'What help, intro, or decision do you need from investors?'**
+  String get investorUpdatePromptAskHint;
+
+  /// No description provided for @exportPlan.
+  ///
+  /// In en, this message translates to:
+  /// **'Export plan…'**
+  String get exportPlan;
+
+  /// No description provided for @exportPlanSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Copy or share a formatted version of your analysis.'**
+  String get exportPlanSubtitle;
+
+  /// No description provided for @exportOnePager.
+  ///
+  /// In en, this message translates to:
+  /// **'One-pager'**
+  String get exportOnePager;
+
+  /// No description provided for @exportOnePagerHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Markdown summary for docs or Notion.'**
+  String get exportOnePagerHint;
+
+  /// No description provided for @exportPitchBullets.
+  ///
+  /// In en, this message translates to:
+  /// **'Pitch bullets'**
+  String get exportPitchBullets;
+
+  /// No description provided for @exportPitchBulletsHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Short bullet list for decks or messages.'**
+  String get exportPitchBulletsHint;
+
+  /// No description provided for @exportEmailIntro.
+  ///
+  /// In en, this message translates to:
+  /// **'Email intro'**
+  String get exportEmailIntro;
+
+  /// No description provided for @exportEmailIntroHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Warm intro paragraph you can paste into email.'**
+  String get exportEmailIntroHint;
+
+  /// No description provided for @versionHistory.
+  ///
+  /// In en, this message translates to:
+  /// **'Version history'**
+  String get versionHistory;
+
+  /// No description provided for @noVersionHistory.
+  ///
+  /// In en, this message translates to:
+  /// **'No version history yet'**
+  String get noVersionHistory;
+
+  /// No description provided for @versionRound.
+  ///
+  /// In en, this message translates to:
+  /// **'Round {round}'**
+  String versionRound(int round);
+
+  /// No description provided for @versionCurrent.
+  ///
+  /// In en, this message translates to:
+  /// **'CURRENT'**
+  String get versionCurrent;
+
+  /// No description provided for @versionRestoredFromRound.
+  ///
+  /// In en, this message translates to:
+  /// **'Restored from round {round}'**
+  String versionRestoredFromRound(int round);
+
+  /// No description provided for @versionChangesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'What changed'**
+  String get versionChangesTitle;
+
+  /// No description provided for @versionFieldUpdated.
+  ///
+  /// In en, this message translates to:
+  /// **'Updated'**
+  String get versionFieldUpdated;
+
+  /// No description provided for @versionFieldNew.
+  ///
+  /// In en, this message translates to:
+  /// **'New'**
+  String get versionFieldNew;
+
+  /// No description provided for @versionFieldBefore.
+  ///
+  /// In en, this message translates to:
+  /// **'Before'**
+  String get versionFieldBefore;
+
+  /// No description provided for @versionFieldAfter.
+  ///
+  /// In en, this message translates to:
+  /// **'After'**
+  String get versionFieldAfter;
+
+  /// No description provided for @versionRestoreTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Restore version?'**
+  String get versionRestoreTitle;
+
+  /// No description provided for @versionRestoreMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'This will create a new version based on round {round}. No history will be lost.'**
+  String versionRestoreMessage(int round);
+
+  /// No description provided for @restore.
+  ///
+  /// In en, this message translates to:
+  /// **'Restore'**
+  String get restore;
+
+  /// No description provided for @makeCurrentVersion.
+  ///
+  /// In en, this message translates to:
+  /// **'Make this the current version'**
+  String get makeCurrentVersion;
+
+  /// No description provided for @restoring.
+  ///
+  /// In en, this message translates to:
+  /// **'Restoring…'**
+  String get restoring;
+
+  /// No description provided for @planFieldStartupTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'STARTUP TITLE'**
+  String get planFieldStartupTitle;
+
+  /// No description provided for @planFieldSummary.
+  ///
+  /// In en, this message translates to:
+  /// **'SUMMARY'**
+  String get planFieldSummary;
 }
 
 class _AppLocalizationsDelegate

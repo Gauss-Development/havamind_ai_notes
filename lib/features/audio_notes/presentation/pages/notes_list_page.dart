@@ -8,7 +8,7 @@ import 'package:sample/core/widgets/obsidian_note_list_tile.dart';
 import 'package:sample/features/audio_notes/domain/entities/audio_note.dart';
 import 'package:sample/features/audio_notes/presentation/bloc/audio_notes_list_bloc.dart';
 import 'package:sample/features/audio_notes/presentation/pages/note_detail_page.dart';
-import 'package:sample/features/audio_notes/presentation/pages/recording_page.dart';
+import 'package:sample/features/audio_notes/presentation/utils/recording_flow.dart';
 import 'package:sample/features/audio_notes/presentation/utils/audio_note_status_ui.dart';
 import 'package:sample/features/audio_notes/presentation/widgets/audio_note_duration_formatter.dart';
 import 'package:sample/features/auth/domain/entities/user_profile.dart';
@@ -296,12 +296,7 @@ class _NotesListViewState extends State<_NotesListView> {
   }
 
   Future<void> _openRecording(BuildContext context) async {
-    final added = await Navigator.of(context).push<bool>(
-      MaterialPageRoute(
-        fullscreenDialog: true,
-        builder: (_) => const RecordingPage(),
-      ),
-    );
+    final added = await openRecordingFlow(context);
     if (context.mounted && added == true) {
       context.read<AudioNotesListBloc>().add(
         const AudioNotesListEvent.refreshed(),

@@ -5,30 +5,39 @@ import 'package:sample/core/theme/app_spacing.dart';
 import 'package:sample/core/theme/obsidian_ui_tokens.dart';
 import 'package:sample/core/widgets/obsidian_gradient_button.dart';
 import 'package:sample/features/audio_notes/domain/entities/plan_version.dart';
+import 'package:sample/features/audio_notes/domain/utils/plan_snapshot_diff.dart';
 import 'package:sample/features/audio_notes/presentation/bloc/plan_version_history_cubit.dart';
+import 'package:sample/features/audio_notes/presentation/utils/plan_snapshot_field_labels.dart';
+import 'package:sample/l10n/generated/app_localizations.dart';
 
 class PlanVersionPreviewPage extends StatelessWidget {
-  const PlanVersionPreviewPage({super.key, required this.version});
+  const PlanVersionPreviewPage({
+    super.key,
+    required this.version,
+    this.previousVersion,
+  });
 
   final PlanVersion version;
+  final PlanVersion? previousVersion;
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
     final t = context.obsidian;
     final dateFmt = DateFormat('MMM d, yyyy • h:mm a');
     final snapshot = version.planSnapshot;
 
     final sections = [
-      _Section('STARTUP TITLE', snapshot['startup_title']),
-      _Section('SUMMARY', snapshot['short_summary']),
-      _Section('THE PROBLEM', snapshot['problem']),
-      _Section('THE SOLUTION', snapshot['solution']),
-      _Section('TARGET AUDIENCE', snapshot['target_audience']),
-      _Section('BUSINESS MODEL', snapshot['business_model']),
-      _Section('KEY METRICS', snapshot['key_metrics']),
-      _Section('ADVANTAGES', snapshot['advantages']),
-      _Section('RISKS & GAPS', snapshot['risks_gaps']),
+      _Section(l10n.planFieldStartupTitle, snapshot['startup_title']),
+      _Section(l10n.planFieldSummary, snapshot['short_summary']),
+      _Section(l10n.theProblem, snapshot['problem']),
+      _Section(l10n.theSolution, snapshot['solution']),
+      _Section(l10n.targetAudience, snapshot['target_audience']),
+      _Section(l10n.businessModel, snapshot['business_model']),
+      _Section(l10n.keyMetrics, snapshot['key_metrics']),
+      _Section(l10n.advantages, snapshot['advantages']),
+      _Section(l10n.risksAndGaps, snapshot['risks_gaps']),
     ];
 
     final marketScore =
@@ -36,10 +45,15 @@ class PlanVersionPreviewPage extends StatelessWidget {
     final techScore =
         (snapshot['technical_complexity_score'] as num?)?.toInt() ?? 0;
 
+    final fieldDiff = diffPlanSnapshots(
+      previous: previousVersion?.planSnapshot,
+      current: snapshot,
+    );
+
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          'Round ${version.roundNumber}',
+          l10n.versionRound(version.roundNumber),
           style: theme.textTheme.titleMedium,
         ),
         centerTitle: true,
@@ -63,7 +77,6 @@ class PlanVersionPreviewPage extends StatelessWidget {
             AppSpacing.xxxl,
           ),
           children: [
-            // Header
             Text(
               dateFmt.format(version.createdAt.toLocal()),
               style: theme.textTheme.bodySmall?.copyWith(
@@ -98,15 +111,17 @@ class PlanVersionPreviewPage extends StatelessWidget {
                 ),
               ),
             ],
-
-            // Scores
+            if (!fieldDiff.isEmpty) ...[
+              const SizedBox(height: AppSpacing.lg),
+              _SnapshotDiffSection(diff: fieldDiff, tokens: t),
+            ],
             if (marketScore > 0 || techScore > 0) ...[
               const SizedBox(height: AppSpacing.lg),
               Row(
                 children: [
                   Expanded(
                     child: _ScoreChip(
-                      label: 'Market',
+                      label: l10n.marketPotential,
                       value: marketScore,
                       color: t.primary,
                       tokens: t,
@@ -115,7 +130,7 @@ class PlanVersionPreviewPage extends StatelessWidget {
                   const SizedBox(width: AppSpacing.md),
                   Expanded(
                     child: _ScoreChip(
-                      label: 'Complexity',
+                      label: l10n.technicalComplexity,
                       value: techScore,
                       color: t.secondary,
                       tokens: t,
@@ -124,8 +139,6 @@ class PlanVersionPreviewPage extends StatelessWidget {
                 ],
               ),
             ],
-
-            // Plan sections
             const SizedBox(height: AppSpacing.lg),
             for (final section in sections)
               if (section.value != null && section.value!.isNotEmpty) ...[
@@ -136,11 +149,8 @@ class PlanVersionPreviewPage extends StatelessWidget {
                 ),
                 const SizedBox(height: AppSpacing.sm),
               ],
-
-            // Restore button
             const SizedBox(height: AppSpacing.xl),
-            BlocBuilder<PlanVersionHistoryCubit,
-                PlanVersionHistoryState>(
+            BlocBuilder<PlanVersionHistoryCubit, PlanVersionHistoryState>(
               builder: (context, state) {
                 return ObsidianGradientButton(
                   onPressed: state.isRestoring
@@ -148,8 +158,8 @@ class PlanVersionPreviewPage extends StatelessWidget {
                       : () => _confirmRestore(context),
                   icon: Icons.restore_rounded,
                   label: state.isRestoring
-                      ? 'Restoring...'
-                      : 'Make this the current version',
+                      ? l10n.restoring
+                      : l10n.makeCurrentVersion,
                 );
               },
             ),
@@ -160,24 +170,24 @@ class PlanVersionPreviewPage extends StatelessWidget {
   }
 
   Future<void> _confirmRestore(BuildContext context) async {
+    final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
     final ok = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: Text('Restore version?', style: theme.textTheme.titleLarge),
+        title: Text(l10n.versionRestoreTitle, style: theme.textTheme.titleLarge),
         content: Text(
-          'This will create a new version based on round ${version.roundNumber}. '
-          'No history will be lost.',
+          l10n.versionRestoreMessage(version.roundNumber),
           style: theme.textTheme.bodyMedium,
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx, false),
-            child: const Text('Cancel'),
+            child: Text(l10n.cancel),
           ),
           FilledButton(
             onPressed: () => Navigator.pop(ctx, true),
-            child: const Text('Restore'),
+            child: Text(l10n.restore),
           ),
         ],
       ),
@@ -192,6 +202,105 @@ class _Section {
   const _Section(this.label, this.value);
   final String label;
   final String? value;
+}
+
+class _SnapshotDiffSection extends StatelessWidget {
+  const _SnapshotDiffSection({
+    required this.diff,
+    required this.tokens,
+  });
+
+  final PlanSnapshotDiff diff;
+  final ObsidianUiTokens tokens;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    final theme = Theme.of(context);
+
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(AppSpacing.base),
+      decoration: BoxDecoration(
+        color: tokens.surfaceContainer,
+        borderRadius: BorderRadius.circular(ObsidianUiTokens.radiusMd),
+        border: Border.all(color: tokens.ghostBorder(0.12)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            l10n.versionChangesTitle,
+            style: theme.textTheme.titleSmall?.copyWith(
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+          const SizedBox(height: AppSpacing.sm),
+          for (final change in diff.changes) ...[
+            _FieldChangeRow(change: change, tokens: tokens),
+            if (change != diff.changes.last)
+              const SizedBox(height: AppSpacing.sm),
+          ],
+        ],
+      ),
+    );
+  }
+}
+
+class _FieldChangeRow extends StatelessWidget {
+  const _FieldChangeRow({
+    required this.change,
+    required this.tokens,
+  });
+
+  final PlanSnapshotFieldChange change;
+  final ObsidianUiTokens tokens;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    final theme = Theme.of(context);
+    final label = planSnapshotFieldLabel(l10n, change.fieldKey);
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          label,
+          style: theme.textTheme.labelSmall?.copyWith(
+            color: tokens.primary,
+            fontWeight: FontWeight.w700,
+          ),
+        ),
+        const SizedBox(height: AppSpacing.xs),
+        if (change.isNew)
+          Text(
+            '${l10n.versionFieldNew}: ${change.after}',
+            style: theme.textTheme.bodySmall?.copyWith(
+              color: tokens.onSurfaceVariant,
+              height: 1.4,
+            ),
+          )
+        else ...[
+          Text(
+            '${l10n.versionFieldBefore}: ${change.before}',
+            style: theme.textTheme.bodySmall?.copyWith(
+              color: tokens.onSurfaceVariant.withValues(alpha: 0.7),
+              height: 1.4,
+            ),
+          ),
+          const SizedBox(height: 2),
+          Text(
+            '${l10n.versionFieldAfter}: ${change.after}',
+            style: theme.textTheme.bodySmall?.copyWith(
+              color: tokens.onSurface,
+              height: 1.4,
+            ),
+          ),
+        ],
+      ],
+    );
+  }
 }
 
 class _ReadOnlySection extends StatelessWidget {

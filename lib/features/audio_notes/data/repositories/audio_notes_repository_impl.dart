@@ -12,6 +12,7 @@ import 'package:sample/features/audio_notes/data/datasources/audio_notes_remote_
 import 'package:sample/features/audio_notes/data/datasources/audio_storage_data_source.dart';
 import 'package:sample/features/audio_notes/domain/entities/audio_note.dart';
 import 'package:sample/features/audio_notes/domain/entities/audio_note_status.dart';
+import 'package:sample/features/audio_notes/domain/entities/note_search_hit.dart';
 import 'package:sample/features/audio_notes/domain/entities/audio_note_transcript.dart';
 import 'package:sample/features/audio_notes/domain/entities/plan_version.dart';
 import 'package:sample/features/audio_notes/domain/entities/startup_analysis.dart';
@@ -83,6 +84,21 @@ class AudioNotesRepositoryImpl implements AudioNotesRepository {
       final list = await _remote.searchByTitle(query: query, limit: limit);
       return Right(list);
     } catch (e) {
+      await _maybeHandleAuthError(e);
+      return Left(UnexpectedFailure(e.toString()));
+    }
+  }
+
+  @override
+  Future<Either<Failure, List<NoteSearchHit>>> searchNotes({
+    required String query,
+    int limit = 20,
+  }) async {
+    try {
+      final hits = await _remote.searchNotes(query: query, limit: limit);
+      return Right(hits);
+    } catch (e) {
+      await _maybeHandleAuthError(e);
       return Left(UnexpectedFailure(e.toString()));
     }
   }
@@ -93,6 +109,7 @@ class AudioNotesRepositoryImpl implements AudioNotesRepository {
       final count = await _remote.countForCurrentUser();
       return Right(count);
     } catch (e) {
+      await _maybeHandleAuthError(e);
       return Left(UnexpectedFailure(e.toString()));
     }
   }
@@ -118,10 +135,12 @@ class AudioNotesRepositoryImpl implements AudioNotesRepository {
   Future<Either<Failure, AudioNote>> saveRecording({
     required String localFilePath,
     required int durationSeconds,
+    required String templateId,
   }) async {
     return processLocalAudioNote(
       localFilePath: localFilePath,
       durationSeconds: durationSeconds,
+      templateId: templateId,
     );
   }
 
@@ -129,6 +148,7 @@ class AudioNotesRepositoryImpl implements AudioNotesRepository {
   Future<Either<Failure, AudioNote>> processLocalAudioNote({
     required String localFilePath,
     required int durationSeconds,
+    required String templateId,
   }) async {
     final user = _client.auth.currentUser;
     if (user == null) {
@@ -156,6 +176,7 @@ class AudioNotesRepositoryImpl implements AudioNotesRepository {
         title: _defaultTitle(),
         audioPath: storagePath,
         durationSeconds: durationSeconds,
+        templateId: templateId,
       );
       rowInserted = true;
 
@@ -371,6 +392,7 @@ class AudioNotesRepositoryImpl implements AudioNotesRepository {
       final total = await _remote.getTotalUsageSeconds(from: from, to: to);
       return Right(total);
     } catch (e) {
+      await _maybeHandleAuthError(e);
       return Left(UnexpectedFailure(e.toString()));
     }
   }
@@ -383,6 +405,7 @@ class AudioNotesRepositoryImpl implements AudioNotesRepository {
       final versions = await _remote.listPlanVersions(planId);
       return Right(versions);
     } catch (e) {
+      await _maybeHandleAuthError(e);
       return Left(UnexpectedFailure(e.toString()));
     }
   }
@@ -395,6 +418,7 @@ class AudioNotesRepositoryImpl implements AudioNotesRepository {
       final count = await _remote.countRefinementRoundsForNote(audioNoteId);
       return Right(count);
     } catch (e) {
+      await _maybeHandleAuthError(e);
       return Left(UnexpectedFailure(e.toString()));
     }
   }
@@ -407,6 +431,7 @@ class AudioNotesRepositoryImpl implements AudioNotesRepository {
       final result = await _remote.restorePlanVersion(versionId);
       return Right(result);
     } catch (e) {
+      await _maybeHandleAuthError(e);
       return Left(ServerFailure(_userFacingError(e)));
     }
   }

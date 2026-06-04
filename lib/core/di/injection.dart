@@ -27,11 +27,13 @@ import 'package:sample/features/audio_notes/domain/usecases/process_local_audio_
 import 'package:sample/features/audio_notes/domain/usecases/request_processing_usecase.dart';
 import 'package:sample/features/audio_notes/domain/usecases/save_audio_recording_usecase.dart';
 import 'package:sample/features/audio_notes/domain/usecases/search_notes_by_title_usecase.dart';
+import 'package:sample/features/audio_notes/domain/usecases/search_notes_usecase.dart';
 import 'package:sample/features/audio_notes/domain/usecases/update_analysis_field_usecase.dart';
 import 'package:sample/features/audio_notes/domain/usecases/update_note_title_usecase.dart';
 import 'package:sample/features/audio_notes/domain/usecases/watch_audio_note_usecase.dart';
 import 'package:sample/features/audio_notes/presentation/bloc/audio_notes_list_bloc.dart';
 import 'package:sample/features/audio_notes/presentation/cubit/notes_count_cubit.dart';
+import 'package:sample/features/audio_notes/presentation/cubit/plan_readiness_home_cubit.dart';
 import 'package:sample/features/audio_notes/presentation/bloc/note_detail_bloc.dart';
 import 'package:sample/features/audio_notes/presentation/bloc/plan_refinement_cubit.dart';
 import 'package:sample/features/audio_notes/presentation/bloc/plan_version_history_cubit.dart';
@@ -116,6 +118,7 @@ Future<void> configureDependencies() async {
   getIt.registerLazySingleton(() => AudioRecordingService());
   getIt.registerFactory(() => ListAudioNotesUseCase(getIt()));
   getIt.registerFactory(() => SearchNotesByTitleUseCase(getIt()));
+  getIt.registerFactory(() => SearchNotesUseCase(getIt()));
   getIt.registerFactory(() => CountAudioNotesUseCase(getIt()));
   getIt.registerFactory(() => GetAudioNoteUseCase(getIt()));
   getIt.registerFactory(() => SaveAudioRecordingUseCase(getIt()));
@@ -131,6 +134,9 @@ Future<void> configureDependencies() async {
 
   getIt.registerFactory(() => AudioNotesListBloc(listAudioNotes: getIt()));
   getIt.registerFactory(() => NotesCountCubit(countNotes: getIt()));
+  getIt.registerFactory(
+    () => PlanReadinessHomeCubit(getAnalysis: getIt()),
+  );
   getIt.registerFactory(
     () => RecordingBloc(
       recordingService: getIt(),

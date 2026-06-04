@@ -245,6 +245,7 @@ class NoteDetailBloc extends Bloc<NoteDetailEvent, NoteDetailState> {
               createdAt: note.createdAt,
               updatedAt: note.updatedAt,
               lastProcessingError: null,
+              templateId: note.templateId,
             ),
             transcript,
             analysis,
@@ -306,6 +307,7 @@ class NoteDetailBloc extends Bloc<NoteDetailEvent, NoteDetailState> {
               createdAt: note.createdAt,
               updatedAt: note.updatedAt,
               lastProcessingError: note.lastProcessingError,
+              templateId: note.templateId,
             );
             emit(
               _buildLoaded(

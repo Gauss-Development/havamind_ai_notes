@@ -17,10 +17,16 @@ import 'package:sample/features/audio_notes/presentation/utils/audio_note_status
 import 'package:sample/features/audio_notes/presentation/pages/plan_version_history_page.dart';
 import 'package:sample/features/audio_notes/presentation/pages/refinement_recording_page.dart';
 import 'package:sample/features/audio_notes/presentation/utils/note_share_formatter.dart';
+import 'package:sample/features/audio_notes/presentation/utils/plan_export_formatter.dart';
+import 'package:sample/features/audio_notes/presentation/widgets/plan_export_sheet.dart';
 import 'package:sample/features/audio_notes/presentation/widgets/audio_note_duration_formatter.dart';
 import 'package:sample/features/favorites/presentation/widgets/favorite_button.dart';
 import 'package:sample/features/tags/presentation/bloc/tags_cubit.dart';
 import 'package:sample/features/tags/presentation/widgets/tag_chips.dart';
+import 'package:sample/features/audio_notes/domain/utils/analysis_plan_gaps.dart';
+import 'package:sample/features/audio_notes/presentation/widgets/note_detail/plan_gaps_card.dart';
+import 'package:sample/features/audio_notes/presentation/widgets/plan_readiness_indicator.dart';
+import 'package:sample/l10n/generated/app_localizations.dart';
 import 'package:share_plus/share_plus.dart';
 
 class NoteDetailPage extends StatelessWidget {
@@ -502,6 +508,7 @@ class _SummaryTabState extends State<_SummaryTab> {
   Widget build(BuildContext context) {
     final t = context.obsidian;
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context)!;
     final dateFmt = _dateFmt;
 
     return ListView(
@@ -558,7 +565,7 @@ class _SummaryTabState extends State<_SummaryTab> {
         if (widget.localAudioExists) ...[
           const SizedBox(height: AppSpacing.sm),
           Text(
-            'Local audio file saved on device',
+            l10n.localAudioSaved,
             style: theme.textTheme.bodySmall,
           ),
         ],
@@ -567,7 +574,7 @@ class _SummaryTabState extends State<_SummaryTab> {
           GestureDetector(
             onTap: () => _editField(
               context,
-              title: 'Edit summary',
+              title: l10n.editSummary,
               value: widget.analysis!.shortSummary,
               field: StartupAnalysisEditableField.shortSummary,
             ),
@@ -582,15 +589,40 @@ class _SummaryTabState extends State<_SummaryTab> {
         ],
         if (widget.analysis != null) ...[
           const SizedBox(height: AppSpacing.xl),
+          PlanReadinessIndicator(
+            readiness: computePlanReadiness(widget.analysis!),
+          ),
+          const SizedBox(height: AppSpacing.xl),
           _VentureIntelligence(
             marketPotential: widget.analysis!.marketPotentialScore ?? 0,
             technicalComplexity: widget.analysis!.technicalComplexityScore ?? 0,
           ),
           const SizedBox(height: AppSpacing.xl),
+          Builder(
+            builder: (context) {
+              final gaps = findAnalysisPlanGaps(widget.analysis!);
+              return Column(
+                children: [
+                  if (gaps.isNotEmpty) ...[
+                    PlanGapsCard(
+                      gaps: gaps,
+                      onAnswerByVoice: (field, question) =>
+                          _openRefinementRecording(
+                        context,
+                        followUpQuestionId: field.name,
+                        followUpQuestionText: question,
+                      ),
+                    ),
+                    const SizedBox(height: AppSpacing.base),
+                  ],
+                ],
+              );
+            },
+          ),
           ObsidianGradientButton(
             onPressed: () => _openRefinementRecording(context),
             icon: Icons.mic_rounded,
-            label: 'Continue recording',
+            label: l10n.continueRecording,
           ),
         ],
       ],
@@ -946,6 +978,7 @@ class _FollowUpQuestionsCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final t = context.obsidian;
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context)!;
 
     return Container(
       decoration: BoxDecoration(
@@ -962,7 +995,7 @@ class _FollowUpQuestionsCard extends StatelessWidget {
               Icon(Icons.help_outline_rounded, size: 18, color: t.primary),
               const SizedBox(width: AppSpacing.sm),
               Text(
-                'FOLLOW-UP QUESTIONS',
+                l10n.followUpQuestions,
                 style: theme.textTheme.labelSmall?.copyWith(
                   color: t.primary,
                 ),
@@ -999,7 +1032,7 @@ class _FollowUpQuestionsCard extends StatelessWidget {
                       size: 18,
                       color: t.primary,
                     ),
-                    tooltip: 'Answer by voice',
+                    tooltip: l10n.answerByVoice,
                   ),
               ],
             ),
@@ -1380,28 +1413,46 @@ class _ShareMenuButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    final canExportPlan = analysis != null &&
+        PlanExportFormatter.hasExportableContent(analysis!);
+
     return PopupMenuButton<String>(
       icon: const Icon(Icons.ios_share_rounded),
-      tooltip: 'Share',
+      tooltip: l10n.share,
       onSelected: (value) async {
         switch (value) {
+          case 'export_plan':
+            if (analysis != null) {
+              await showPlanExportSheet(context: context, analysis: analysis!);
+            }
           case 'copy':
             await Clipboard.setData(ClipboardData(text: _formatted));
             if (context.mounted) {
               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Copied to clipboard')),
+                SnackBar(content: Text(l10n.copiedToClipboard)),
               );
             }
           case 'share':
             await SharePlus.instance.share(ShareParams(text: _formatted));
         }
       },
-      itemBuilder: (_) => const [
+      itemBuilder: (_) => [
+        if (canExportPlan)
+          PopupMenuItem(
+            value: 'export_plan',
+            child: ListTile(
+              leading: const Icon(Icons.description_outlined),
+              title: Text(l10n.exportPlan),
+              dense: true,
+              contentPadding: EdgeInsets.zero,
+            ),
+          ),
         PopupMenuItem(
           value: 'copy',
           child: ListTile(
-            leading: Icon(Icons.copy_rounded),
-            title: Text('Copy to clipboard'),
+            leading: const Icon(Icons.copy_rounded),
+            title: Text(l10n.copyToClipboard),
             dense: true,
             contentPadding: EdgeInsets.zero,
           ),
@@ -1409,8 +1460,8 @@ class _ShareMenuButton extends StatelessWidget {
         PopupMenuItem(
           value: 'share',
           child: ListTile(
-            leading: Icon(Icons.share_rounded),
-            title: Text('Share'),
+            leading: const Icon(Icons.share_rounded),
+            title: Text(l10n.share),
             dense: true,
             contentPadding: EdgeInsets.zero,
           ),

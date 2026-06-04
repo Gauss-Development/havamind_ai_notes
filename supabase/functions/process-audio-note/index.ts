@@ -34,6 +34,61 @@ type AnalysisJson = {
   technical_complexity_score: number;
 };
 
+const ANALYSIS_JSON_SCHEMA = `{
+  "summary": "",
+  "startup_title": "",
+  "problem": "",
+  "solution": "",
+  "target_audience": "",
+  "business_model": "",
+  "key_metrics": "",
+  "advantages": "",
+  "risks_gaps": "",
+  "follow_up_questions": ["", ""],
+  "market_potential_score": 0,
+  "technical_complexity_score": 0
+}`;
+
+const ANALYSIS_JSON_RULES = `Rules:
+- if data is missing, use "not specified" (except startup_title — see below)
+- startup_title: a short, human-readable headline for this note (same language as the transcription, roughly 6–12 words). Describe the concrete idea or topic. Never use "not specified" here unless the transcription truly has no topic at all.
+- follow_up_questions is always an array of strings (can be empty)
+- market_potential_score — integer 0-100, market potential assessment
+- technical_complexity_score — integer 0-100, technical complexity assessment
+- no markdown, only JSON`;
+
+const TEMPLATE_ANALYST_INTROS: Record<string, string> = {
+  founder_pitch:
+    "You are a startup business analyst reviewing a founder's spoken pitch memo.",
+  customer_discovery:
+    "You are a startup business analyst reviewing a customer discovery interview memo. Emphasize user pain, interview insights, segment clarity, and validation next steps. Map spoken content into the same structured fields (problem = user pain, solution = proposed value, target_audience = interview segment, key_metrics = signals or quotes, advantages = differentiated insight, risks_gaps = open questions).",
+  investor_update:
+    "You are a startup business analyst reviewing a founder's investor update memo. Emphasize progress, metrics, product changes, challenges, and the explicit ask. Map spoken content into the same structured fields (problem = context or market, solution = product progress, key_metrics = KPIs mentioned, risks_gaps = blockers, follow_up_questions = investor follow-ups).",
+};
+
+function normalizeTemplateId(raw: unknown): string {
+  if (typeof raw !== "string") return "founder_pitch";
+  const id = raw.trim();
+  if (id in TEMPLATE_ANALYST_INTROS) return id;
+  return "founder_pitch";
+}
+
+function buildAnalysisPrompt(templateId: string, transcriptText: string): string {
+  const intro =
+    TEMPLATE_ANALYST_INTROS[normalizeTemplateId(templateId)] ??
+    TEMPLATE_ANALYST_INTROS.founder_pitch;
+
+  return `${intro}
+
+Based on the transcription, return strictly JSON with this structure:
+${ANALYSIS_JSON_SCHEMA}
+
+${ANALYSIS_JSON_RULES}
+
+Transcription:
+${transcriptText}`;
+}
+
 function extractTranscriptText(trJson: unknown): string {
   if (trJson && typeof trJson === "object" && "text" in trJson) {
     const t = (trJson as { text?: unknown }).text;
@@ -130,7 +185,7 @@ Deno.serve(async (req: Request) => {
 
   const { data: note, error: noteErr } = await supabase
     .from("audio_notes")
-    .select("id, user_id, audio_path, status, duration_seconds")
+    .select("id, user_id, audio_path, status, duration_seconds, template_id")
     .eq("id", audioNoteId)
     .maybeSingle();
 
@@ -283,35 +338,10 @@ Deno.serve(async (req: Request) => {
       .eq("id", audioNoteId);
     if (st2Err) throw new Error(st2Err.message);
 
-    const analysisPrompt =
-      `You are a startup business analyst.
-
-Based on the transcription, return strictly JSON with this structure:
-{
-  "summary": "",
-  "startup_title": "",
-  "problem": "",
-  "solution": "",
-  "target_audience": "",
-  "business_model": "",
-  "key_metrics": "",
-  "advantages": "",
-  "risks_gaps": "",
-  "follow_up_questions": ["", ""],
-  "market_potential_score": 0,
-  "technical_complexity_score": 0
-}
-
-Rules:
-- if data is missing, use "not specified" (except startup_title — see below)
-- startup_title: a short, human-readable headline for this note (same language as the transcription, roughly 6–12 words). Describe the concrete idea or topic (e.g. a startup angle, product, or plan). Never use "not specified" here unless the transcription truly has no topic at all.
-- follow_up_questions is always an array of strings (can be empty)
-- market_potential_score — integer 0-100, market potential assessment
-- technical_complexity_score — integer 0-100, technical complexity assessment
-- no markdown, only JSON
-
-Transcription:
-${transcriptText}`;
+    const analysisPrompt = buildAnalysisPrompt(
+      note.template_id,
+      transcriptText,
+    );
 
     const chatRes = await fetch("https://api.openai.com/v1/chat/completions", {
       method: "POST",
