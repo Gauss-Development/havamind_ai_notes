@@ -82,44 +82,44 @@ class ObsidianUiTokens extends ThemeExtension<ObsidianUiTokens> {
   // ── Elevation presets ──────────────────────────────────────────────────
   /// 1dp — subtle separation (chip on card, list dividers).
   List<BoxShadow> get elevationSm => [
-        BoxShadow(
-          color: primary.withValues(alpha: 0.08),
-          blurRadius: 2,
-          offset: const Offset(0, 1),
-        ),
-      ];
+    BoxShadow(
+      color: primary.withValues(alpha: 0.08),
+      blurRadius: 2,
+      offset: const Offset(0, 1),
+    ),
+  ];
 
   /// 4dp — cards lifted off scroll.
   List<BoxShadow> get elevationMd => [
-        BoxShadow(
-          color: primary.withValues(alpha: 0.12),
-          blurRadius: 12,
-          offset: const Offset(0, 4),
-        ),
-      ];
+    BoxShadow(
+      color: primary.withValues(alpha: 0.12),
+      blurRadius: 12,
+      offset: const Offset(0, 4),
+    ),
+  ];
 
   /// 12dp — sheets, prominent floating menus, with soft brand glow.
   List<BoxShadow> get elevationLg => [
-        const BoxShadow(
-          color: Color(0x2E000000),
-          blurRadius: 32,
-          offset: Offset(0, 12),
-        ),
-        BoxShadow(
-          color: primary.withValues(alpha: 0.20),
-          blurRadius: 24,
-          offset: Offset.zero,
-        ),
-      ];
+    BoxShadow(
+      color: primary.withValues(alpha: 0.14),
+      blurRadius: 32,
+      offset: const Offset(0, 12),
+    ),
+    BoxShadow(
+      color: primary.withValues(alpha: 0.20),
+      blurRadius: 24,
+      offset: Offset.zero,
+    ),
+  ];
 
   /// Brand glow — primary CTA pressed/active state.
   List<BoxShadow> get vibrantGlow => [
-        BoxShadow(
-          color: primary.withValues(alpha: 0.32),
-          blurRadius: 24,
-          offset: const Offset(0, 8),
-        ),
-      ];
+    BoxShadow(
+      color: primary.withValues(alpha: 0.32),
+      blurRadius: 24,
+      offset: const Offset(0, 8),
+    ),
+  ];
 
   /// Subtle ambient shadow for floating UI (nav bar, elevated menus).
   ///
@@ -166,11 +166,7 @@ class ObsidianUiTokens extends ThemeExtension<ObsidianUiTokens> {
     heroBackdropGradient: RadialGradient(
       center: Alignment(-0.4, -0.6),
       radius: 1.2,
-      colors: [
-        Color(0x66818CF8),
-        Color(0x33C084FC),
-        Color(0x0022D3EE),
-      ],
+      colors: [Color(0x66818CF8), Color(0x33C084FC), Color(0x0022D3EE)],
       stops: [0.0, 0.55, 1.0],
     ),
   );
@@ -204,11 +200,7 @@ class ObsidianUiTokens extends ThemeExtension<ObsidianUiTokens> {
     heroBackdropGradient: RadialGradient(
       center: Alignment(-0.4, -0.6),
       radius: 1.2,
-      colors: [
-        Color(0x33818CF8),
-        Color(0x1FC084FC),
-        Color(0x0022D3EE),
-      ],
+      colors: [Color(0x33818CF8), Color(0x1FC084FC), Color(0x0022D3EE)],
       stops: [0.0, 0.55, 1.0],
     ),
   );
@@ -300,10 +292,16 @@ class ObsidianUiTokens extends ThemeExtension<ObsidianUiTokens> {
       warning: Color.lerp(warning, other.warning, t)!,
       outlineVariant: Color.lerp(outlineVariant, other.outlineVariant, t)!,
       onPrimaryButton: Color.lerp(onPrimaryButton, other.onPrimaryButton, t)!,
-      primaryGradient:
-          LinearGradient.lerp(primaryGradient, other.primaryGradient, t)!,
-      accentGradient:
-          LinearGradient.lerp(accentGradient, other.accentGradient, t)!,
+      primaryGradient: LinearGradient.lerp(
+        primaryGradient,
+        other.primaryGradient,
+        t,
+      )!,
+      accentGradient: LinearGradient.lerp(
+        accentGradient,
+        other.accentGradient,
+        t,
+      )!,
       heroBackdropGradient: RadialGradient.lerp(
         heroBackdropGradient,
         other.heroBackdropGradient,
@@ -321,11 +319,17 @@ extension ObsidianUiTokensContext on BuildContext {
 /// Height of the dashboard bottom bar content (excluding safe area).
 const double kObsidianNavBarHeight = 64;
 
-/// Extra space so FABs clear the floating nav + home indicator.
-double obsidianFabBottomPadding(BuildContext context) {
-  final safe = MediaQuery.paddingOf(context).bottom;
-  return kObsidianNavBarHeight + safe + 12;
-}
+/// System bottom inset (home indicator / gesture bar).
+double appSystemBottomInset(BuildContext context) =>
+    MediaQuery.paddingOf(context).bottom;
+
+/// Total height reserved above the physical screen bottom for the floating nav.
+double appNavBarTotalHeight(BuildContext context) =>
+    kObsidianNavBarHeight + appSystemBottomInset(context) + 8;
+
+/// Extra space so scroll content and FABs clear the floating nav.
+double obsidianFabBottomPadding(BuildContext context) =>
+    appNavBarTotalHeight(context) + 12;
 
 // ── Forward-looking aliases (Obsidian* → App*) ───────────────────────────
 //

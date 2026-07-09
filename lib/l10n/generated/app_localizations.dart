@@ -110,11 +110,107 @@ abstract class AppLocalizations {
   /// **'Sign in with Google'**
   String get signIn;
 
+  /// No description provided for @signInWithGoogle.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign in with Google'**
+  String get signInWithGoogle;
+
+  /// No description provided for @signInWithApple.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign in with Apple'**
+  String get signInWithApple;
+
+  /// No description provided for @signInWithEmail.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign in'**
+  String get signInWithEmail;
+
+  /// No description provided for @signUp.
+  ///
+  /// In en, this message translates to:
+  /// **'Create account'**
+  String get signUp;
+
   /// No description provided for @signInSubtitle.
   ///
   /// In en, this message translates to:
   /// **'Sign in to save your notes and analysis.'**
   String get signInSubtitle;
+
+  /// No description provided for @email.
+  ///
+  /// In en, this message translates to:
+  /// **'Email'**
+  String get email;
+
+  /// No description provided for @password.
+  ///
+  /// In en, this message translates to:
+  /// **'Password'**
+  String get password;
+
+  /// No description provided for @orContinueWith.
+  ///
+  /// In en, this message translates to:
+  /// **'or continue with'**
+  String get orContinueWith;
+
+  /// No description provided for @checkEmailToConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Check your email to confirm your account, then sign in.'**
+  String get checkEmailToConfirm;
+
+  /// No description provided for @emailRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter your email'**
+  String get emailRequired;
+
+  /// No description provided for @invalidEmail.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a valid email address'**
+  String get invalidEmail;
+
+  /// No description provided for @passwordRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter your password'**
+  String get passwordRequired;
+
+  /// No description provided for @passwordTooShort.
+  ///
+  /// In en, this message translates to:
+  /// **'Password must be at least 6 characters'**
+  String get passwordTooShort;
+
+  /// No description provided for @showPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Show password'**
+  String get showPassword;
+
+  /// No description provided for @hidePassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Hide password'**
+  String get hidePassword;
+
+  /// No description provided for @alreadyHaveAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'Already have an account? Sign in'**
+  String get alreadyHaveAccount;
+
+  /// No description provided for @dontHaveAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'Don\'t have an account? Create one'**
+  String get dontHaveAccount;
 
   /// No description provided for @home.
   ///
@@ -260,6 +356,12 @@ abstract class AppLocalizations {
   /// **'RECORDING'**
   String get recording;
 
+  /// No description provided for @paused.
+  ///
+  /// In en, this message translates to:
+  /// **'PAUSED'**
+  String get paused;
+
   /// No description provided for @cancel.
   ///
   /// In en, this message translates to:
@@ -278,11 +380,83 @@ abstract class AppLocalizations {
   /// **'Cancel recording'**
   String get cancelRecording;
 
+  /// No description provided for @pauseRecording.
+  ///
+  /// In en, this message translates to:
+  /// **'Pause'**
+  String get pauseRecording;
+
+  /// No description provided for @resumeRecording.
+  ///
+  /// In en, this message translates to:
+  /// **'Resume'**
+  String get resumeRecording;
+
+  /// No description provided for @finishRecording.
+  ///
+  /// In en, this message translates to:
+  /// **'Done'**
+  String get finishRecording;
+
+  /// No description provided for @submitForAnalysis.
+  ///
+  /// In en, this message translates to:
+  /// **'Submit for analysis'**
+  String get submitForAnalysis;
+
   /// No description provided for @transcribingAndAnalyzing.
   ///
   /// In en, this message translates to:
   /// **'Transcribing & analyzing...'**
   String get transcribingAndAnalyzing;
+
+  /// No description provided for @answerQuestion.
+  ///
+  /// In en, this message translates to:
+  /// **'Answer question'**
+  String get answerQuestion;
+
+  /// No description provided for @refinePlan.
+  ///
+  /// In en, this message translates to:
+  /// **'Refine plan'**
+  String get refinePlan;
+
+  /// No description provided for @reviewRecording.
+  ///
+  /// In en, this message translates to:
+  /// **'REVIEW RECORDING'**
+  String get reviewRecording;
+
+  /// No description provided for @uploading.
+  ///
+  /// In en, this message translates to:
+  /// **'UPLOADING...'**
+  String get uploading;
+
+  /// No description provided for @refiningYourPlan.
+  ///
+  /// In en, this message translates to:
+  /// **'REFINING YOUR PLAN...'**
+  String get refiningYourPlan;
+
+  /// No description provided for @done.
+  ///
+  /// In en, this message translates to:
+  /// **'DONE'**
+  String get done;
+
+  /// No description provided for @limitReached.
+  ///
+  /// In en, this message translates to:
+  /// **'LIMIT REACHED'**
+  String get limitReached;
+
+  /// No description provided for @refine.
+  ///
+  /// In en, this message translates to:
+  /// **'Refine'**
+  String get refine;
 
   /// No description provided for @maxMinutes.
   ///

@@ -21,6 +21,11 @@ mixin _$AuthEvent {
   TResult when<TResult extends Object?>({
     required TResult Function() started,
     required TResult Function() signInWithGooglePressed,
+    required TResult Function() signInWithApplePressed,
+    required TResult Function(EmailPasswordParams params)
+    signInWithEmailPasswordPressed,
+    required TResult Function(EmailPasswordParams params)
+    signUpWithEmailPasswordPressed,
     required TResult Function() signOutPressed,
     required TResult Function(AuthSnapshot snapshot) snapshotReceived,
   }) => throw _privateConstructorUsedError;
@@ -28,6 +33,11 @@ mixin _$AuthEvent {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? started,
     TResult? Function()? signInWithGooglePressed,
+    TResult? Function()? signInWithApplePressed,
+    TResult? Function(EmailPasswordParams params)?
+    signInWithEmailPasswordPressed,
+    TResult? Function(EmailPasswordParams params)?
+    signUpWithEmailPasswordPressed,
     TResult? Function()? signOutPressed,
     TResult? Function(AuthSnapshot snapshot)? snapshotReceived,
   }) => throw _privateConstructorUsedError;
@@ -35,6 +45,11 @@ mixin _$AuthEvent {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? started,
     TResult Function()? signInWithGooglePressed,
+    TResult Function()? signInWithApplePressed,
+    TResult Function(EmailPasswordParams params)?
+    signInWithEmailPasswordPressed,
+    TResult Function(EmailPasswordParams params)?
+    signUpWithEmailPasswordPressed,
     TResult Function()? signOutPressed,
     TResult Function(AuthSnapshot snapshot)? snapshotReceived,
     required TResult orElse(),
@@ -44,6 +59,12 @@ mixin _$AuthEvent {
     required TResult Function(_Started value) started,
     required TResult Function(_SignInWithGooglePressed value)
     signInWithGooglePressed,
+    required TResult Function(_SignInWithApplePressed value)
+    signInWithApplePressed,
+    required TResult Function(_SignInWithEmailPasswordPressed value)
+    signInWithEmailPasswordPressed,
+    required TResult Function(_SignUpWithEmailPasswordPressed value)
+    signUpWithEmailPasswordPressed,
     required TResult Function(_SignOutPressed value) signOutPressed,
     required TResult Function(_SnapshotReceived value) snapshotReceived,
   }) => throw _privateConstructorUsedError;
@@ -51,6 +72,11 @@ mixin _$AuthEvent {
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(_Started value)? started,
     TResult? Function(_SignInWithGooglePressed value)? signInWithGooglePressed,
+    TResult? Function(_SignInWithApplePressed value)? signInWithApplePressed,
+    TResult? Function(_SignInWithEmailPasswordPressed value)?
+    signInWithEmailPasswordPressed,
+    TResult? Function(_SignUpWithEmailPasswordPressed value)?
+    signUpWithEmailPasswordPressed,
     TResult? Function(_SignOutPressed value)? signOutPressed,
     TResult? Function(_SnapshotReceived value)? snapshotReceived,
   }) => throw _privateConstructorUsedError;
@@ -58,6 +84,11 @@ mixin _$AuthEvent {
   TResult maybeMap<TResult extends Object?>({
     TResult Function(_Started value)? started,
     TResult Function(_SignInWithGooglePressed value)? signInWithGooglePressed,
+    TResult Function(_SignInWithApplePressed value)? signInWithApplePressed,
+    TResult Function(_SignInWithEmailPasswordPressed value)?
+    signInWithEmailPasswordPressed,
+    TResult Function(_SignUpWithEmailPasswordPressed value)?
+    signUpWithEmailPasswordPressed,
     TResult Function(_SignOutPressed value)? signOutPressed,
     TResult Function(_SnapshotReceived value)? snapshotReceived,
     required TResult orElse(),
@@ -129,6 +160,11 @@ class _$StartedImpl implements _Started {
   TResult when<TResult extends Object?>({
     required TResult Function() started,
     required TResult Function() signInWithGooglePressed,
+    required TResult Function() signInWithApplePressed,
+    required TResult Function(EmailPasswordParams params)
+    signInWithEmailPasswordPressed,
+    required TResult Function(EmailPasswordParams params)
+    signUpWithEmailPasswordPressed,
     required TResult Function() signOutPressed,
     required TResult Function(AuthSnapshot snapshot) snapshotReceived,
   }) {
@@ -140,6 +176,11 @@ class _$StartedImpl implements _Started {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? started,
     TResult? Function()? signInWithGooglePressed,
+    TResult? Function()? signInWithApplePressed,
+    TResult? Function(EmailPasswordParams params)?
+    signInWithEmailPasswordPressed,
+    TResult? Function(EmailPasswordParams params)?
+    signUpWithEmailPasswordPressed,
     TResult? Function()? signOutPressed,
     TResult? Function(AuthSnapshot snapshot)? snapshotReceived,
   }) {
@@ -151,6 +192,11 @@ class _$StartedImpl implements _Started {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? started,
     TResult Function()? signInWithGooglePressed,
+    TResult Function()? signInWithApplePressed,
+    TResult Function(EmailPasswordParams params)?
+    signInWithEmailPasswordPressed,
+    TResult Function(EmailPasswordParams params)?
+    signUpWithEmailPasswordPressed,
     TResult Function()? signOutPressed,
     TResult Function(AuthSnapshot snapshot)? snapshotReceived,
     required TResult orElse(),
@@ -167,6 +213,12 @@ class _$StartedImpl implements _Started {
     required TResult Function(_Started value) started,
     required TResult Function(_SignInWithGooglePressed value)
     signInWithGooglePressed,
+    required TResult Function(_SignInWithApplePressed value)
+    signInWithApplePressed,
+    required TResult Function(_SignInWithEmailPasswordPressed value)
+    signInWithEmailPasswordPressed,
+    required TResult Function(_SignUpWithEmailPasswordPressed value)
+    signUpWithEmailPasswordPressed,
     required TResult Function(_SignOutPressed value) signOutPressed,
     required TResult Function(_SnapshotReceived value) snapshotReceived,
   }) {
@@ -178,6 +230,11 @@ class _$StartedImpl implements _Started {
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(_Started value)? started,
     TResult? Function(_SignInWithGooglePressed value)? signInWithGooglePressed,
+    TResult? Function(_SignInWithApplePressed value)? signInWithApplePressed,
+    TResult? Function(_SignInWithEmailPasswordPressed value)?
+    signInWithEmailPasswordPressed,
+    TResult? Function(_SignUpWithEmailPasswordPressed value)?
+    signUpWithEmailPasswordPressed,
     TResult? Function(_SignOutPressed value)? signOutPressed,
     TResult? Function(_SnapshotReceived value)? snapshotReceived,
   }) {
@@ -189,6 +246,11 @@ class _$StartedImpl implements _Started {
   TResult maybeMap<TResult extends Object?>({
     TResult Function(_Started value)? started,
     TResult Function(_SignInWithGooglePressed value)? signInWithGooglePressed,
+    TResult Function(_SignInWithApplePressed value)? signInWithApplePressed,
+    TResult Function(_SignInWithEmailPasswordPressed value)?
+    signInWithEmailPasswordPressed,
+    TResult Function(_SignUpWithEmailPasswordPressed value)?
+    signUpWithEmailPasswordPressed,
     TResult Function(_SignOutPressed value)? signOutPressed,
     TResult Function(_SnapshotReceived value)? snapshotReceived,
     required TResult orElse(),
@@ -250,6 +312,11 @@ class _$SignInWithGooglePressedImpl implements _SignInWithGooglePressed {
   TResult when<TResult extends Object?>({
     required TResult Function() started,
     required TResult Function() signInWithGooglePressed,
+    required TResult Function() signInWithApplePressed,
+    required TResult Function(EmailPasswordParams params)
+    signInWithEmailPasswordPressed,
+    required TResult Function(EmailPasswordParams params)
+    signUpWithEmailPasswordPressed,
     required TResult Function() signOutPressed,
     required TResult Function(AuthSnapshot snapshot) snapshotReceived,
   }) {
@@ -261,6 +328,11 @@ class _$SignInWithGooglePressedImpl implements _SignInWithGooglePressed {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? started,
     TResult? Function()? signInWithGooglePressed,
+    TResult? Function()? signInWithApplePressed,
+    TResult? Function(EmailPasswordParams params)?
+    signInWithEmailPasswordPressed,
+    TResult? Function(EmailPasswordParams params)?
+    signUpWithEmailPasswordPressed,
     TResult? Function()? signOutPressed,
     TResult? Function(AuthSnapshot snapshot)? snapshotReceived,
   }) {
@@ -272,6 +344,11 @@ class _$SignInWithGooglePressedImpl implements _SignInWithGooglePressed {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? started,
     TResult Function()? signInWithGooglePressed,
+    TResult Function()? signInWithApplePressed,
+    TResult Function(EmailPasswordParams params)?
+    signInWithEmailPasswordPressed,
+    TResult Function(EmailPasswordParams params)?
+    signUpWithEmailPasswordPressed,
     TResult Function()? signOutPressed,
     TResult Function(AuthSnapshot snapshot)? snapshotReceived,
     required TResult orElse(),
@@ -288,6 +365,12 @@ class _$SignInWithGooglePressedImpl implements _SignInWithGooglePressed {
     required TResult Function(_Started value) started,
     required TResult Function(_SignInWithGooglePressed value)
     signInWithGooglePressed,
+    required TResult Function(_SignInWithApplePressed value)
+    signInWithApplePressed,
+    required TResult Function(_SignInWithEmailPasswordPressed value)
+    signInWithEmailPasswordPressed,
+    required TResult Function(_SignUpWithEmailPasswordPressed value)
+    signUpWithEmailPasswordPressed,
     required TResult Function(_SignOutPressed value) signOutPressed,
     required TResult Function(_SnapshotReceived value) snapshotReceived,
   }) {
@@ -299,6 +382,11 @@ class _$SignInWithGooglePressedImpl implements _SignInWithGooglePressed {
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(_Started value)? started,
     TResult? Function(_SignInWithGooglePressed value)? signInWithGooglePressed,
+    TResult? Function(_SignInWithApplePressed value)? signInWithApplePressed,
+    TResult? Function(_SignInWithEmailPasswordPressed value)?
+    signInWithEmailPasswordPressed,
+    TResult? Function(_SignUpWithEmailPasswordPressed value)?
+    signUpWithEmailPasswordPressed,
     TResult? Function(_SignOutPressed value)? signOutPressed,
     TResult? Function(_SnapshotReceived value)? snapshotReceived,
   }) {
@@ -310,6 +398,11 @@ class _$SignInWithGooglePressedImpl implements _SignInWithGooglePressed {
   TResult maybeMap<TResult extends Object?>({
     TResult Function(_Started value)? started,
     TResult Function(_SignInWithGooglePressed value)? signInWithGooglePressed,
+    TResult Function(_SignInWithApplePressed value)? signInWithApplePressed,
+    TResult Function(_SignInWithEmailPasswordPressed value)?
+    signInWithEmailPasswordPressed,
+    TResult Function(_SignUpWithEmailPasswordPressed value)?
+    signUpWithEmailPasswordPressed,
     TResult Function(_SignOutPressed value)? signOutPressed,
     TResult Function(_SnapshotReceived value)? snapshotReceived,
     required TResult orElse(),
@@ -323,6 +416,550 @@ class _$SignInWithGooglePressedImpl implements _SignInWithGooglePressed {
 
 abstract class _SignInWithGooglePressed implements AuthEvent {
   const factory _SignInWithGooglePressed() = _$SignInWithGooglePressedImpl;
+}
+
+/// @nodoc
+abstract class _$$SignInWithApplePressedImplCopyWith<$Res> {
+  factory _$$SignInWithApplePressedImplCopyWith(
+    _$SignInWithApplePressedImpl value,
+    $Res Function(_$SignInWithApplePressedImpl) then,
+  ) = __$$SignInWithApplePressedImplCopyWithImpl<$Res>;
+}
+
+/// @nodoc
+class __$$SignInWithApplePressedImplCopyWithImpl<$Res>
+    extends _$AuthEventCopyWithImpl<$Res, _$SignInWithApplePressedImpl>
+    implements _$$SignInWithApplePressedImplCopyWith<$Res> {
+  __$$SignInWithApplePressedImplCopyWithImpl(
+    _$SignInWithApplePressedImpl _value,
+    $Res Function(_$SignInWithApplePressedImpl) _then,
+  ) : super(_value, _then);
+
+  /// Create a copy of AuthEvent
+  /// with the given fields replaced by the non-null parameter values.
+}
+
+/// @nodoc
+
+class _$SignInWithApplePressedImpl implements _SignInWithApplePressed {
+  const _$SignInWithApplePressedImpl();
+
+  @override
+  String toString() {
+    return 'AuthEvent.signInWithApplePressed()';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$SignInWithApplePressedImpl);
+  }
+
+  @override
+  int get hashCode => runtimeType.hashCode;
+
+  @override
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>({
+    required TResult Function() started,
+    required TResult Function() signInWithGooglePressed,
+    required TResult Function() signInWithApplePressed,
+    required TResult Function(EmailPasswordParams params)
+    signInWithEmailPasswordPressed,
+    required TResult Function(EmailPasswordParams params)
+    signUpWithEmailPasswordPressed,
+    required TResult Function() signOutPressed,
+    required TResult Function(AuthSnapshot snapshot) snapshotReceived,
+  }) {
+    return signInWithApplePressed();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult? Function()? started,
+    TResult? Function()? signInWithGooglePressed,
+    TResult? Function()? signInWithApplePressed,
+    TResult? Function(EmailPasswordParams params)?
+    signInWithEmailPasswordPressed,
+    TResult? Function(EmailPasswordParams params)?
+    signUpWithEmailPasswordPressed,
+    TResult? Function()? signOutPressed,
+    TResult? Function(AuthSnapshot snapshot)? snapshotReceived,
+  }) {
+    return signInWithApplePressed?.call();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function()? started,
+    TResult Function()? signInWithGooglePressed,
+    TResult Function()? signInWithApplePressed,
+    TResult Function(EmailPasswordParams params)?
+    signInWithEmailPasswordPressed,
+    TResult Function(EmailPasswordParams params)?
+    signUpWithEmailPasswordPressed,
+    TResult Function()? signOutPressed,
+    TResult Function(AuthSnapshot snapshot)? snapshotReceived,
+    required TResult orElse(),
+  }) {
+    if (signInWithApplePressed != null) {
+      return signInWithApplePressed();
+    }
+    return orElse();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>({
+    required TResult Function(_Started value) started,
+    required TResult Function(_SignInWithGooglePressed value)
+    signInWithGooglePressed,
+    required TResult Function(_SignInWithApplePressed value)
+    signInWithApplePressed,
+    required TResult Function(_SignInWithEmailPasswordPressed value)
+    signInWithEmailPasswordPressed,
+    required TResult Function(_SignUpWithEmailPasswordPressed value)
+    signUpWithEmailPasswordPressed,
+    required TResult Function(_SignOutPressed value) signOutPressed,
+    required TResult Function(_SnapshotReceived value) snapshotReceived,
+  }) {
+    return signInWithApplePressed(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult? Function(_Started value)? started,
+    TResult? Function(_SignInWithGooglePressed value)? signInWithGooglePressed,
+    TResult? Function(_SignInWithApplePressed value)? signInWithApplePressed,
+    TResult? Function(_SignInWithEmailPasswordPressed value)?
+    signInWithEmailPasswordPressed,
+    TResult? Function(_SignUpWithEmailPasswordPressed value)?
+    signUpWithEmailPasswordPressed,
+    TResult? Function(_SignOutPressed value)? signOutPressed,
+    TResult? Function(_SnapshotReceived value)? snapshotReceived,
+  }) {
+    return signInWithApplePressed?.call(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(_Started value)? started,
+    TResult Function(_SignInWithGooglePressed value)? signInWithGooglePressed,
+    TResult Function(_SignInWithApplePressed value)? signInWithApplePressed,
+    TResult Function(_SignInWithEmailPasswordPressed value)?
+    signInWithEmailPasswordPressed,
+    TResult Function(_SignUpWithEmailPasswordPressed value)?
+    signUpWithEmailPasswordPressed,
+    TResult Function(_SignOutPressed value)? signOutPressed,
+    TResult Function(_SnapshotReceived value)? snapshotReceived,
+    required TResult orElse(),
+  }) {
+    if (signInWithApplePressed != null) {
+      return signInWithApplePressed(this);
+    }
+    return orElse();
+  }
+}
+
+abstract class _SignInWithApplePressed implements AuthEvent {
+  const factory _SignInWithApplePressed() = _$SignInWithApplePressedImpl;
+}
+
+/// @nodoc
+abstract class _$$SignInWithEmailPasswordPressedImplCopyWith<$Res> {
+  factory _$$SignInWithEmailPasswordPressedImplCopyWith(
+    _$SignInWithEmailPasswordPressedImpl value,
+    $Res Function(_$SignInWithEmailPasswordPressedImpl) then,
+  ) = __$$SignInWithEmailPasswordPressedImplCopyWithImpl<$Res>;
+  @useResult
+  $Res call({EmailPasswordParams params});
+}
+
+/// @nodoc
+class __$$SignInWithEmailPasswordPressedImplCopyWithImpl<$Res>
+    extends _$AuthEventCopyWithImpl<$Res, _$SignInWithEmailPasswordPressedImpl>
+    implements _$$SignInWithEmailPasswordPressedImplCopyWith<$Res> {
+  __$$SignInWithEmailPasswordPressedImplCopyWithImpl(
+    _$SignInWithEmailPasswordPressedImpl _value,
+    $Res Function(_$SignInWithEmailPasswordPressedImpl) _then,
+  ) : super(_value, _then);
+
+  /// Create a copy of AuthEvent
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({Object? params = null}) {
+    return _then(
+      _$SignInWithEmailPasswordPressedImpl(
+        null == params
+            ? _value.params
+            : params // ignore: cast_nullable_to_non_nullable
+                  as EmailPasswordParams,
+      ),
+    );
+  }
+}
+
+/// @nodoc
+
+class _$SignInWithEmailPasswordPressedImpl
+    implements _SignInWithEmailPasswordPressed {
+  const _$SignInWithEmailPasswordPressedImpl(this.params);
+
+  @override
+  final EmailPasswordParams params;
+
+  @override
+  String toString() {
+    return 'AuthEvent.signInWithEmailPasswordPressed(params: $params)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$SignInWithEmailPasswordPressedImpl &&
+            (identical(other.params, params) || other.params == params));
+  }
+
+  @override
+  int get hashCode => Object.hash(runtimeType, params);
+
+  /// Create a copy of AuthEvent
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$SignInWithEmailPasswordPressedImplCopyWith<
+    _$SignInWithEmailPasswordPressedImpl
+  >
+  get copyWith =>
+      __$$SignInWithEmailPasswordPressedImplCopyWithImpl<
+        _$SignInWithEmailPasswordPressedImpl
+      >(this, _$identity);
+
+  @override
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>({
+    required TResult Function() started,
+    required TResult Function() signInWithGooglePressed,
+    required TResult Function() signInWithApplePressed,
+    required TResult Function(EmailPasswordParams params)
+    signInWithEmailPasswordPressed,
+    required TResult Function(EmailPasswordParams params)
+    signUpWithEmailPasswordPressed,
+    required TResult Function() signOutPressed,
+    required TResult Function(AuthSnapshot snapshot) snapshotReceived,
+  }) {
+    return signInWithEmailPasswordPressed(params);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult? Function()? started,
+    TResult? Function()? signInWithGooglePressed,
+    TResult? Function()? signInWithApplePressed,
+    TResult? Function(EmailPasswordParams params)?
+    signInWithEmailPasswordPressed,
+    TResult? Function(EmailPasswordParams params)?
+    signUpWithEmailPasswordPressed,
+    TResult? Function()? signOutPressed,
+    TResult? Function(AuthSnapshot snapshot)? snapshotReceived,
+  }) {
+    return signInWithEmailPasswordPressed?.call(params);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function()? started,
+    TResult Function()? signInWithGooglePressed,
+    TResult Function()? signInWithApplePressed,
+    TResult Function(EmailPasswordParams params)?
+    signInWithEmailPasswordPressed,
+    TResult Function(EmailPasswordParams params)?
+    signUpWithEmailPasswordPressed,
+    TResult Function()? signOutPressed,
+    TResult Function(AuthSnapshot snapshot)? snapshotReceived,
+    required TResult orElse(),
+  }) {
+    if (signInWithEmailPasswordPressed != null) {
+      return signInWithEmailPasswordPressed(params);
+    }
+    return orElse();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>({
+    required TResult Function(_Started value) started,
+    required TResult Function(_SignInWithGooglePressed value)
+    signInWithGooglePressed,
+    required TResult Function(_SignInWithApplePressed value)
+    signInWithApplePressed,
+    required TResult Function(_SignInWithEmailPasswordPressed value)
+    signInWithEmailPasswordPressed,
+    required TResult Function(_SignUpWithEmailPasswordPressed value)
+    signUpWithEmailPasswordPressed,
+    required TResult Function(_SignOutPressed value) signOutPressed,
+    required TResult Function(_SnapshotReceived value) snapshotReceived,
+  }) {
+    return signInWithEmailPasswordPressed(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult? Function(_Started value)? started,
+    TResult? Function(_SignInWithGooglePressed value)? signInWithGooglePressed,
+    TResult? Function(_SignInWithApplePressed value)? signInWithApplePressed,
+    TResult? Function(_SignInWithEmailPasswordPressed value)?
+    signInWithEmailPasswordPressed,
+    TResult? Function(_SignUpWithEmailPasswordPressed value)?
+    signUpWithEmailPasswordPressed,
+    TResult? Function(_SignOutPressed value)? signOutPressed,
+    TResult? Function(_SnapshotReceived value)? snapshotReceived,
+  }) {
+    return signInWithEmailPasswordPressed?.call(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(_Started value)? started,
+    TResult Function(_SignInWithGooglePressed value)? signInWithGooglePressed,
+    TResult Function(_SignInWithApplePressed value)? signInWithApplePressed,
+    TResult Function(_SignInWithEmailPasswordPressed value)?
+    signInWithEmailPasswordPressed,
+    TResult Function(_SignUpWithEmailPasswordPressed value)?
+    signUpWithEmailPasswordPressed,
+    TResult Function(_SignOutPressed value)? signOutPressed,
+    TResult Function(_SnapshotReceived value)? snapshotReceived,
+    required TResult orElse(),
+  }) {
+    if (signInWithEmailPasswordPressed != null) {
+      return signInWithEmailPasswordPressed(this);
+    }
+    return orElse();
+  }
+}
+
+abstract class _SignInWithEmailPasswordPressed implements AuthEvent {
+  const factory _SignInWithEmailPasswordPressed(
+    final EmailPasswordParams params,
+  ) = _$SignInWithEmailPasswordPressedImpl;
+
+  EmailPasswordParams get params;
+
+  /// Create a copy of AuthEvent
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  _$$SignInWithEmailPasswordPressedImplCopyWith<
+    _$SignInWithEmailPasswordPressedImpl
+  >
+  get copyWith => throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class _$$SignUpWithEmailPasswordPressedImplCopyWith<$Res> {
+  factory _$$SignUpWithEmailPasswordPressedImplCopyWith(
+    _$SignUpWithEmailPasswordPressedImpl value,
+    $Res Function(_$SignUpWithEmailPasswordPressedImpl) then,
+  ) = __$$SignUpWithEmailPasswordPressedImplCopyWithImpl<$Res>;
+  @useResult
+  $Res call({EmailPasswordParams params});
+}
+
+/// @nodoc
+class __$$SignUpWithEmailPasswordPressedImplCopyWithImpl<$Res>
+    extends _$AuthEventCopyWithImpl<$Res, _$SignUpWithEmailPasswordPressedImpl>
+    implements _$$SignUpWithEmailPasswordPressedImplCopyWith<$Res> {
+  __$$SignUpWithEmailPasswordPressedImplCopyWithImpl(
+    _$SignUpWithEmailPasswordPressedImpl _value,
+    $Res Function(_$SignUpWithEmailPasswordPressedImpl) _then,
+  ) : super(_value, _then);
+
+  /// Create a copy of AuthEvent
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({Object? params = null}) {
+    return _then(
+      _$SignUpWithEmailPasswordPressedImpl(
+        null == params
+            ? _value.params
+            : params // ignore: cast_nullable_to_non_nullable
+                  as EmailPasswordParams,
+      ),
+    );
+  }
+}
+
+/// @nodoc
+
+class _$SignUpWithEmailPasswordPressedImpl
+    implements _SignUpWithEmailPasswordPressed {
+  const _$SignUpWithEmailPasswordPressedImpl(this.params);
+
+  @override
+  final EmailPasswordParams params;
+
+  @override
+  String toString() {
+    return 'AuthEvent.signUpWithEmailPasswordPressed(params: $params)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$SignUpWithEmailPasswordPressedImpl &&
+            (identical(other.params, params) || other.params == params));
+  }
+
+  @override
+  int get hashCode => Object.hash(runtimeType, params);
+
+  /// Create a copy of AuthEvent
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$SignUpWithEmailPasswordPressedImplCopyWith<
+    _$SignUpWithEmailPasswordPressedImpl
+  >
+  get copyWith =>
+      __$$SignUpWithEmailPasswordPressedImplCopyWithImpl<
+        _$SignUpWithEmailPasswordPressedImpl
+      >(this, _$identity);
+
+  @override
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>({
+    required TResult Function() started,
+    required TResult Function() signInWithGooglePressed,
+    required TResult Function() signInWithApplePressed,
+    required TResult Function(EmailPasswordParams params)
+    signInWithEmailPasswordPressed,
+    required TResult Function(EmailPasswordParams params)
+    signUpWithEmailPasswordPressed,
+    required TResult Function() signOutPressed,
+    required TResult Function(AuthSnapshot snapshot) snapshotReceived,
+  }) {
+    return signUpWithEmailPasswordPressed(params);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult? Function()? started,
+    TResult? Function()? signInWithGooglePressed,
+    TResult? Function()? signInWithApplePressed,
+    TResult? Function(EmailPasswordParams params)?
+    signInWithEmailPasswordPressed,
+    TResult? Function(EmailPasswordParams params)?
+    signUpWithEmailPasswordPressed,
+    TResult? Function()? signOutPressed,
+    TResult? Function(AuthSnapshot snapshot)? snapshotReceived,
+  }) {
+    return signUpWithEmailPasswordPressed?.call(params);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function()? started,
+    TResult Function()? signInWithGooglePressed,
+    TResult Function()? signInWithApplePressed,
+    TResult Function(EmailPasswordParams params)?
+    signInWithEmailPasswordPressed,
+    TResult Function(EmailPasswordParams params)?
+    signUpWithEmailPasswordPressed,
+    TResult Function()? signOutPressed,
+    TResult Function(AuthSnapshot snapshot)? snapshotReceived,
+    required TResult orElse(),
+  }) {
+    if (signUpWithEmailPasswordPressed != null) {
+      return signUpWithEmailPasswordPressed(params);
+    }
+    return orElse();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>({
+    required TResult Function(_Started value) started,
+    required TResult Function(_SignInWithGooglePressed value)
+    signInWithGooglePressed,
+    required TResult Function(_SignInWithApplePressed value)
+    signInWithApplePressed,
+    required TResult Function(_SignInWithEmailPasswordPressed value)
+    signInWithEmailPasswordPressed,
+    required TResult Function(_SignUpWithEmailPasswordPressed value)
+    signUpWithEmailPasswordPressed,
+    required TResult Function(_SignOutPressed value) signOutPressed,
+    required TResult Function(_SnapshotReceived value) snapshotReceived,
+  }) {
+    return signUpWithEmailPasswordPressed(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult? Function(_Started value)? started,
+    TResult? Function(_SignInWithGooglePressed value)? signInWithGooglePressed,
+    TResult? Function(_SignInWithApplePressed value)? signInWithApplePressed,
+    TResult? Function(_SignInWithEmailPasswordPressed value)?
+    signInWithEmailPasswordPressed,
+    TResult? Function(_SignUpWithEmailPasswordPressed value)?
+    signUpWithEmailPasswordPressed,
+    TResult? Function(_SignOutPressed value)? signOutPressed,
+    TResult? Function(_SnapshotReceived value)? snapshotReceived,
+  }) {
+    return signUpWithEmailPasswordPressed?.call(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(_Started value)? started,
+    TResult Function(_SignInWithGooglePressed value)? signInWithGooglePressed,
+    TResult Function(_SignInWithApplePressed value)? signInWithApplePressed,
+    TResult Function(_SignInWithEmailPasswordPressed value)?
+    signInWithEmailPasswordPressed,
+    TResult Function(_SignUpWithEmailPasswordPressed value)?
+    signUpWithEmailPasswordPressed,
+    TResult Function(_SignOutPressed value)? signOutPressed,
+    TResult Function(_SnapshotReceived value)? snapshotReceived,
+    required TResult orElse(),
+  }) {
+    if (signUpWithEmailPasswordPressed != null) {
+      return signUpWithEmailPasswordPressed(this);
+    }
+    return orElse();
+  }
+}
+
+abstract class _SignUpWithEmailPasswordPressed implements AuthEvent {
+  const factory _SignUpWithEmailPasswordPressed(
+    final EmailPasswordParams params,
+  ) = _$SignUpWithEmailPasswordPressedImpl;
+
+  EmailPasswordParams get params;
+
+  /// Create a copy of AuthEvent
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  _$$SignUpWithEmailPasswordPressedImplCopyWith<
+    _$SignUpWithEmailPasswordPressedImpl
+  >
+  get copyWith => throw _privateConstructorUsedError;
 }
 
 /// @nodoc
@@ -370,6 +1007,11 @@ class _$SignOutPressedImpl implements _SignOutPressed {
   TResult when<TResult extends Object?>({
     required TResult Function() started,
     required TResult Function() signInWithGooglePressed,
+    required TResult Function() signInWithApplePressed,
+    required TResult Function(EmailPasswordParams params)
+    signInWithEmailPasswordPressed,
+    required TResult Function(EmailPasswordParams params)
+    signUpWithEmailPasswordPressed,
     required TResult Function() signOutPressed,
     required TResult Function(AuthSnapshot snapshot) snapshotReceived,
   }) {
@@ -381,6 +1023,11 @@ class _$SignOutPressedImpl implements _SignOutPressed {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? started,
     TResult? Function()? signInWithGooglePressed,
+    TResult? Function()? signInWithApplePressed,
+    TResult? Function(EmailPasswordParams params)?
+    signInWithEmailPasswordPressed,
+    TResult? Function(EmailPasswordParams params)?
+    signUpWithEmailPasswordPressed,
     TResult? Function()? signOutPressed,
     TResult? Function(AuthSnapshot snapshot)? snapshotReceived,
   }) {
@@ -392,6 +1039,11 @@ class _$SignOutPressedImpl implements _SignOutPressed {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? started,
     TResult Function()? signInWithGooglePressed,
+    TResult Function()? signInWithApplePressed,
+    TResult Function(EmailPasswordParams params)?
+    signInWithEmailPasswordPressed,
+    TResult Function(EmailPasswordParams params)?
+    signUpWithEmailPasswordPressed,
     TResult Function()? signOutPressed,
     TResult Function(AuthSnapshot snapshot)? snapshotReceived,
     required TResult orElse(),
@@ -408,6 +1060,12 @@ class _$SignOutPressedImpl implements _SignOutPressed {
     required TResult Function(_Started value) started,
     required TResult Function(_SignInWithGooglePressed value)
     signInWithGooglePressed,
+    required TResult Function(_SignInWithApplePressed value)
+    signInWithApplePressed,
+    required TResult Function(_SignInWithEmailPasswordPressed value)
+    signInWithEmailPasswordPressed,
+    required TResult Function(_SignUpWithEmailPasswordPressed value)
+    signUpWithEmailPasswordPressed,
     required TResult Function(_SignOutPressed value) signOutPressed,
     required TResult Function(_SnapshotReceived value) snapshotReceived,
   }) {
@@ -419,6 +1077,11 @@ class _$SignOutPressedImpl implements _SignOutPressed {
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(_Started value)? started,
     TResult? Function(_SignInWithGooglePressed value)? signInWithGooglePressed,
+    TResult? Function(_SignInWithApplePressed value)? signInWithApplePressed,
+    TResult? Function(_SignInWithEmailPasswordPressed value)?
+    signInWithEmailPasswordPressed,
+    TResult? Function(_SignUpWithEmailPasswordPressed value)?
+    signUpWithEmailPasswordPressed,
     TResult? Function(_SignOutPressed value)? signOutPressed,
     TResult? Function(_SnapshotReceived value)? snapshotReceived,
   }) {
@@ -430,6 +1093,11 @@ class _$SignOutPressedImpl implements _SignOutPressed {
   TResult maybeMap<TResult extends Object?>({
     TResult Function(_Started value)? started,
     TResult Function(_SignInWithGooglePressed value)? signInWithGooglePressed,
+    TResult Function(_SignInWithApplePressed value)? signInWithApplePressed,
+    TResult Function(_SignInWithEmailPasswordPressed value)?
+    signInWithEmailPasswordPressed,
+    TResult Function(_SignUpWithEmailPasswordPressed value)?
+    signUpWithEmailPasswordPressed,
     TResult Function(_SignOutPressed value)? signOutPressed,
     TResult Function(_SnapshotReceived value)? snapshotReceived,
     required TResult orElse(),
@@ -533,6 +1201,11 @@ class _$SnapshotReceivedImpl implements _SnapshotReceived {
   TResult when<TResult extends Object?>({
     required TResult Function() started,
     required TResult Function() signInWithGooglePressed,
+    required TResult Function() signInWithApplePressed,
+    required TResult Function(EmailPasswordParams params)
+    signInWithEmailPasswordPressed,
+    required TResult Function(EmailPasswordParams params)
+    signUpWithEmailPasswordPressed,
     required TResult Function() signOutPressed,
     required TResult Function(AuthSnapshot snapshot) snapshotReceived,
   }) {
@@ -544,6 +1217,11 @@ class _$SnapshotReceivedImpl implements _SnapshotReceived {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? started,
     TResult? Function()? signInWithGooglePressed,
+    TResult? Function()? signInWithApplePressed,
+    TResult? Function(EmailPasswordParams params)?
+    signInWithEmailPasswordPressed,
+    TResult? Function(EmailPasswordParams params)?
+    signUpWithEmailPasswordPressed,
     TResult? Function()? signOutPressed,
     TResult? Function(AuthSnapshot snapshot)? snapshotReceived,
   }) {
@@ -555,6 +1233,11 @@ class _$SnapshotReceivedImpl implements _SnapshotReceived {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? started,
     TResult Function()? signInWithGooglePressed,
+    TResult Function()? signInWithApplePressed,
+    TResult Function(EmailPasswordParams params)?
+    signInWithEmailPasswordPressed,
+    TResult Function(EmailPasswordParams params)?
+    signUpWithEmailPasswordPressed,
     TResult Function()? signOutPressed,
     TResult Function(AuthSnapshot snapshot)? snapshotReceived,
     required TResult orElse(),
@@ -571,6 +1254,12 @@ class _$SnapshotReceivedImpl implements _SnapshotReceived {
     required TResult Function(_Started value) started,
     required TResult Function(_SignInWithGooglePressed value)
     signInWithGooglePressed,
+    required TResult Function(_SignInWithApplePressed value)
+    signInWithApplePressed,
+    required TResult Function(_SignInWithEmailPasswordPressed value)
+    signInWithEmailPasswordPressed,
+    required TResult Function(_SignUpWithEmailPasswordPressed value)
+    signUpWithEmailPasswordPressed,
     required TResult Function(_SignOutPressed value) signOutPressed,
     required TResult Function(_SnapshotReceived value) snapshotReceived,
   }) {
@@ -582,6 +1271,11 @@ class _$SnapshotReceivedImpl implements _SnapshotReceived {
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(_Started value)? started,
     TResult? Function(_SignInWithGooglePressed value)? signInWithGooglePressed,
+    TResult? Function(_SignInWithApplePressed value)? signInWithApplePressed,
+    TResult? Function(_SignInWithEmailPasswordPressed value)?
+    signInWithEmailPasswordPressed,
+    TResult? Function(_SignUpWithEmailPasswordPressed value)?
+    signUpWithEmailPasswordPressed,
     TResult? Function(_SignOutPressed value)? signOutPressed,
     TResult? Function(_SnapshotReceived value)? snapshotReceived,
   }) {
@@ -593,6 +1287,11 @@ class _$SnapshotReceivedImpl implements _SnapshotReceived {
   TResult maybeMap<TResult extends Object?>({
     TResult Function(_Started value)? started,
     TResult Function(_SignInWithGooglePressed value)? signInWithGooglePressed,
+    TResult Function(_SignInWithApplePressed value)? signInWithApplePressed,
+    TResult Function(_SignInWithEmailPasswordPressed value)?
+    signInWithEmailPasswordPressed,
+    TResult Function(_SignUpWithEmailPasswordPressed value)?
+    signUpWithEmailPasswordPressed,
     TResult Function(_SignOutPressed value)? signOutPressed,
     TResult Function(_SnapshotReceived value)? snapshotReceived,
     required TResult orElse(),
@@ -623,21 +1322,36 @@ mixin _$AuthState {
   TResult when<TResult extends Object?>({
     required TResult Function() unknown,
     required TResult Function() loading,
-    required TResult Function(String? errorMessage) unauthenticated,
+    required TResult Function(
+      String? errorMessage,
+      bool emailConfirmationSent,
+      bool isSubmitting,
+    )
+    unauthenticated,
     required TResult Function(UserProfile profile) authenticated,
   }) => throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? unknown,
     TResult? Function()? loading,
-    TResult? Function(String? errorMessage)? unauthenticated,
+    TResult? Function(
+      String? errorMessage,
+      bool emailConfirmationSent,
+      bool isSubmitting,
+    )?
+    unauthenticated,
     TResult? Function(UserProfile profile)? authenticated,
   }) => throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? unknown,
     TResult Function()? loading,
-    TResult Function(String? errorMessage)? unauthenticated,
+    TResult Function(
+      String? errorMessage,
+      bool emailConfirmationSent,
+      bool isSubmitting,
+    )?
+    unauthenticated,
     TResult Function(UserProfile profile)? authenticated,
     required TResult orElse(),
   }) => throw _privateConstructorUsedError;
@@ -730,7 +1444,12 @@ class _$UnknownImpl implements _Unknown {
   TResult when<TResult extends Object?>({
     required TResult Function() unknown,
     required TResult Function() loading,
-    required TResult Function(String? errorMessage) unauthenticated,
+    required TResult Function(
+      String? errorMessage,
+      bool emailConfirmationSent,
+      bool isSubmitting,
+    )
+    unauthenticated,
     required TResult Function(UserProfile profile) authenticated,
   }) {
     return unknown();
@@ -741,7 +1460,12 @@ class _$UnknownImpl implements _Unknown {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? unknown,
     TResult? Function()? loading,
-    TResult? Function(String? errorMessage)? unauthenticated,
+    TResult? Function(
+      String? errorMessage,
+      bool emailConfirmationSent,
+      bool isSubmitting,
+    )?
+    unauthenticated,
     TResult? Function(UserProfile profile)? authenticated,
   }) {
     return unknown?.call();
@@ -752,7 +1476,12 @@ class _$UnknownImpl implements _Unknown {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? unknown,
     TResult Function()? loading,
-    TResult Function(String? errorMessage)? unauthenticated,
+    TResult Function(
+      String? errorMessage,
+      bool emailConfirmationSent,
+      bool isSubmitting,
+    )?
+    unauthenticated,
     TResult Function(UserProfile profile)? authenticated,
     required TResult orElse(),
   }) {
@@ -849,7 +1578,12 @@ class _$LoadingImpl implements _Loading {
   TResult when<TResult extends Object?>({
     required TResult Function() unknown,
     required TResult Function() loading,
-    required TResult Function(String? errorMessage) unauthenticated,
+    required TResult Function(
+      String? errorMessage,
+      bool emailConfirmationSent,
+      bool isSubmitting,
+    )
+    unauthenticated,
     required TResult Function(UserProfile profile) authenticated,
   }) {
     return loading();
@@ -860,7 +1594,12 @@ class _$LoadingImpl implements _Loading {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? unknown,
     TResult? Function()? loading,
-    TResult? Function(String? errorMessage)? unauthenticated,
+    TResult? Function(
+      String? errorMessage,
+      bool emailConfirmationSent,
+      bool isSubmitting,
+    )?
+    unauthenticated,
     TResult? Function(UserProfile profile)? authenticated,
   }) {
     return loading?.call();
@@ -871,7 +1610,12 @@ class _$LoadingImpl implements _Loading {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? unknown,
     TResult Function()? loading,
-    TResult Function(String? errorMessage)? unauthenticated,
+    TResult Function(
+      String? errorMessage,
+      bool emailConfirmationSent,
+      bool isSubmitting,
+    )?
+    unauthenticated,
     TResult Function(UserProfile profile)? authenticated,
     required TResult orElse(),
   }) {
@@ -930,7 +1674,11 @@ abstract class _$$UnauthenticatedImplCopyWith<$Res> {
     $Res Function(_$UnauthenticatedImpl) then,
   ) = __$$UnauthenticatedImplCopyWithImpl<$Res>;
   @useResult
-  $Res call({String? errorMessage});
+  $Res call({
+    String? errorMessage,
+    bool emailConfirmationSent,
+    bool isSubmitting,
+  });
 }
 
 /// @nodoc
@@ -946,13 +1694,25 @@ class __$$UnauthenticatedImplCopyWithImpl<$Res>
   /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
-  $Res call({Object? errorMessage = freezed}) {
+  $Res call({
+    Object? errorMessage = freezed,
+    Object? emailConfirmationSent = null,
+    Object? isSubmitting = null,
+  }) {
     return _then(
       _$UnauthenticatedImpl(
         errorMessage: freezed == errorMessage
             ? _value.errorMessage
             : errorMessage // ignore: cast_nullable_to_non_nullable
                   as String?,
+        emailConfirmationSent: null == emailConfirmationSent
+            ? _value.emailConfirmationSent
+            : emailConfirmationSent // ignore: cast_nullable_to_non_nullable
+                  as bool,
+        isSubmitting: null == isSubmitting
+            ? _value.isSubmitting
+            : isSubmitting // ignore: cast_nullable_to_non_nullable
+                  as bool,
       ),
     );
   }
@@ -961,14 +1721,24 @@ class __$$UnauthenticatedImplCopyWithImpl<$Res>
 /// @nodoc
 
 class _$UnauthenticatedImpl implements _Unauthenticated {
-  const _$UnauthenticatedImpl({this.errorMessage});
+  const _$UnauthenticatedImpl({
+    this.errorMessage,
+    this.emailConfirmationSent = false,
+    this.isSubmitting = false,
+  });
 
   @override
   final String? errorMessage;
+  @override
+  @JsonKey()
+  final bool emailConfirmationSent;
+  @override
+  @JsonKey()
+  final bool isSubmitting;
 
   @override
   String toString() {
-    return 'AuthState.unauthenticated(errorMessage: $errorMessage)';
+    return 'AuthState.unauthenticated(errorMessage: $errorMessage, emailConfirmationSent: $emailConfirmationSent, isSubmitting: $isSubmitting)';
   }
 
   @override
@@ -977,11 +1747,20 @@ class _$UnauthenticatedImpl implements _Unauthenticated {
         (other.runtimeType == runtimeType &&
             other is _$UnauthenticatedImpl &&
             (identical(other.errorMessage, errorMessage) ||
-                other.errorMessage == errorMessage));
+                other.errorMessage == errorMessage) &&
+            (identical(other.emailConfirmationSent, emailConfirmationSent) ||
+                other.emailConfirmationSent == emailConfirmationSent) &&
+            (identical(other.isSubmitting, isSubmitting) ||
+                other.isSubmitting == isSubmitting));
   }
 
   @override
-  int get hashCode => Object.hash(runtimeType, errorMessage);
+  int get hashCode => Object.hash(
+    runtimeType,
+    errorMessage,
+    emailConfirmationSent,
+    isSubmitting,
+  );
 
   /// Create a copy of AuthState
   /// with the given fields replaced by the non-null parameter values.
@@ -999,10 +1778,15 @@ class _$UnauthenticatedImpl implements _Unauthenticated {
   TResult when<TResult extends Object?>({
     required TResult Function() unknown,
     required TResult Function() loading,
-    required TResult Function(String? errorMessage) unauthenticated,
+    required TResult Function(
+      String? errorMessage,
+      bool emailConfirmationSent,
+      bool isSubmitting,
+    )
+    unauthenticated,
     required TResult Function(UserProfile profile) authenticated,
   }) {
-    return unauthenticated(errorMessage);
+    return unauthenticated(errorMessage, emailConfirmationSent, isSubmitting);
   }
 
   @override
@@ -1010,10 +1794,19 @@ class _$UnauthenticatedImpl implements _Unauthenticated {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? unknown,
     TResult? Function()? loading,
-    TResult? Function(String? errorMessage)? unauthenticated,
+    TResult? Function(
+      String? errorMessage,
+      bool emailConfirmationSent,
+      bool isSubmitting,
+    )?
+    unauthenticated,
     TResult? Function(UserProfile profile)? authenticated,
   }) {
-    return unauthenticated?.call(errorMessage);
+    return unauthenticated?.call(
+      errorMessage,
+      emailConfirmationSent,
+      isSubmitting,
+    );
   }
 
   @override
@@ -1021,12 +1814,17 @@ class _$UnauthenticatedImpl implements _Unauthenticated {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? unknown,
     TResult Function()? loading,
-    TResult Function(String? errorMessage)? unauthenticated,
+    TResult Function(
+      String? errorMessage,
+      bool emailConfirmationSent,
+      bool isSubmitting,
+    )?
+    unauthenticated,
     TResult Function(UserProfile profile)? authenticated,
     required TResult orElse(),
   }) {
     if (unauthenticated != null) {
-      return unauthenticated(errorMessage);
+      return unauthenticated(errorMessage, emailConfirmationSent, isSubmitting);
     }
     return orElse();
   }
@@ -1070,10 +1868,15 @@ class _$UnauthenticatedImpl implements _Unauthenticated {
 }
 
 abstract class _Unauthenticated implements AuthState {
-  const factory _Unauthenticated({final String? errorMessage}) =
-      _$UnauthenticatedImpl;
+  const factory _Unauthenticated({
+    final String? errorMessage,
+    final bool emailConfirmationSent,
+    final bool isSubmitting,
+  }) = _$UnauthenticatedImpl;
 
   String? get errorMessage;
+  bool get emailConfirmationSent;
+  bool get isSubmitting;
 
   /// Create a copy of AuthState
   /// with the given fields replaced by the non-null parameter values.
@@ -1154,7 +1957,12 @@ class _$AuthenticatedImpl implements _Authenticated {
   TResult when<TResult extends Object?>({
     required TResult Function() unknown,
     required TResult Function() loading,
-    required TResult Function(String? errorMessage) unauthenticated,
+    required TResult Function(
+      String? errorMessage,
+      bool emailConfirmationSent,
+      bool isSubmitting,
+    )
+    unauthenticated,
     required TResult Function(UserProfile profile) authenticated,
   }) {
     return authenticated(profile);
@@ -1165,7 +1973,12 @@ class _$AuthenticatedImpl implements _Authenticated {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? unknown,
     TResult? Function()? loading,
-    TResult? Function(String? errorMessage)? unauthenticated,
+    TResult? Function(
+      String? errorMessage,
+      bool emailConfirmationSent,
+      bool isSubmitting,
+    )?
+    unauthenticated,
     TResult? Function(UserProfile profile)? authenticated,
   }) {
     return authenticated?.call(profile);
@@ -1176,7 +1989,12 @@ class _$AuthenticatedImpl implements _Authenticated {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? unknown,
     TResult Function()? loading,
-    TResult Function(String? errorMessage)? unauthenticated,
+    TResult Function(
+      String? errorMessage,
+      bool emailConfirmationSent,
+      bool isSubmitting,
+    )?
+    unauthenticated,
     TResult Function(UserProfile profile)? authenticated,
     required TResult orElse(),
   }) {

@@ -43,8 +43,6 @@ abstract class AudioNotesRepository {
 
   Future<Either<Failure, Unit>> requestProcessing(String noteId);
 
-  Future<Either<Failure, Unit>> deleteLocalAudioFile(String noteId);
-
   Future<Either<Failure, AudioNoteTranscript?>> getTranscript(String noteId);
 
   Future<Either<Failure, StartupAnalysis?>> getAnalysis(String noteId);

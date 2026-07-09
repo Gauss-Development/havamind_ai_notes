@@ -191,11 +191,7 @@ class AudioNotesRepositoryImpl implements AudioNotesRepository {
       // Local recording is now safely in remote storage and the edge
       // function has been kicked off — purge the on-device copy so the
       // app's documents directory doesn't grow unbounded.
-      try {
-        if (await file.exists()) {
-          await file.delete();
-        }
-      } catch (_) {}
+      await _deleteLocalFileIfExists(file);
 
       final note = await _remote.fetchById(noteId);
       return Right(note);
@@ -219,6 +215,7 @@ class AudioNotesRepositoryImpl implements AudioNotesRepository {
           await _storage.removeObject(storagePath);
         } catch (_) {}
       }
+      await _deleteLocalFileIfExists(file);
       return Left(ServerFailure(msg));
     }
   }
@@ -235,7 +232,7 @@ class AudioNotesRepositoryImpl implements AudioNotesRepository {
       await _remote.deleteRow(id);
       if (_isRemoteStoragePath(note.audioPath)) {
         try {
-          await _storage.removeObject(note.audioPath);
+          await _storage.removeObject(note.audioPath!);
         } catch (_) {
           // Object cleanup is best-effort once the DB row is gone —
           // surface it in logs only, not as a user-facing failure.
@@ -295,31 +292,18 @@ class AudioNotesRepositoryImpl implements AudioNotesRepository {
     }
   }
 
-  @override
-  Future<Either<Failure, Unit>> deleteLocalAudioFile(String noteId) async {
-    try {
-      final note = await _remote.fetchById(noteId);
-      final localPath = _normalizeLocalPath(note.audioPath);
-      if (localPath == null) {
-        return const Left(
-          UnexpectedFailure('No local audio file stored for this note'),
-        );
-      }
-
-      final file = File(localPath);
-      if (await file.exists()) {
-        await file.delete();
-      }
-      return const Right(unit);
-    } catch (e) {
-      return Left(UnexpectedFailure(_userFacingError(e)));
-    }
-  }
-
   String _userFacingError(Object e) {
     final s = e.toString();
     const prefix = 'Exception: ';
     return s.startsWith(prefix) ? s.substring(prefix.length) : s;
+  }
+
+  Future<void> _deleteLocalFileIfExists(File file) async {
+    try {
+      if (await file.exists()) {
+        await file.delete();
+      }
+    } catch (_) {}
   }
 
   @override
@@ -486,16 +470,16 @@ class AudioNotesRepositoryImpl implements AudioNotesRepository {
     return _remote.watchNote(noteId);
   }
 
-  bool _isRemoteStoragePath(String path) {
-    final trimmed = path.trim();
+  bool _isRemoteStoragePath(String? path) {
+    final trimmed = path?.trim() ?? '';
     if (trimmed.isEmpty) return false;
     return !trimmed.startsWith('/') &&
         !trimmed.startsWith('file://') &&
         !trimmed.contains(':\\');
   }
 
-  String? _normalizeLocalPath(String value) {
-    final trimmed = value.trim();
+  String? _normalizeLocalPath(String? value) {
+    final trimmed = value?.trim() ?? '';
     if (trimmed.isEmpty) return null;
     if (trimmed.startsWith('file://')) {
       return Uri.tryParse(trimmed)?.toFilePath();

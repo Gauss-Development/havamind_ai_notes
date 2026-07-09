@@ -5,7 +5,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:purchases_flutter/purchases_flutter.dart';
 import 'package:sample/core/error/failure.dart';
 import 'package:sample/core/usecases/usecase.dart';
-import 'package:sample/features/auth/data/datasources/profile_remote_data_source.dart';
 import 'package:sample/features/subscription/domain/entities/subscription_status.dart';
 import 'package:sample/features/subscription/domain/entities/usage_info.dart';
 import 'package:sample/features/subscription/domain/repositories/subscription_repository.dart';
@@ -26,15 +25,13 @@ class SubscriptionCubit extends Cubit<SubscriptionState> {
     required PurchasePackageUseCase purchasePackage,
     required SubscriptionRepository repository,
     required GetCurrentUsageUseCase getCurrentUsage,
-    required ProfileRemoteDataSource profileRemote,
-  })  : _getSubscriptionStatus = getSubscriptionStatus,
-        _restorePurchases = restorePurchases,
-        _getOfferings = getOfferings,
-        _purchasePackage = purchasePackage,
-        _repository = repository,
-        _getCurrentUsage = getCurrentUsage,
-        _profileRemote = profileRemote,
-        super(const SubscriptionInitial());
+  }) : _getSubscriptionStatus = getSubscriptionStatus,
+       _restorePurchases = restorePurchases,
+       _getOfferings = getOfferings,
+       _purchasePackage = purchasePackage,
+       _repository = repository,
+       _getCurrentUsage = getCurrentUsage,
+       super(const SubscriptionInitial());
 
   final GetSubscriptionStatusUseCase _getSubscriptionStatus;
   final RestorePurchasesUseCase _restorePurchases;
@@ -42,7 +39,6 @@ class SubscriptionCubit extends Cubit<SubscriptionState> {
   final PurchasePackageUseCase _purchasePackage;
   final SubscriptionRepository _repository;
   final GetCurrentUsageUseCase _getCurrentUsage;
-  final ProfileRemoteDataSource _profileRemote;
 
   StreamSubscription<void>? _statusSubscription;
 
@@ -52,14 +48,12 @@ class SubscriptionCubit extends Cubit<SubscriptionState> {
   /// round-trips run in parallel and their `emit`s land in arbitrary order.
   Future<void> _lastStreamEmit = Future<void>.value();
 
-  /// Emits Loaded and mirrors the tier into the user's profile so
-  /// Edge Functions can run server-side gates against the same value.
-  ///
-  /// The profile update is **awaited** before emitting so a user who buys a
-  /// plan and immediately records does not invoke `process-audio-note` while
-  /// Postgres still shows `free` (RevenueCat already has the entitlement).
-  Future<void> _emitLoaded(SubscriptionStatus status, UsageInfo? usageInfo) async {
-    await _profileRemote.updateSubscriptionTier(status.tier.name);
+  /// Emits Loaded from RevenueCat state. Server-side usage gates must read
+  /// only server-owned subscription state, not client-written profile data.
+  Future<void> _emitLoaded(
+    SubscriptionStatus status,
+    UsageInfo? usageInfo,
+  ) async {
     if (isClosed) return;
     emit(SubscriptionLoaded(status, usageInfo: usageInfo));
   }
@@ -84,14 +78,14 @@ class SubscriptionCubit extends Cubit<SubscriptionState> {
 
   void _listenToUpdates() {
     _statusSubscription?.cancel();
-    _statusSubscription = _repository.watchSubscriptionStatus().listen((status) {
+    _statusSubscription = _repository.watchSubscriptionStatus().listen((
+      status,
+    ) {
       // Append this status emit to the serialization chain so that
       // back-to-back RC events emit in order rather than racing on the
       // shared cubit state. `.catchError` swallows transient failures
       // so the chain stays alive for subsequent events.
-      _lastStreamEmit = _lastStreamEmit
-          .catchError((_) {})
-          .then((_) async {
+      _lastStreamEmit = _lastStreamEmit.catchError((_) {}).then((_) async {
         if (isClosed) return;
         final usageResult = await _getCurrentUsage(const NoParams());
         if (isClosed) return;
@@ -105,10 +99,8 @@ class SubscriptionCubit extends Cubit<SubscriptionState> {
     await Navigator.of(context).push<void>(
       MaterialPageRoute(
         fullscreenDialog: true,
-        builder: (_) => BlocProvider.value(
-          value: this,
-          child: const PaywallPage(),
-        ),
+        builder: (_) =>
+            BlocProvider.value(value: this, child: const PaywallPage()),
       ),
     );
     await _fetchStatusAndUsage();
@@ -117,13 +109,10 @@ class SubscriptionCubit extends Cubit<SubscriptionState> {
   /// Loads offerings for paywall display. Called from PaywallPage.
   Future<Offerings?> loadOfferings() async {
     final result = await _getOfferings(const NoParams());
-    return result.fold(
-      (failure) {
-        emit(SubscriptionError(failure.message));
-        return null;
-      },
-      (offerings) => offerings,
-    );
+    return result.fold((failure) {
+      emit(SubscriptionError(failure.message));
+      return null;
+    }, (offerings) => offerings);
   }
 
   /// Triggers a purchase via RevenueCat.
@@ -149,10 +138,8 @@ class SubscriptionCubit extends Cubit<SubscriptionState> {
   Future<void> showCustomerCenter(BuildContext context) async {
     await Navigator.of(context).push<void>(
       MaterialPageRoute(
-        builder: (_) => BlocProvider.value(
-          value: this,
-          child: const CustomerCenterPage(),
-        ),
+        builder: (_) =>
+            BlocProvider.value(value: this, child: const CustomerCenterPage()),
       ),
     );
     await _fetchStatusAndUsage();

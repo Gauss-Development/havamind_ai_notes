@@ -207,8 +207,10 @@ class _ButtonContent extends StatelessWidget {
           Icon(icon, size: 20),
           const SizedBox(width: 8),
         ],
+        // Flexible (not Expanded) so the centered Row shrink-wraps its
+        // content while long labels still ellipsize instead of overflowing.
         if (expand)
-          Expanded(child: labelWidget)
+          Flexible(child: labelWidget)
         else
           labelWidget,
       ],

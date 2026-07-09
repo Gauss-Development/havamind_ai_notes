@@ -33,7 +33,6 @@ dependencies:
   share_plus: ^12.0.2
   purchases_flutter: ^9.16.0
   purchases_ui_flutter: ^9.16.0
-  curved_navigation_bar: ^1.0.6
   url_launcher: ^6.3.1
 
 dev_dependencies:

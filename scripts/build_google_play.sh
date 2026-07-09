@@ -23,17 +23,35 @@ if [[ ! -f "$KEY_PROPS" ]]; then
   exit 1
 fi
 
-# shellcheck disable=SC1090
-source "$KEY_PROPS"
+read_key_prop() {
+  local key="$1"
+  local line
+  line="$(grep -E "^${key}=" "$KEY_PROPS" | head -1 || true)"
+  if [[ -z "$line" ]]; then
+    return 1
+  fi
+  printf '%s' "${line#*=}"
+}
 
-if [[ -z "${storeFile:-}" || -z "${storePassword:-}" || -z "${keyPassword:-}" || -z "${keyAlias:-}" ]]; then
+storePassword="$(read_key_prop storePassword || true)"
+keyPassword="$(read_key_prop keyPassword || true)"
+keyAlias="$(read_key_prop keyAlias || true)"
+storeFile="$(read_key_prop storeFile || true)"
+
+if [[ -z "$storeFile" || -z "$storePassword" || -z "$keyPassword" || -z "$keyAlias" ]]; then
   echo "error: $KEY_PROPS must set storeFile, storePassword, keyPassword, keyAlias" >&2
   exit 1
 fi
 
-KEYSTORE_PATH="android/app/${storeFile}"
+if [[ "$storeFile" = /* ]]; then
+  KEYSTORE_PATH="$storeFile"
+else
+  KEYSTORE_PATH="android/app/$storeFile"
+fi
+
 if [[ ! -f "$KEYSTORE_PATH" ]]; then
-  echo "error: keystore not found at $KEYSTORE_PATH (storeFile is relative to android/app)" >&2
+  echo "error: keystore not found at $KEYSTORE_PATH" >&2
+  echo "       storeFile is relative to android/app (e.g. ../upload-keystore.jks)" >&2
   exit 1
 fi
 
@@ -62,7 +80,10 @@ if [[ ! -f "$ENV_PRODUCTION" ]]; then
   echo "         and use production Supabase + RevenueCat Android key (goog_...)."
   echo ""
   read -r -p "Continue anyway? [y/N] " ans
-  [[ "${ans,,}" == "y" || "${ans,,}" == "yes" ]] || exit 1
+  case "$(printf '%s' "$ans" | tr '[:upper:]' '[:lower:]')" in
+    y|yes) ;;
+    *) exit 1 ;;
+  esac
 fi
 
 echo "==> Building app bundle (production)..."

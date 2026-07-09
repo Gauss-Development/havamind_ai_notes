@@ -20,6 +20,8 @@ mixin _$RecordingEvent {
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
     required TResult Function() startPressed,
+    required TResult Function() pausePressed,
+    required TResult Function() resumePressed,
     required TResult Function() stopPressed,
     required TResult Function() cancelPressed,
     required TResult Function() savePressed,
@@ -29,6 +31,8 @@ mixin _$RecordingEvent {
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? startPressed,
+    TResult? Function()? pausePressed,
+    TResult? Function()? resumePressed,
     TResult? Function()? stopPressed,
     TResult? Function()? cancelPressed,
     TResult? Function()? savePressed,
@@ -38,6 +42,8 @@ mixin _$RecordingEvent {
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? startPressed,
+    TResult Function()? pausePressed,
+    TResult Function()? resumePressed,
     TResult Function()? stopPressed,
     TResult Function()? cancelPressed,
     TResult Function()? savePressed,
@@ -48,6 +54,8 @@ mixin _$RecordingEvent {
   @optionalTypeArgs
   TResult map<TResult extends Object?>({
     required TResult Function(_StartPressed value) startPressed,
+    required TResult Function(_PausePressed value) pausePressed,
+    required TResult Function(_ResumePressed value) resumePressed,
     required TResult Function(_StopPressed value) stopPressed,
     required TResult Function(_CancelPressed value) cancelPressed,
     required TResult Function(_SavePressed value) savePressed,
@@ -57,6 +65,8 @@ mixin _$RecordingEvent {
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(_StartPressed value)? startPressed,
+    TResult? Function(_PausePressed value)? pausePressed,
+    TResult? Function(_ResumePressed value)? resumePressed,
     TResult? Function(_StopPressed value)? stopPressed,
     TResult? Function(_CancelPressed value)? cancelPressed,
     TResult? Function(_SavePressed value)? savePressed,
@@ -66,6 +76,8 @@ mixin _$RecordingEvent {
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object?>({
     TResult Function(_StartPressed value)? startPressed,
+    TResult Function(_PausePressed value)? pausePressed,
+    TResult Function(_ResumePressed value)? resumePressed,
     TResult Function(_StopPressed value)? stopPressed,
     TResult Function(_CancelPressed value)? cancelPressed,
     TResult Function(_SavePressed value)? savePressed,
@@ -141,6 +153,8 @@ class _$StartPressedImpl implements _StartPressed {
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
     required TResult Function() startPressed,
+    required TResult Function() pausePressed,
+    required TResult Function() resumePressed,
     required TResult Function() stopPressed,
     required TResult Function() cancelPressed,
     required TResult Function() savePressed,
@@ -154,6 +168,8 @@ class _$StartPressedImpl implements _StartPressed {
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? startPressed,
+    TResult? Function()? pausePressed,
+    TResult? Function()? resumePressed,
     TResult? Function()? stopPressed,
     TResult? Function()? cancelPressed,
     TResult? Function()? savePressed,
@@ -167,6 +183,8 @@ class _$StartPressedImpl implements _StartPressed {
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? startPressed,
+    TResult Function()? pausePressed,
+    TResult Function()? resumePressed,
     TResult Function()? stopPressed,
     TResult Function()? cancelPressed,
     TResult Function()? savePressed,
@@ -184,6 +202,8 @@ class _$StartPressedImpl implements _StartPressed {
   @optionalTypeArgs
   TResult map<TResult extends Object?>({
     required TResult Function(_StartPressed value) startPressed,
+    required TResult Function(_PausePressed value) pausePressed,
+    required TResult Function(_ResumePressed value) resumePressed,
     required TResult Function(_StopPressed value) stopPressed,
     required TResult Function(_CancelPressed value) cancelPressed,
     required TResult Function(_SavePressed value) savePressed,
@@ -197,6 +217,8 @@ class _$StartPressedImpl implements _StartPressed {
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(_StartPressed value)? startPressed,
+    TResult? Function(_PausePressed value)? pausePressed,
+    TResult? Function(_ResumePressed value)? resumePressed,
     TResult? Function(_StopPressed value)? stopPressed,
     TResult? Function(_CancelPressed value)? cancelPressed,
     TResult? Function(_SavePressed value)? savePressed,
@@ -210,6 +232,8 @@ class _$StartPressedImpl implements _StartPressed {
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object?>({
     TResult Function(_StartPressed value)? startPressed,
+    TResult Function(_PausePressed value)? pausePressed,
+    TResult Function(_ResumePressed value)? resumePressed,
     TResult Function(_StopPressed value)? stopPressed,
     TResult Function(_CancelPressed value)? cancelPressed,
     TResult Function(_SavePressed value)? savePressed,
@@ -226,6 +250,292 @@ class _$StartPressedImpl implements _StartPressed {
 
 abstract class _StartPressed implements RecordingEvent {
   const factory _StartPressed() = _$StartPressedImpl;
+}
+
+/// @nodoc
+abstract class _$$PausePressedImplCopyWith<$Res> {
+  factory _$$PausePressedImplCopyWith(
+    _$PausePressedImpl value,
+    $Res Function(_$PausePressedImpl) then,
+  ) = __$$PausePressedImplCopyWithImpl<$Res>;
+}
+
+/// @nodoc
+class __$$PausePressedImplCopyWithImpl<$Res>
+    extends _$RecordingEventCopyWithImpl<$Res, _$PausePressedImpl>
+    implements _$$PausePressedImplCopyWith<$Res> {
+  __$$PausePressedImplCopyWithImpl(
+    _$PausePressedImpl _value,
+    $Res Function(_$PausePressedImpl) _then,
+  ) : super(_value, _then);
+
+  /// Create a copy of RecordingEvent
+  /// with the given fields replaced by the non-null parameter values.
+}
+
+/// @nodoc
+
+class _$PausePressedImpl implements _PausePressed {
+  const _$PausePressedImpl();
+
+  @override
+  String toString() {
+    return 'RecordingEvent.pausePressed()';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType && other is _$PausePressedImpl);
+  }
+
+  @override
+  int get hashCode => runtimeType.hashCode;
+
+  @override
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>({
+    required TResult Function() startPressed,
+    required TResult Function() pausePressed,
+    required TResult Function() resumePressed,
+    required TResult Function() stopPressed,
+    required TResult Function() cancelPressed,
+    required TResult Function() savePressed,
+    required TResult Function() tick,
+    required TResult Function(String templateId) templateSelected,
+  }) {
+    return pausePressed();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult? Function()? startPressed,
+    TResult? Function()? pausePressed,
+    TResult? Function()? resumePressed,
+    TResult? Function()? stopPressed,
+    TResult? Function()? cancelPressed,
+    TResult? Function()? savePressed,
+    TResult? Function()? tick,
+    TResult? Function(String templateId)? templateSelected,
+  }) {
+    return pausePressed?.call();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function()? startPressed,
+    TResult Function()? pausePressed,
+    TResult Function()? resumePressed,
+    TResult Function()? stopPressed,
+    TResult Function()? cancelPressed,
+    TResult Function()? savePressed,
+    TResult Function()? tick,
+    TResult Function(String templateId)? templateSelected,
+    required TResult orElse(),
+  }) {
+    if (pausePressed != null) {
+      return pausePressed();
+    }
+    return orElse();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>({
+    required TResult Function(_StartPressed value) startPressed,
+    required TResult Function(_PausePressed value) pausePressed,
+    required TResult Function(_ResumePressed value) resumePressed,
+    required TResult Function(_StopPressed value) stopPressed,
+    required TResult Function(_CancelPressed value) cancelPressed,
+    required TResult Function(_SavePressed value) savePressed,
+    required TResult Function(_Tick value) tick,
+    required TResult Function(_TemplateSelected value) templateSelected,
+  }) {
+    return pausePressed(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult? Function(_StartPressed value)? startPressed,
+    TResult? Function(_PausePressed value)? pausePressed,
+    TResult? Function(_ResumePressed value)? resumePressed,
+    TResult? Function(_StopPressed value)? stopPressed,
+    TResult? Function(_CancelPressed value)? cancelPressed,
+    TResult? Function(_SavePressed value)? savePressed,
+    TResult? Function(_Tick value)? tick,
+    TResult? Function(_TemplateSelected value)? templateSelected,
+  }) {
+    return pausePressed?.call(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(_StartPressed value)? startPressed,
+    TResult Function(_PausePressed value)? pausePressed,
+    TResult Function(_ResumePressed value)? resumePressed,
+    TResult Function(_StopPressed value)? stopPressed,
+    TResult Function(_CancelPressed value)? cancelPressed,
+    TResult Function(_SavePressed value)? savePressed,
+    TResult Function(_Tick value)? tick,
+    TResult Function(_TemplateSelected value)? templateSelected,
+    required TResult orElse(),
+  }) {
+    if (pausePressed != null) {
+      return pausePressed(this);
+    }
+    return orElse();
+  }
+}
+
+abstract class _PausePressed implements RecordingEvent {
+  const factory _PausePressed() = _$PausePressedImpl;
+}
+
+/// @nodoc
+abstract class _$$ResumePressedImplCopyWith<$Res> {
+  factory _$$ResumePressedImplCopyWith(
+    _$ResumePressedImpl value,
+    $Res Function(_$ResumePressedImpl) then,
+  ) = __$$ResumePressedImplCopyWithImpl<$Res>;
+}
+
+/// @nodoc
+class __$$ResumePressedImplCopyWithImpl<$Res>
+    extends _$RecordingEventCopyWithImpl<$Res, _$ResumePressedImpl>
+    implements _$$ResumePressedImplCopyWith<$Res> {
+  __$$ResumePressedImplCopyWithImpl(
+    _$ResumePressedImpl _value,
+    $Res Function(_$ResumePressedImpl) _then,
+  ) : super(_value, _then);
+
+  /// Create a copy of RecordingEvent
+  /// with the given fields replaced by the non-null parameter values.
+}
+
+/// @nodoc
+
+class _$ResumePressedImpl implements _ResumePressed {
+  const _$ResumePressedImpl();
+
+  @override
+  String toString() {
+    return 'RecordingEvent.resumePressed()';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType && other is _$ResumePressedImpl);
+  }
+
+  @override
+  int get hashCode => runtimeType.hashCode;
+
+  @override
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>({
+    required TResult Function() startPressed,
+    required TResult Function() pausePressed,
+    required TResult Function() resumePressed,
+    required TResult Function() stopPressed,
+    required TResult Function() cancelPressed,
+    required TResult Function() savePressed,
+    required TResult Function() tick,
+    required TResult Function(String templateId) templateSelected,
+  }) {
+    return resumePressed();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult? Function()? startPressed,
+    TResult? Function()? pausePressed,
+    TResult? Function()? resumePressed,
+    TResult? Function()? stopPressed,
+    TResult? Function()? cancelPressed,
+    TResult? Function()? savePressed,
+    TResult? Function()? tick,
+    TResult? Function(String templateId)? templateSelected,
+  }) {
+    return resumePressed?.call();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function()? startPressed,
+    TResult Function()? pausePressed,
+    TResult Function()? resumePressed,
+    TResult Function()? stopPressed,
+    TResult Function()? cancelPressed,
+    TResult Function()? savePressed,
+    TResult Function()? tick,
+    TResult Function(String templateId)? templateSelected,
+    required TResult orElse(),
+  }) {
+    if (resumePressed != null) {
+      return resumePressed();
+    }
+    return orElse();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>({
+    required TResult Function(_StartPressed value) startPressed,
+    required TResult Function(_PausePressed value) pausePressed,
+    required TResult Function(_ResumePressed value) resumePressed,
+    required TResult Function(_StopPressed value) stopPressed,
+    required TResult Function(_CancelPressed value) cancelPressed,
+    required TResult Function(_SavePressed value) savePressed,
+    required TResult Function(_Tick value) tick,
+    required TResult Function(_TemplateSelected value) templateSelected,
+  }) {
+    return resumePressed(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult? Function(_StartPressed value)? startPressed,
+    TResult? Function(_PausePressed value)? pausePressed,
+    TResult? Function(_ResumePressed value)? resumePressed,
+    TResult? Function(_StopPressed value)? stopPressed,
+    TResult? Function(_CancelPressed value)? cancelPressed,
+    TResult? Function(_SavePressed value)? savePressed,
+    TResult? Function(_Tick value)? tick,
+    TResult? Function(_TemplateSelected value)? templateSelected,
+  }) {
+    return resumePressed?.call(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(_StartPressed value)? startPressed,
+    TResult Function(_PausePressed value)? pausePressed,
+    TResult Function(_ResumePressed value)? resumePressed,
+    TResult Function(_StopPressed value)? stopPressed,
+    TResult Function(_CancelPressed value)? cancelPressed,
+    TResult Function(_SavePressed value)? savePressed,
+    TResult Function(_Tick value)? tick,
+    TResult Function(_TemplateSelected value)? templateSelected,
+    required TResult orElse(),
+  }) {
+    if (resumePressed != null) {
+      return resumePressed(this);
+    }
+    return orElse();
+  }
+}
+
+abstract class _ResumePressed implements RecordingEvent {
+  const factory _ResumePressed() = _$ResumePressedImpl;
 }
 
 /// @nodoc
@@ -272,6 +582,8 @@ class _$StopPressedImpl implements _StopPressed {
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
     required TResult Function() startPressed,
+    required TResult Function() pausePressed,
+    required TResult Function() resumePressed,
     required TResult Function() stopPressed,
     required TResult Function() cancelPressed,
     required TResult Function() savePressed,
@@ -285,6 +597,8 @@ class _$StopPressedImpl implements _StopPressed {
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? startPressed,
+    TResult? Function()? pausePressed,
+    TResult? Function()? resumePressed,
     TResult? Function()? stopPressed,
     TResult? Function()? cancelPressed,
     TResult? Function()? savePressed,
@@ -298,6 +612,8 @@ class _$StopPressedImpl implements _StopPressed {
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? startPressed,
+    TResult Function()? pausePressed,
+    TResult Function()? resumePressed,
     TResult Function()? stopPressed,
     TResult Function()? cancelPressed,
     TResult Function()? savePressed,
@@ -315,6 +631,8 @@ class _$StopPressedImpl implements _StopPressed {
   @optionalTypeArgs
   TResult map<TResult extends Object?>({
     required TResult Function(_StartPressed value) startPressed,
+    required TResult Function(_PausePressed value) pausePressed,
+    required TResult Function(_ResumePressed value) resumePressed,
     required TResult Function(_StopPressed value) stopPressed,
     required TResult Function(_CancelPressed value) cancelPressed,
     required TResult Function(_SavePressed value) savePressed,
@@ -328,6 +646,8 @@ class _$StopPressedImpl implements _StopPressed {
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(_StartPressed value)? startPressed,
+    TResult? Function(_PausePressed value)? pausePressed,
+    TResult? Function(_ResumePressed value)? resumePressed,
     TResult? Function(_StopPressed value)? stopPressed,
     TResult? Function(_CancelPressed value)? cancelPressed,
     TResult? Function(_SavePressed value)? savePressed,
@@ -341,6 +661,8 @@ class _$StopPressedImpl implements _StopPressed {
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object?>({
     TResult Function(_StartPressed value)? startPressed,
+    TResult Function(_PausePressed value)? pausePressed,
+    TResult Function(_ResumePressed value)? resumePressed,
     TResult Function(_StopPressed value)? stopPressed,
     TResult Function(_CancelPressed value)? cancelPressed,
     TResult Function(_SavePressed value)? savePressed,
@@ -403,6 +725,8 @@ class _$CancelPressedImpl implements _CancelPressed {
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
     required TResult Function() startPressed,
+    required TResult Function() pausePressed,
+    required TResult Function() resumePressed,
     required TResult Function() stopPressed,
     required TResult Function() cancelPressed,
     required TResult Function() savePressed,
@@ -416,6 +740,8 @@ class _$CancelPressedImpl implements _CancelPressed {
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? startPressed,
+    TResult? Function()? pausePressed,
+    TResult? Function()? resumePressed,
     TResult? Function()? stopPressed,
     TResult? Function()? cancelPressed,
     TResult? Function()? savePressed,
@@ -429,6 +755,8 @@ class _$CancelPressedImpl implements _CancelPressed {
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? startPressed,
+    TResult Function()? pausePressed,
+    TResult Function()? resumePressed,
     TResult Function()? stopPressed,
     TResult Function()? cancelPressed,
     TResult Function()? savePressed,
@@ -446,6 +774,8 @@ class _$CancelPressedImpl implements _CancelPressed {
   @optionalTypeArgs
   TResult map<TResult extends Object?>({
     required TResult Function(_StartPressed value) startPressed,
+    required TResult Function(_PausePressed value) pausePressed,
+    required TResult Function(_ResumePressed value) resumePressed,
     required TResult Function(_StopPressed value) stopPressed,
     required TResult Function(_CancelPressed value) cancelPressed,
     required TResult Function(_SavePressed value) savePressed,
@@ -459,6 +789,8 @@ class _$CancelPressedImpl implements _CancelPressed {
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(_StartPressed value)? startPressed,
+    TResult? Function(_PausePressed value)? pausePressed,
+    TResult? Function(_ResumePressed value)? resumePressed,
     TResult? Function(_StopPressed value)? stopPressed,
     TResult? Function(_CancelPressed value)? cancelPressed,
     TResult? Function(_SavePressed value)? savePressed,
@@ -472,6 +804,8 @@ class _$CancelPressedImpl implements _CancelPressed {
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object?>({
     TResult Function(_StartPressed value)? startPressed,
+    TResult Function(_PausePressed value)? pausePressed,
+    TResult Function(_ResumePressed value)? resumePressed,
     TResult Function(_StopPressed value)? stopPressed,
     TResult Function(_CancelPressed value)? cancelPressed,
     TResult Function(_SavePressed value)? savePressed,
@@ -534,6 +868,8 @@ class _$SavePressedImpl implements _SavePressed {
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
     required TResult Function() startPressed,
+    required TResult Function() pausePressed,
+    required TResult Function() resumePressed,
     required TResult Function() stopPressed,
     required TResult Function() cancelPressed,
     required TResult Function() savePressed,
@@ -547,6 +883,8 @@ class _$SavePressedImpl implements _SavePressed {
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? startPressed,
+    TResult? Function()? pausePressed,
+    TResult? Function()? resumePressed,
     TResult? Function()? stopPressed,
     TResult? Function()? cancelPressed,
     TResult? Function()? savePressed,
@@ -560,6 +898,8 @@ class _$SavePressedImpl implements _SavePressed {
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? startPressed,
+    TResult Function()? pausePressed,
+    TResult Function()? resumePressed,
     TResult Function()? stopPressed,
     TResult Function()? cancelPressed,
     TResult Function()? savePressed,
@@ -577,6 +917,8 @@ class _$SavePressedImpl implements _SavePressed {
   @optionalTypeArgs
   TResult map<TResult extends Object?>({
     required TResult Function(_StartPressed value) startPressed,
+    required TResult Function(_PausePressed value) pausePressed,
+    required TResult Function(_ResumePressed value) resumePressed,
     required TResult Function(_StopPressed value) stopPressed,
     required TResult Function(_CancelPressed value) cancelPressed,
     required TResult Function(_SavePressed value) savePressed,
@@ -590,6 +932,8 @@ class _$SavePressedImpl implements _SavePressed {
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(_StartPressed value)? startPressed,
+    TResult? Function(_PausePressed value)? pausePressed,
+    TResult? Function(_ResumePressed value)? resumePressed,
     TResult? Function(_StopPressed value)? stopPressed,
     TResult? Function(_CancelPressed value)? cancelPressed,
     TResult? Function(_SavePressed value)? savePressed,
@@ -603,6 +947,8 @@ class _$SavePressedImpl implements _SavePressed {
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object?>({
     TResult Function(_StartPressed value)? startPressed,
+    TResult Function(_PausePressed value)? pausePressed,
+    TResult Function(_ResumePressed value)? resumePressed,
     TResult Function(_StopPressed value)? stopPressed,
     TResult Function(_CancelPressed value)? cancelPressed,
     TResult Function(_SavePressed value)? savePressed,
@@ -663,6 +1009,8 @@ class _$TickImpl implements _Tick {
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
     required TResult Function() startPressed,
+    required TResult Function() pausePressed,
+    required TResult Function() resumePressed,
     required TResult Function() stopPressed,
     required TResult Function() cancelPressed,
     required TResult Function() savePressed,
@@ -676,6 +1024,8 @@ class _$TickImpl implements _Tick {
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? startPressed,
+    TResult? Function()? pausePressed,
+    TResult? Function()? resumePressed,
     TResult? Function()? stopPressed,
     TResult? Function()? cancelPressed,
     TResult? Function()? savePressed,
@@ -689,6 +1039,8 @@ class _$TickImpl implements _Tick {
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? startPressed,
+    TResult Function()? pausePressed,
+    TResult Function()? resumePressed,
     TResult Function()? stopPressed,
     TResult Function()? cancelPressed,
     TResult Function()? savePressed,
@@ -706,6 +1058,8 @@ class _$TickImpl implements _Tick {
   @optionalTypeArgs
   TResult map<TResult extends Object?>({
     required TResult Function(_StartPressed value) startPressed,
+    required TResult Function(_PausePressed value) pausePressed,
+    required TResult Function(_ResumePressed value) resumePressed,
     required TResult Function(_StopPressed value) stopPressed,
     required TResult Function(_CancelPressed value) cancelPressed,
     required TResult Function(_SavePressed value) savePressed,
@@ -719,6 +1073,8 @@ class _$TickImpl implements _Tick {
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(_StartPressed value)? startPressed,
+    TResult? Function(_PausePressed value)? pausePressed,
+    TResult? Function(_ResumePressed value)? resumePressed,
     TResult? Function(_StopPressed value)? stopPressed,
     TResult? Function(_CancelPressed value)? cancelPressed,
     TResult? Function(_SavePressed value)? savePressed,
@@ -732,6 +1088,8 @@ class _$TickImpl implements _Tick {
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object?>({
     TResult Function(_StartPressed value)? startPressed,
+    TResult Function(_PausePressed value)? pausePressed,
+    TResult Function(_ResumePressed value)? resumePressed,
     TResult Function(_StopPressed value)? stopPressed,
     TResult Function(_CancelPressed value)? cancelPressed,
     TResult Function(_SavePressed value)? savePressed,
@@ -825,6 +1183,8 @@ class _$TemplateSelectedImpl implements _TemplateSelected {
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
     required TResult Function() startPressed,
+    required TResult Function() pausePressed,
+    required TResult Function() resumePressed,
     required TResult Function() stopPressed,
     required TResult Function() cancelPressed,
     required TResult Function() savePressed,
@@ -838,6 +1198,8 @@ class _$TemplateSelectedImpl implements _TemplateSelected {
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? startPressed,
+    TResult? Function()? pausePressed,
+    TResult? Function()? resumePressed,
     TResult? Function()? stopPressed,
     TResult? Function()? cancelPressed,
     TResult? Function()? savePressed,
@@ -851,6 +1213,8 @@ class _$TemplateSelectedImpl implements _TemplateSelected {
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? startPressed,
+    TResult Function()? pausePressed,
+    TResult Function()? resumePressed,
     TResult Function()? stopPressed,
     TResult Function()? cancelPressed,
     TResult Function()? savePressed,
@@ -868,6 +1232,8 @@ class _$TemplateSelectedImpl implements _TemplateSelected {
   @optionalTypeArgs
   TResult map<TResult extends Object?>({
     required TResult Function(_StartPressed value) startPressed,
+    required TResult Function(_PausePressed value) pausePressed,
+    required TResult Function(_ResumePressed value) resumePressed,
     required TResult Function(_StopPressed value) stopPressed,
     required TResult Function(_CancelPressed value) cancelPressed,
     required TResult Function(_SavePressed value) savePressed,
@@ -881,6 +1247,8 @@ class _$TemplateSelectedImpl implements _TemplateSelected {
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(_StartPressed value)? startPressed,
+    TResult? Function(_PausePressed value)? pausePressed,
+    TResult? Function(_ResumePressed value)? resumePressed,
     TResult? Function(_StopPressed value)? stopPressed,
     TResult? Function(_CancelPressed value)? cancelPressed,
     TResult? Function(_SavePressed value)? savePressed,
@@ -894,6 +1262,8 @@ class _$TemplateSelectedImpl implements _TemplateSelected {
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object?>({
     TResult Function(_StartPressed value)? startPressed,
+    TResult Function(_PausePressed value)? pausePressed,
+    TResult Function(_ResumePressed value)? resumePressed,
     TResult Function(_StopPressed value)? stopPressed,
     TResult Function(_CancelPressed value)? cancelPressed,
     TResult Function(_SavePressed value)? savePressed,
@@ -926,7 +1296,12 @@ mixin _$RecordingState {
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
     required TResult Function(String templateId) idle,
-    required TResult Function(int elapsedSeconds, String filePath) recording,
+    required TResult Function(
+      int elapsedSeconds,
+      String filePath,
+      bool isPaused,
+    )
+    recording,
     required TResult Function(String filePath, int durationSeconds) readyToSave,
     required TResult Function() uploading,
     required TResult Function(AudioNote note) success,
@@ -936,7 +1311,8 @@ mixin _$RecordingState {
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function(String templateId)? idle,
-    TResult? Function(int elapsedSeconds, String filePath)? recording,
+    TResult? Function(int elapsedSeconds, String filePath, bool isPaused)?
+    recording,
     TResult? Function(String filePath, int durationSeconds)? readyToSave,
     TResult? Function()? uploading,
     TResult? Function(AudioNote note)? success,
@@ -946,7 +1322,8 @@ mixin _$RecordingState {
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
     TResult Function(String templateId)? idle,
-    TResult Function(int elapsedSeconds, String filePath)? recording,
+    TResult Function(int elapsedSeconds, String filePath, bool isPaused)?
+    recording,
     TResult Function(String filePath, int durationSeconds)? readyToSave,
     TResult Function()? uploading,
     TResult Function(AudioNote note)? success,
@@ -1080,7 +1457,12 @@ class _$IdleImpl implements _Idle {
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
     required TResult Function(String templateId) idle,
-    required TResult Function(int elapsedSeconds, String filePath) recording,
+    required TResult Function(
+      int elapsedSeconds,
+      String filePath,
+      bool isPaused,
+    )
+    recording,
     required TResult Function(String filePath, int durationSeconds) readyToSave,
     required TResult Function() uploading,
     required TResult Function(AudioNote note) success,
@@ -1094,7 +1476,8 @@ class _$IdleImpl implements _Idle {
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function(String templateId)? idle,
-    TResult? Function(int elapsedSeconds, String filePath)? recording,
+    TResult? Function(int elapsedSeconds, String filePath, bool isPaused)?
+    recording,
     TResult? Function(String filePath, int durationSeconds)? readyToSave,
     TResult? Function()? uploading,
     TResult? Function(AudioNote note)? success,
@@ -1108,7 +1491,8 @@ class _$IdleImpl implements _Idle {
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
     TResult Function(String templateId)? idle,
-    TResult Function(int elapsedSeconds, String filePath)? recording,
+    TResult Function(int elapsedSeconds, String filePath, bool isPaused)?
+    recording,
     TResult Function(String filePath, int durationSeconds)? readyToSave,
     TResult Function()? uploading,
     TResult Function(AudioNote note)? success,
@@ -1188,7 +1572,7 @@ abstract class _$$RecordingImplCopyWith<$Res> {
     $Res Function(_$RecordingImpl) then,
   ) = __$$RecordingImplCopyWithImpl<$Res>;
   @useResult
-  $Res call({int elapsedSeconds, String filePath});
+  $Res call({int elapsedSeconds, String filePath, bool isPaused});
 }
 
 /// @nodoc
@@ -1204,7 +1588,11 @@ class __$$RecordingImplCopyWithImpl<$Res>
   /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
-  $Res call({Object? elapsedSeconds = null, Object? filePath = null}) {
+  $Res call({
+    Object? elapsedSeconds = null,
+    Object? filePath = null,
+    Object? isPaused = null,
+  }) {
     return _then(
       _$RecordingImpl(
         elapsedSeconds: null == elapsedSeconds
@@ -1215,6 +1603,10 @@ class __$$RecordingImplCopyWithImpl<$Res>
             ? _value.filePath
             : filePath // ignore: cast_nullable_to_non_nullable
                   as String,
+        isPaused: null == isPaused
+            ? _value.isPaused
+            : isPaused // ignore: cast_nullable_to_non_nullable
+                  as bool,
       ),
     );
   }
@@ -1223,16 +1615,23 @@ class __$$RecordingImplCopyWithImpl<$Res>
 /// @nodoc
 
 class _$RecordingImpl implements _Recording {
-  const _$RecordingImpl({required this.elapsedSeconds, required this.filePath});
+  const _$RecordingImpl({
+    required this.elapsedSeconds,
+    required this.filePath,
+    this.isPaused = false,
+  });
 
   @override
   final int elapsedSeconds;
   @override
   final String filePath;
+  @override
+  @JsonKey()
+  final bool isPaused;
 
   @override
   String toString() {
-    return 'RecordingState.recording(elapsedSeconds: $elapsedSeconds, filePath: $filePath)';
+    return 'RecordingState.recording(elapsedSeconds: $elapsedSeconds, filePath: $filePath, isPaused: $isPaused)';
   }
 
   @override
@@ -1243,11 +1642,14 @@ class _$RecordingImpl implements _Recording {
             (identical(other.elapsedSeconds, elapsedSeconds) ||
                 other.elapsedSeconds == elapsedSeconds) &&
             (identical(other.filePath, filePath) ||
-                other.filePath == filePath));
+                other.filePath == filePath) &&
+            (identical(other.isPaused, isPaused) ||
+                other.isPaused == isPaused));
   }
 
   @override
-  int get hashCode => Object.hash(runtimeType, elapsedSeconds, filePath);
+  int get hashCode =>
+      Object.hash(runtimeType, elapsedSeconds, filePath, isPaused);
 
   /// Create a copy of RecordingState
   /// with the given fields replaced by the non-null parameter values.
@@ -1261,35 +1663,42 @@ class _$RecordingImpl implements _Recording {
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
     required TResult Function(String templateId) idle,
-    required TResult Function(int elapsedSeconds, String filePath) recording,
+    required TResult Function(
+      int elapsedSeconds,
+      String filePath,
+      bool isPaused,
+    )
+    recording,
     required TResult Function(String filePath, int durationSeconds) readyToSave,
     required TResult Function() uploading,
     required TResult Function(AudioNote note) success,
     required TResult Function(String message) failure,
     required TResult Function() limitReached,
   }) {
-    return recording(elapsedSeconds, filePath);
+    return recording(elapsedSeconds, filePath, isPaused);
   }
 
   @override
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function(String templateId)? idle,
-    TResult? Function(int elapsedSeconds, String filePath)? recording,
+    TResult? Function(int elapsedSeconds, String filePath, bool isPaused)?
+    recording,
     TResult? Function(String filePath, int durationSeconds)? readyToSave,
     TResult? Function()? uploading,
     TResult? Function(AudioNote note)? success,
     TResult? Function(String message)? failure,
     TResult? Function()? limitReached,
   }) {
-    return recording?.call(elapsedSeconds, filePath);
+    return recording?.call(elapsedSeconds, filePath, isPaused);
   }
 
   @override
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
     TResult Function(String templateId)? idle,
-    TResult Function(int elapsedSeconds, String filePath)? recording,
+    TResult Function(int elapsedSeconds, String filePath, bool isPaused)?
+    recording,
     TResult Function(String filePath, int durationSeconds)? readyToSave,
     TResult Function()? uploading,
     TResult Function(AudioNote note)? success,
@@ -1298,7 +1707,7 @@ class _$RecordingImpl implements _Recording {
     required TResult orElse(),
   }) {
     if (recording != null) {
-      return recording(elapsedSeconds, filePath);
+      return recording(elapsedSeconds, filePath, isPaused);
     }
     return orElse();
   }
@@ -1354,10 +1763,12 @@ abstract class _Recording implements RecordingState {
   const factory _Recording({
     required final int elapsedSeconds,
     required final String filePath,
+    final bool isPaused,
   }) = _$RecordingImpl;
 
   int get elapsedSeconds;
   String get filePath;
+  bool get isPaused;
 
   /// Create a copy of RecordingState
   /// with the given fields replaced by the non-null parameter values.
@@ -1449,7 +1860,12 @@ class _$ReadyToSaveImpl implements _ReadyToSave {
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
     required TResult Function(String templateId) idle,
-    required TResult Function(int elapsedSeconds, String filePath) recording,
+    required TResult Function(
+      int elapsedSeconds,
+      String filePath,
+      bool isPaused,
+    )
+    recording,
     required TResult Function(String filePath, int durationSeconds) readyToSave,
     required TResult Function() uploading,
     required TResult Function(AudioNote note) success,
@@ -1463,7 +1879,8 @@ class _$ReadyToSaveImpl implements _ReadyToSave {
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function(String templateId)? idle,
-    TResult? Function(int elapsedSeconds, String filePath)? recording,
+    TResult? Function(int elapsedSeconds, String filePath, bool isPaused)?
+    recording,
     TResult? Function(String filePath, int durationSeconds)? readyToSave,
     TResult? Function()? uploading,
     TResult? Function(AudioNote note)? success,
@@ -1477,7 +1894,8 @@ class _$ReadyToSaveImpl implements _ReadyToSave {
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
     TResult Function(String templateId)? idle,
-    TResult Function(int elapsedSeconds, String filePath)? recording,
+    TResult Function(int elapsedSeconds, String filePath, bool isPaused)?
+    recording,
     TResult Function(String filePath, int durationSeconds)? readyToSave,
     TResult Function()? uploading,
     TResult Function(AudioNote note)? success,
@@ -1598,7 +2016,12 @@ class _$UploadingImpl implements _Uploading {
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
     required TResult Function(String templateId) idle,
-    required TResult Function(int elapsedSeconds, String filePath) recording,
+    required TResult Function(
+      int elapsedSeconds,
+      String filePath,
+      bool isPaused,
+    )
+    recording,
     required TResult Function(String filePath, int durationSeconds) readyToSave,
     required TResult Function() uploading,
     required TResult Function(AudioNote note) success,
@@ -1612,7 +2035,8 @@ class _$UploadingImpl implements _Uploading {
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function(String templateId)? idle,
-    TResult? Function(int elapsedSeconds, String filePath)? recording,
+    TResult? Function(int elapsedSeconds, String filePath, bool isPaused)?
+    recording,
     TResult? Function(String filePath, int durationSeconds)? readyToSave,
     TResult? Function()? uploading,
     TResult? Function(AudioNote note)? success,
@@ -1626,7 +2050,8 @@ class _$UploadingImpl implements _Uploading {
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
     TResult Function(String templateId)? idle,
-    TResult Function(int elapsedSeconds, String filePath)? recording,
+    TResult Function(int elapsedSeconds, String filePath, bool isPaused)?
+    recording,
     TResult Function(String filePath, int durationSeconds)? readyToSave,
     TResult Function()? uploading,
     TResult Function(AudioNote note)? success,
@@ -1762,7 +2187,12 @@ class _$SuccessImpl implements _Success {
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
     required TResult Function(String templateId) idle,
-    required TResult Function(int elapsedSeconds, String filePath) recording,
+    required TResult Function(
+      int elapsedSeconds,
+      String filePath,
+      bool isPaused,
+    )
+    recording,
     required TResult Function(String filePath, int durationSeconds) readyToSave,
     required TResult Function() uploading,
     required TResult Function(AudioNote note) success,
@@ -1776,7 +2206,8 @@ class _$SuccessImpl implements _Success {
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function(String templateId)? idle,
-    TResult? Function(int elapsedSeconds, String filePath)? recording,
+    TResult? Function(int elapsedSeconds, String filePath, bool isPaused)?
+    recording,
     TResult? Function(String filePath, int durationSeconds)? readyToSave,
     TResult? Function()? uploading,
     TResult? Function(AudioNote note)? success,
@@ -1790,7 +2221,8 @@ class _$SuccessImpl implements _Success {
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
     TResult Function(String templateId)? idle,
-    TResult Function(int elapsedSeconds, String filePath)? recording,
+    TResult Function(int elapsedSeconds, String filePath, bool isPaused)?
+    recording,
     TResult Function(String filePath, int durationSeconds)? readyToSave,
     TResult Function()? uploading,
     TResult Function(AudioNote note)? success,
@@ -1934,7 +2366,12 @@ class _$FailureImpl implements _Failure {
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
     required TResult Function(String templateId) idle,
-    required TResult Function(int elapsedSeconds, String filePath) recording,
+    required TResult Function(
+      int elapsedSeconds,
+      String filePath,
+      bool isPaused,
+    )
+    recording,
     required TResult Function(String filePath, int durationSeconds) readyToSave,
     required TResult Function() uploading,
     required TResult Function(AudioNote note) success,
@@ -1948,7 +2385,8 @@ class _$FailureImpl implements _Failure {
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function(String templateId)? idle,
-    TResult? Function(int elapsedSeconds, String filePath)? recording,
+    TResult? Function(int elapsedSeconds, String filePath, bool isPaused)?
+    recording,
     TResult? Function(String filePath, int durationSeconds)? readyToSave,
     TResult? Function()? uploading,
     TResult? Function(AudioNote note)? success,
@@ -1962,7 +2400,8 @@ class _$FailureImpl implements _Failure {
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
     TResult Function(String templateId)? idle,
-    TResult Function(int elapsedSeconds, String filePath)? recording,
+    TResult Function(int elapsedSeconds, String filePath, bool isPaused)?
+    recording,
     TResult Function(String filePath, int durationSeconds)? readyToSave,
     TResult Function()? uploading,
     TResult Function(AudioNote note)? success,
@@ -2079,7 +2518,12 @@ class _$LimitReachedImpl implements _LimitReached {
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
     required TResult Function(String templateId) idle,
-    required TResult Function(int elapsedSeconds, String filePath) recording,
+    required TResult Function(
+      int elapsedSeconds,
+      String filePath,
+      bool isPaused,
+    )
+    recording,
     required TResult Function(String filePath, int durationSeconds) readyToSave,
     required TResult Function() uploading,
     required TResult Function(AudioNote note) success,
@@ -2093,7 +2537,8 @@ class _$LimitReachedImpl implements _LimitReached {
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function(String templateId)? idle,
-    TResult? Function(int elapsedSeconds, String filePath)? recording,
+    TResult? Function(int elapsedSeconds, String filePath, bool isPaused)?
+    recording,
     TResult? Function(String filePath, int durationSeconds)? readyToSave,
     TResult? Function()? uploading,
     TResult? Function(AudioNote note)? success,
@@ -2107,7 +2552,8 @@ class _$LimitReachedImpl implements _LimitReached {
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
     TResult Function(String templateId)? idle,
-    TResult Function(int elapsedSeconds, String filePath)? recording,
+    TResult Function(int elapsedSeconds, String filePath, bool isPaused)?
+    recording,
     TResult Function(String filePath, int durationSeconds)? readyToSave,
     TResult Function()? uploading,
     TResult Function(AudioNote note)? success,

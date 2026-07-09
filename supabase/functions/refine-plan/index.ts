@@ -147,6 +147,14 @@ function jsonResponse(body: Record<string, unknown>, status: number) {
   });
 }
 
+function isOwnedAudioPath(audioPath: string, userId: string): boolean {
+  const normalized = audioPath.trim();
+  return normalized.length > 0 &&
+    !normalized.startsWith("/") &&
+    !normalized.includes("..") &&
+    normalized.startsWith(`${userId}/`);
+}
+
 function snapshotFromAnalysis(
   a: Record<string, unknown>,
 ): PlanSnapshot {
@@ -419,8 +427,27 @@ Deno.serve(async (req: Request) => {
     );
   }
 
+  // ── Load current plan (startup_analyses) ────────────────────────
+  // planId maps to audio_note_id
+  const { data: analysis, error: analysisErr } = await supabase
+    .from("startup_analyses")
+    .select("*")
+    .eq("audio_note_id", planId)
+    .maybeSingle();
+
+  if (analysisErr || !analysis) {
+    return jsonResponse({ error: "Plan not found" }, 404);
+  }
+  if (analysis.user_id !== user.id) {
+    return jsonResponse({ error: "Forbidden" }, 403);
+  }
+
   // ── Transcribe audio if audioPath provided ─────────────────────
   if (!transcription && audioPath) {
+    if (!isOwnedAudioPath(audioPath, user.id)) {
+      return jsonResponse({ error: "Forbidden audio path" }, 403);
+    }
+
     const { data: audioData, error: dlErr } = await supabase.storage
       .from("audio-notes")
       .download(audioPath);
@@ -458,21 +485,6 @@ Deno.serve(async (req: Request) => {
 
   if (!transcription || transcription.trim().length === 0) {
     return jsonResponse({ error: "transcription cannot be empty" }, 400);
-  }
-
-  // ── Load current plan (startup_analyses) ────────────────────────
-  // planId maps to audio_note_id
-  const { data: analysis, error: analysisErr } = await supabase
-    .from("startup_analyses")
-    .select("*")
-    .eq("audio_note_id", planId)
-    .maybeSingle();
-
-  if (analysisErr || !analysis) {
-    return jsonResponse({ error: "Plan not found" }, 404);
-  }
-  if (analysis.user_id !== user.id) {
-    return jsonResponse({ error: "Forbidden" }, 403);
   }
 
   // ── Load prior refinement rounds ────────────────────────────────

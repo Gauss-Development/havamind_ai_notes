@@ -196,6 +196,20 @@ Deno.serve(async (req: Request) => {
     return jsonResponse({ error: "Forbidden" }, 403);
   }
 
+  // Ephemeral storage: once processing completes the raw audio is removed and
+  // `audio_path` is nulled. A (re)processing request for such a note can never
+  // succeed since there is no blob to transcribe, so reject it explicitly
+  // instead of failing later at the download step.
+  if (!note.audio_path) {
+    return jsonResponse(
+      {
+        error: "Audio already processed and removed; nothing to reprocess.",
+        code: "AUDIO_ALREADY_PROCESSED",
+      },
+      409,
+    );
+  }
+
   // ── Server-side usage gate ────────────────────────────────────────────
   // Mirrors the client-side check in `GetCurrentUsageUseCase`. Without it
   // the free tier limit is enforced only by the Flutter app and a curl
@@ -407,6 +421,15 @@ Deno.serve(async (req: Request) => {
       .eq("id", audioNoteId);
     if (doneErr) throw new Error(doneErr.message);
 
+    // Ephemeral storage: the bucket is a staging area for the processing
+    // pipeline, not a media library. Once a note is completed the transcript
+    // and analysis are the durable artifacts, so the raw audio blob is
+    // deleted and `audio_path` is nulled. We remove the blob first and only
+    // null the column on success — a transient removal failure therefore
+    // leaves a recoverable reference for retry/cleanup instead of orphaning
+    // the object forever.
+    await cleanupAudioBlob(supabase, audioNoteId, note.audio_path);
+
     return jsonResponse({ ok: true, status: "completed" }, 200);
   } catch (e) {
     const msg = e instanceof Error ? e.message : String(e);
@@ -426,4 +449,41 @@ function jsonResponse(body: Record<string, unknown>, status: number) {
     status,
     headers: { ...corsHeaders, "Content-Type": "application/json" },
   });
+}
+
+/**
+ * Best-effort removal of the staging audio blob after a note is completed.
+ * Never throws — the note is already completed, so cleanup must not turn a
+ * successful run into a failure. The `audio_path` column is only nulled once
+ * the Storage object is actually gone, keeping the reference recoverable if
+ * the remove call fails transiently.
+ */
+async function cleanupAudioBlob(
+  // deno-lint-ignore no-explicit-any
+  supabase: any,
+  audioNoteId: string,
+  audioPath: string | null,
+): Promise<void> {
+  if (!audioPath) return;
+  try {
+    const { error: rmErr } = await supabase.storage
+      .from("audio-notes")
+      .remove([audioPath]);
+    if (rmErr) {
+      console.error("audio blob cleanup failed:", rmErr.message);
+      return;
+    }
+    const { error: nullErr } = await supabase
+      .from("audio_notes")
+      .update({ audio_path: null })
+      .eq("id", audioNoteId);
+    if (nullErr) {
+      console.error("audio_path null update failed:", nullErr.message);
+    }
+  } catch (e) {
+    console.error(
+      "audio blob cleanup error:",
+      e instanceof Error ? e.message : String(e),
+    );
+  }
 }

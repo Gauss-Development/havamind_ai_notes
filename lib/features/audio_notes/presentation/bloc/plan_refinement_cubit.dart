@@ -15,6 +15,7 @@ class PlanRefinementState extends Equatable {
   const PlanRefinementState._({
     this.status = PlanRefinementStatus.idle,
     this.elapsedSeconds = 0,
+    this.isPaused = false,
     this.filePath,
     this.result,
     this.error,
@@ -28,6 +29,7 @@ class PlanRefinementState extends Equatable {
 
   final PlanRefinementStatus status;
   final int elapsedSeconds;
+  final bool isPaused;
   final String? filePath;
   final Map<String, dynamic>? result;
   final String? error;
@@ -38,6 +40,7 @@ class PlanRefinementState extends Equatable {
   PlanRefinementState copyWith({
     PlanRefinementStatus? status,
     int? elapsedSeconds,
+    bool? isPaused,
     String? filePath,
     Map<String, dynamic>? result,
     String? error,
@@ -48,6 +51,7 @@ class PlanRefinementState extends Equatable {
     return PlanRefinementState._(
       status: status ?? this.status,
       elapsedSeconds: elapsedSeconds ?? this.elapsedSeconds,
+      isPaused: isPaused ?? this.isPaused,
       filePath: filePath ?? this.filePath,
       result: result ?? this.result,
       error: error,
@@ -61,6 +65,7 @@ class PlanRefinementState extends Equatable {
   List<Object?> get props => [
         status,
         elapsedSeconds,
+        isPaused,
         filePath,
         result,
         error,
@@ -152,8 +157,13 @@ class PlanRefinementCubit extends Cubit<PlanRefinementState> {
     emit(state.copyWith(
       status: PlanRefinementStatus.recording,
       elapsedSeconds: 0,
+      isPaused: false,
       filePath: path,
     ));
+    _startTimer();
+  }
+
+  void _startTimer() {
     _timer?.cancel();
     _timer = Timer.periodic(
       const Duration(seconds: 1),
@@ -162,13 +172,49 @@ class PlanRefinementCubit extends Cubit<PlanRefinementState> {
   }
 
   void _onTick() {
-    if (state.status != PlanRefinementStatus.recording) return;
+    if (state.status != PlanRefinementStatus.recording || state.isPaused) {
+      return;
+    }
     final next = state.elapsedSeconds + 1;
     if (next >= _effectiveMaxSeconds) {
       stopRecording();
     } else {
       emit(state.copyWith(elapsedSeconds: next));
     }
+  }
+
+  Future<void> pauseRecording() async {
+    if (state.status != PlanRefinementStatus.recording || state.isPaused) {
+      return;
+    }
+    _timer?.cancel();
+    try {
+      await _recording.pauseRecording();
+    } catch (e) {
+      emit(state.copyWith(
+        status: PlanRefinementStatus.failure,
+        error: e.toString(),
+      ));
+      return;
+    }
+    emit(state.copyWith(isPaused: true));
+  }
+
+  Future<void> resumeRecording() async {
+    if (state.status != PlanRefinementStatus.recording || !state.isPaused) {
+      return;
+    }
+    try {
+      await _recording.resumeRecording();
+    } catch (e) {
+      emit(state.copyWith(
+        status: PlanRefinementStatus.failure,
+        error: e.toString(),
+      ));
+      return;
+    }
+    emit(state.copyWith(isPaused: false));
+    _startTimer();
   }
 
   Future<void> stopRecording() async {
@@ -185,6 +231,7 @@ class PlanRefinementCubit extends Cubit<PlanRefinementState> {
     }
     emit(state.copyWith(
       status: PlanRefinementStatus.readyToSave,
+      isPaused: false,
       elapsedSeconds:
           state.elapsedSeconds == 0 ? 1 : state.elapsedSeconds,
     ));

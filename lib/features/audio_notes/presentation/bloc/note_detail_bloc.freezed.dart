@@ -22,7 +22,6 @@ mixin _$NoteDetailEvent {
     required TResult Function(String noteId) loadRequested,
     required TResult Function() deleteRequested,
     required TResult Function() retryProcessing,
-    required TResult Function() deleteLocalAudioRequested,
     required TResult Function(StartupAnalysisEditableField field, String value)
     analysisFieldUpdated,
     required TResult Function(String title) titleUpdated,
@@ -33,7 +32,6 @@ mixin _$NoteDetailEvent {
     TResult? Function(String noteId)? loadRequested,
     TResult? Function()? deleteRequested,
     TResult? Function()? retryProcessing,
-    TResult? Function()? deleteLocalAudioRequested,
     TResult? Function(StartupAnalysisEditableField field, String value)?
     analysisFieldUpdated,
     TResult? Function(String title)? titleUpdated,
@@ -44,7 +42,6 @@ mixin _$NoteDetailEvent {
     TResult Function(String noteId)? loadRequested,
     TResult Function()? deleteRequested,
     TResult Function()? retryProcessing,
-    TResult Function()? deleteLocalAudioRequested,
     TResult Function(StartupAnalysisEditableField field, String value)?
     analysisFieldUpdated,
     TResult Function(String title)? titleUpdated,
@@ -56,8 +53,6 @@ mixin _$NoteDetailEvent {
     required TResult Function(_LoadRequested value) loadRequested,
     required TResult Function(_DeleteRequested value) deleteRequested,
     required TResult Function(_RetryProcessing value) retryProcessing,
-    required TResult Function(_DeleteLocalAudioRequested value)
-    deleteLocalAudioRequested,
     required TResult Function(_AnalysisFieldUpdated value) analysisFieldUpdated,
     required TResult Function(_TitleUpdated value) titleUpdated,
     required TResult Function(_NoteUpdated value) noteUpdated,
@@ -67,8 +62,6 @@ mixin _$NoteDetailEvent {
     TResult? Function(_LoadRequested value)? loadRequested,
     TResult? Function(_DeleteRequested value)? deleteRequested,
     TResult? Function(_RetryProcessing value)? retryProcessing,
-    TResult? Function(_DeleteLocalAudioRequested value)?
-    deleteLocalAudioRequested,
     TResult? Function(_AnalysisFieldUpdated value)? analysisFieldUpdated,
     TResult? Function(_TitleUpdated value)? titleUpdated,
     TResult? Function(_NoteUpdated value)? noteUpdated,
@@ -78,8 +71,6 @@ mixin _$NoteDetailEvent {
     TResult Function(_LoadRequested value)? loadRequested,
     TResult Function(_DeleteRequested value)? deleteRequested,
     TResult Function(_RetryProcessing value)? retryProcessing,
-    TResult Function(_DeleteLocalAudioRequested value)?
-    deleteLocalAudioRequested,
     TResult Function(_AnalysisFieldUpdated value)? analysisFieldUpdated,
     TResult Function(_TitleUpdated value)? titleUpdated,
     TResult Function(_NoteUpdated value)? noteUpdated,
@@ -182,7 +173,6 @@ class _$LoadRequestedImpl implements _LoadRequested {
     required TResult Function(String noteId) loadRequested,
     required TResult Function() deleteRequested,
     required TResult Function() retryProcessing,
-    required TResult Function() deleteLocalAudioRequested,
     required TResult Function(StartupAnalysisEditableField field, String value)
     analysisFieldUpdated,
     required TResult Function(String title) titleUpdated,
@@ -197,7 +187,6 @@ class _$LoadRequestedImpl implements _LoadRequested {
     TResult? Function(String noteId)? loadRequested,
     TResult? Function()? deleteRequested,
     TResult? Function()? retryProcessing,
-    TResult? Function()? deleteLocalAudioRequested,
     TResult? Function(StartupAnalysisEditableField field, String value)?
     analysisFieldUpdated,
     TResult? Function(String title)? titleUpdated,
@@ -212,7 +201,6 @@ class _$LoadRequestedImpl implements _LoadRequested {
     TResult Function(String noteId)? loadRequested,
     TResult Function()? deleteRequested,
     TResult Function()? retryProcessing,
-    TResult Function()? deleteLocalAudioRequested,
     TResult Function(StartupAnalysisEditableField field, String value)?
     analysisFieldUpdated,
     TResult Function(String title)? titleUpdated,
@@ -231,8 +219,6 @@ class _$LoadRequestedImpl implements _LoadRequested {
     required TResult Function(_LoadRequested value) loadRequested,
     required TResult Function(_DeleteRequested value) deleteRequested,
     required TResult Function(_RetryProcessing value) retryProcessing,
-    required TResult Function(_DeleteLocalAudioRequested value)
-    deleteLocalAudioRequested,
     required TResult Function(_AnalysisFieldUpdated value) analysisFieldUpdated,
     required TResult Function(_TitleUpdated value) titleUpdated,
     required TResult Function(_NoteUpdated value) noteUpdated,
@@ -246,8 +232,6 @@ class _$LoadRequestedImpl implements _LoadRequested {
     TResult? Function(_LoadRequested value)? loadRequested,
     TResult? Function(_DeleteRequested value)? deleteRequested,
     TResult? Function(_RetryProcessing value)? retryProcessing,
-    TResult? Function(_DeleteLocalAudioRequested value)?
-    deleteLocalAudioRequested,
     TResult? Function(_AnalysisFieldUpdated value)? analysisFieldUpdated,
     TResult? Function(_TitleUpdated value)? titleUpdated,
     TResult? Function(_NoteUpdated value)? noteUpdated,
@@ -261,8 +245,6 @@ class _$LoadRequestedImpl implements _LoadRequested {
     TResult Function(_LoadRequested value)? loadRequested,
     TResult Function(_DeleteRequested value)? deleteRequested,
     TResult Function(_RetryProcessing value)? retryProcessing,
-    TResult Function(_DeleteLocalAudioRequested value)?
-    deleteLocalAudioRequested,
     TResult Function(_AnalysisFieldUpdated value)? analysisFieldUpdated,
     TResult Function(_TitleUpdated value)? titleUpdated,
     TResult Function(_NoteUpdated value)? noteUpdated,
@@ -333,7 +315,6 @@ class _$DeleteRequestedImpl implements _DeleteRequested {
     required TResult Function(String noteId) loadRequested,
     required TResult Function() deleteRequested,
     required TResult Function() retryProcessing,
-    required TResult Function() deleteLocalAudioRequested,
     required TResult Function(StartupAnalysisEditableField field, String value)
     analysisFieldUpdated,
     required TResult Function(String title) titleUpdated,
@@ -348,7 +329,6 @@ class _$DeleteRequestedImpl implements _DeleteRequested {
     TResult? Function(String noteId)? loadRequested,
     TResult? Function()? deleteRequested,
     TResult? Function()? retryProcessing,
-    TResult? Function()? deleteLocalAudioRequested,
     TResult? Function(StartupAnalysisEditableField field, String value)?
     analysisFieldUpdated,
     TResult? Function(String title)? titleUpdated,
@@ -363,7 +343,6 @@ class _$DeleteRequestedImpl implements _DeleteRequested {
     TResult Function(String noteId)? loadRequested,
     TResult Function()? deleteRequested,
     TResult Function()? retryProcessing,
-    TResult Function()? deleteLocalAudioRequested,
     TResult Function(StartupAnalysisEditableField field, String value)?
     analysisFieldUpdated,
     TResult Function(String title)? titleUpdated,
@@ -382,8 +361,6 @@ class _$DeleteRequestedImpl implements _DeleteRequested {
     required TResult Function(_LoadRequested value) loadRequested,
     required TResult Function(_DeleteRequested value) deleteRequested,
     required TResult Function(_RetryProcessing value) retryProcessing,
-    required TResult Function(_DeleteLocalAudioRequested value)
-    deleteLocalAudioRequested,
     required TResult Function(_AnalysisFieldUpdated value) analysisFieldUpdated,
     required TResult Function(_TitleUpdated value) titleUpdated,
     required TResult Function(_NoteUpdated value) noteUpdated,
@@ -397,8 +374,6 @@ class _$DeleteRequestedImpl implements _DeleteRequested {
     TResult? Function(_LoadRequested value)? loadRequested,
     TResult? Function(_DeleteRequested value)? deleteRequested,
     TResult? Function(_RetryProcessing value)? retryProcessing,
-    TResult? Function(_DeleteLocalAudioRequested value)?
-    deleteLocalAudioRequested,
     TResult? Function(_AnalysisFieldUpdated value)? analysisFieldUpdated,
     TResult? Function(_TitleUpdated value)? titleUpdated,
     TResult? Function(_NoteUpdated value)? noteUpdated,
@@ -412,8 +387,6 @@ class _$DeleteRequestedImpl implements _DeleteRequested {
     TResult Function(_LoadRequested value)? loadRequested,
     TResult Function(_DeleteRequested value)? deleteRequested,
     TResult Function(_RetryProcessing value)? retryProcessing,
-    TResult Function(_DeleteLocalAudioRequested value)?
-    deleteLocalAudioRequested,
     TResult Function(_AnalysisFieldUpdated value)? analysisFieldUpdated,
     TResult Function(_TitleUpdated value)? titleUpdated,
     TResult Function(_NoteUpdated value)? noteUpdated,
@@ -476,7 +449,6 @@ class _$RetryProcessingImpl implements _RetryProcessing {
     required TResult Function(String noteId) loadRequested,
     required TResult Function() deleteRequested,
     required TResult Function() retryProcessing,
-    required TResult Function() deleteLocalAudioRequested,
     required TResult Function(StartupAnalysisEditableField field, String value)
     analysisFieldUpdated,
     required TResult Function(String title) titleUpdated,
@@ -491,7 +463,6 @@ class _$RetryProcessingImpl implements _RetryProcessing {
     TResult? Function(String noteId)? loadRequested,
     TResult? Function()? deleteRequested,
     TResult? Function()? retryProcessing,
-    TResult? Function()? deleteLocalAudioRequested,
     TResult? Function(StartupAnalysisEditableField field, String value)?
     analysisFieldUpdated,
     TResult? Function(String title)? titleUpdated,
@@ -506,7 +477,6 @@ class _$RetryProcessingImpl implements _RetryProcessing {
     TResult Function(String noteId)? loadRequested,
     TResult Function()? deleteRequested,
     TResult Function()? retryProcessing,
-    TResult Function()? deleteLocalAudioRequested,
     TResult Function(StartupAnalysisEditableField field, String value)?
     analysisFieldUpdated,
     TResult Function(String title)? titleUpdated,
@@ -525,8 +495,6 @@ class _$RetryProcessingImpl implements _RetryProcessing {
     required TResult Function(_LoadRequested value) loadRequested,
     required TResult Function(_DeleteRequested value) deleteRequested,
     required TResult Function(_RetryProcessing value) retryProcessing,
-    required TResult Function(_DeleteLocalAudioRequested value)
-    deleteLocalAudioRequested,
     required TResult Function(_AnalysisFieldUpdated value) analysisFieldUpdated,
     required TResult Function(_TitleUpdated value) titleUpdated,
     required TResult Function(_NoteUpdated value) noteUpdated,
@@ -540,8 +508,6 @@ class _$RetryProcessingImpl implements _RetryProcessing {
     TResult? Function(_LoadRequested value)? loadRequested,
     TResult? Function(_DeleteRequested value)? deleteRequested,
     TResult? Function(_RetryProcessing value)? retryProcessing,
-    TResult? Function(_DeleteLocalAudioRequested value)?
-    deleteLocalAudioRequested,
     TResult? Function(_AnalysisFieldUpdated value)? analysisFieldUpdated,
     TResult? Function(_TitleUpdated value)? titleUpdated,
     TResult? Function(_NoteUpdated value)? noteUpdated,
@@ -555,8 +521,6 @@ class _$RetryProcessingImpl implements _RetryProcessing {
     TResult Function(_LoadRequested value)? loadRequested,
     TResult Function(_DeleteRequested value)? deleteRequested,
     TResult Function(_RetryProcessing value)? retryProcessing,
-    TResult Function(_DeleteLocalAudioRequested value)?
-    deleteLocalAudioRequested,
     TResult Function(_AnalysisFieldUpdated value)? analysisFieldUpdated,
     TResult Function(_TitleUpdated value)? titleUpdated,
     TResult Function(_NoteUpdated value)? noteUpdated,
@@ -571,150 +535,6 @@ class _$RetryProcessingImpl implements _RetryProcessing {
 
 abstract class _RetryProcessing implements NoteDetailEvent {
   const factory _RetryProcessing() = _$RetryProcessingImpl;
-}
-
-/// @nodoc
-abstract class _$$DeleteLocalAudioRequestedImplCopyWith<$Res> {
-  factory _$$DeleteLocalAudioRequestedImplCopyWith(
-    _$DeleteLocalAudioRequestedImpl value,
-    $Res Function(_$DeleteLocalAudioRequestedImpl) then,
-  ) = __$$DeleteLocalAudioRequestedImplCopyWithImpl<$Res>;
-}
-
-/// @nodoc
-class __$$DeleteLocalAudioRequestedImplCopyWithImpl<$Res>
-    extends _$NoteDetailEventCopyWithImpl<$Res, _$DeleteLocalAudioRequestedImpl>
-    implements _$$DeleteLocalAudioRequestedImplCopyWith<$Res> {
-  __$$DeleteLocalAudioRequestedImplCopyWithImpl(
-    _$DeleteLocalAudioRequestedImpl _value,
-    $Res Function(_$DeleteLocalAudioRequestedImpl) _then,
-  ) : super(_value, _then);
-
-  /// Create a copy of NoteDetailEvent
-  /// with the given fields replaced by the non-null parameter values.
-}
-
-/// @nodoc
-
-class _$DeleteLocalAudioRequestedImpl implements _DeleteLocalAudioRequested {
-  const _$DeleteLocalAudioRequestedImpl();
-
-  @override
-  String toString() {
-    return 'NoteDetailEvent.deleteLocalAudioRequested()';
-  }
-
-  @override
-  bool operator ==(Object other) {
-    return identical(this, other) ||
-        (other.runtimeType == runtimeType &&
-            other is _$DeleteLocalAudioRequestedImpl);
-  }
-
-  @override
-  int get hashCode => runtimeType.hashCode;
-
-  @override
-  @optionalTypeArgs
-  TResult when<TResult extends Object?>({
-    required TResult Function(String noteId) loadRequested,
-    required TResult Function() deleteRequested,
-    required TResult Function() retryProcessing,
-    required TResult Function() deleteLocalAudioRequested,
-    required TResult Function(StartupAnalysisEditableField field, String value)
-    analysisFieldUpdated,
-    required TResult Function(String title) titleUpdated,
-    required TResult Function(AudioNote note) noteUpdated,
-  }) {
-    return deleteLocalAudioRequested();
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult? whenOrNull<TResult extends Object?>({
-    TResult? Function(String noteId)? loadRequested,
-    TResult? Function()? deleteRequested,
-    TResult? Function()? retryProcessing,
-    TResult? Function()? deleteLocalAudioRequested,
-    TResult? Function(StartupAnalysisEditableField field, String value)?
-    analysisFieldUpdated,
-    TResult? Function(String title)? titleUpdated,
-    TResult? Function(AudioNote note)? noteUpdated,
-  }) {
-    return deleteLocalAudioRequested?.call();
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult maybeWhen<TResult extends Object?>({
-    TResult Function(String noteId)? loadRequested,
-    TResult Function()? deleteRequested,
-    TResult Function()? retryProcessing,
-    TResult Function()? deleteLocalAudioRequested,
-    TResult Function(StartupAnalysisEditableField field, String value)?
-    analysisFieldUpdated,
-    TResult Function(String title)? titleUpdated,
-    TResult Function(AudioNote note)? noteUpdated,
-    required TResult orElse(),
-  }) {
-    if (deleteLocalAudioRequested != null) {
-      return deleteLocalAudioRequested();
-    }
-    return orElse();
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult map<TResult extends Object?>({
-    required TResult Function(_LoadRequested value) loadRequested,
-    required TResult Function(_DeleteRequested value) deleteRequested,
-    required TResult Function(_RetryProcessing value) retryProcessing,
-    required TResult Function(_DeleteLocalAudioRequested value)
-    deleteLocalAudioRequested,
-    required TResult Function(_AnalysisFieldUpdated value) analysisFieldUpdated,
-    required TResult Function(_TitleUpdated value) titleUpdated,
-    required TResult Function(_NoteUpdated value) noteUpdated,
-  }) {
-    return deleteLocalAudioRequested(this);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult? mapOrNull<TResult extends Object?>({
-    TResult? Function(_LoadRequested value)? loadRequested,
-    TResult? Function(_DeleteRequested value)? deleteRequested,
-    TResult? Function(_RetryProcessing value)? retryProcessing,
-    TResult? Function(_DeleteLocalAudioRequested value)?
-    deleteLocalAudioRequested,
-    TResult? Function(_AnalysisFieldUpdated value)? analysisFieldUpdated,
-    TResult? Function(_TitleUpdated value)? titleUpdated,
-    TResult? Function(_NoteUpdated value)? noteUpdated,
-  }) {
-    return deleteLocalAudioRequested?.call(this);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult maybeMap<TResult extends Object?>({
-    TResult Function(_LoadRequested value)? loadRequested,
-    TResult Function(_DeleteRequested value)? deleteRequested,
-    TResult Function(_RetryProcessing value)? retryProcessing,
-    TResult Function(_DeleteLocalAudioRequested value)?
-    deleteLocalAudioRequested,
-    TResult Function(_AnalysisFieldUpdated value)? analysisFieldUpdated,
-    TResult Function(_TitleUpdated value)? titleUpdated,
-    TResult Function(_NoteUpdated value)? noteUpdated,
-    required TResult orElse(),
-  }) {
-    if (deleteLocalAudioRequested != null) {
-      return deleteLocalAudioRequested(this);
-    }
-    return orElse();
-  }
-}
-
-abstract class _DeleteLocalAudioRequested implements NoteDetailEvent {
-  const factory _DeleteLocalAudioRequested() = _$DeleteLocalAudioRequestedImpl;
 }
 
 /// @nodoc
@@ -801,7 +621,6 @@ class _$AnalysisFieldUpdatedImpl implements _AnalysisFieldUpdated {
     required TResult Function(String noteId) loadRequested,
     required TResult Function() deleteRequested,
     required TResult Function() retryProcessing,
-    required TResult Function() deleteLocalAudioRequested,
     required TResult Function(StartupAnalysisEditableField field, String value)
     analysisFieldUpdated,
     required TResult Function(String title) titleUpdated,
@@ -816,7 +635,6 @@ class _$AnalysisFieldUpdatedImpl implements _AnalysisFieldUpdated {
     TResult? Function(String noteId)? loadRequested,
     TResult? Function()? deleteRequested,
     TResult? Function()? retryProcessing,
-    TResult? Function()? deleteLocalAudioRequested,
     TResult? Function(StartupAnalysisEditableField field, String value)?
     analysisFieldUpdated,
     TResult? Function(String title)? titleUpdated,
@@ -831,7 +649,6 @@ class _$AnalysisFieldUpdatedImpl implements _AnalysisFieldUpdated {
     TResult Function(String noteId)? loadRequested,
     TResult Function()? deleteRequested,
     TResult Function()? retryProcessing,
-    TResult Function()? deleteLocalAudioRequested,
     TResult Function(StartupAnalysisEditableField field, String value)?
     analysisFieldUpdated,
     TResult Function(String title)? titleUpdated,
@@ -850,8 +667,6 @@ class _$AnalysisFieldUpdatedImpl implements _AnalysisFieldUpdated {
     required TResult Function(_LoadRequested value) loadRequested,
     required TResult Function(_DeleteRequested value) deleteRequested,
     required TResult Function(_RetryProcessing value) retryProcessing,
-    required TResult Function(_DeleteLocalAudioRequested value)
-    deleteLocalAudioRequested,
     required TResult Function(_AnalysisFieldUpdated value) analysisFieldUpdated,
     required TResult Function(_TitleUpdated value) titleUpdated,
     required TResult Function(_NoteUpdated value) noteUpdated,
@@ -865,8 +680,6 @@ class _$AnalysisFieldUpdatedImpl implements _AnalysisFieldUpdated {
     TResult? Function(_LoadRequested value)? loadRequested,
     TResult? Function(_DeleteRequested value)? deleteRequested,
     TResult? Function(_RetryProcessing value)? retryProcessing,
-    TResult? Function(_DeleteLocalAudioRequested value)?
-    deleteLocalAudioRequested,
     TResult? Function(_AnalysisFieldUpdated value)? analysisFieldUpdated,
     TResult? Function(_TitleUpdated value)? titleUpdated,
     TResult? Function(_NoteUpdated value)? noteUpdated,
@@ -880,8 +693,6 @@ class _$AnalysisFieldUpdatedImpl implements _AnalysisFieldUpdated {
     TResult Function(_LoadRequested value)? loadRequested,
     TResult Function(_DeleteRequested value)? deleteRequested,
     TResult Function(_RetryProcessing value)? retryProcessing,
-    TResult Function(_DeleteLocalAudioRequested value)?
-    deleteLocalAudioRequested,
     TResult Function(_AnalysisFieldUpdated value)? analysisFieldUpdated,
     TResult Function(_TitleUpdated value)? titleUpdated,
     TResult Function(_NoteUpdated value)? noteUpdated,
@@ -983,7 +794,6 @@ class _$TitleUpdatedImpl implements _TitleUpdated {
     required TResult Function(String noteId) loadRequested,
     required TResult Function() deleteRequested,
     required TResult Function() retryProcessing,
-    required TResult Function() deleteLocalAudioRequested,
     required TResult Function(StartupAnalysisEditableField field, String value)
     analysisFieldUpdated,
     required TResult Function(String title) titleUpdated,
@@ -998,7 +808,6 @@ class _$TitleUpdatedImpl implements _TitleUpdated {
     TResult? Function(String noteId)? loadRequested,
     TResult? Function()? deleteRequested,
     TResult? Function()? retryProcessing,
-    TResult? Function()? deleteLocalAudioRequested,
     TResult? Function(StartupAnalysisEditableField field, String value)?
     analysisFieldUpdated,
     TResult? Function(String title)? titleUpdated,
@@ -1013,7 +822,6 @@ class _$TitleUpdatedImpl implements _TitleUpdated {
     TResult Function(String noteId)? loadRequested,
     TResult Function()? deleteRequested,
     TResult Function()? retryProcessing,
-    TResult Function()? deleteLocalAudioRequested,
     TResult Function(StartupAnalysisEditableField field, String value)?
     analysisFieldUpdated,
     TResult Function(String title)? titleUpdated,
@@ -1032,8 +840,6 @@ class _$TitleUpdatedImpl implements _TitleUpdated {
     required TResult Function(_LoadRequested value) loadRequested,
     required TResult Function(_DeleteRequested value) deleteRequested,
     required TResult Function(_RetryProcessing value) retryProcessing,
-    required TResult Function(_DeleteLocalAudioRequested value)
-    deleteLocalAudioRequested,
     required TResult Function(_AnalysisFieldUpdated value) analysisFieldUpdated,
     required TResult Function(_TitleUpdated value) titleUpdated,
     required TResult Function(_NoteUpdated value) noteUpdated,
@@ -1047,8 +853,6 @@ class _$TitleUpdatedImpl implements _TitleUpdated {
     TResult? Function(_LoadRequested value)? loadRequested,
     TResult? Function(_DeleteRequested value)? deleteRequested,
     TResult? Function(_RetryProcessing value)? retryProcessing,
-    TResult? Function(_DeleteLocalAudioRequested value)?
-    deleteLocalAudioRequested,
     TResult? Function(_AnalysisFieldUpdated value)? analysisFieldUpdated,
     TResult? Function(_TitleUpdated value)? titleUpdated,
     TResult? Function(_NoteUpdated value)? noteUpdated,
@@ -1062,8 +866,6 @@ class _$TitleUpdatedImpl implements _TitleUpdated {
     TResult Function(_LoadRequested value)? loadRequested,
     TResult Function(_DeleteRequested value)? deleteRequested,
     TResult Function(_RetryProcessing value)? retryProcessing,
-    TResult Function(_DeleteLocalAudioRequested value)?
-    deleteLocalAudioRequested,
     TResult Function(_AnalysisFieldUpdated value)? analysisFieldUpdated,
     TResult Function(_TitleUpdated value)? titleUpdated,
     TResult Function(_NoteUpdated value)? noteUpdated,
@@ -1161,7 +963,6 @@ class _$NoteUpdatedImpl implements _NoteUpdated {
     required TResult Function(String noteId) loadRequested,
     required TResult Function() deleteRequested,
     required TResult Function() retryProcessing,
-    required TResult Function() deleteLocalAudioRequested,
     required TResult Function(StartupAnalysisEditableField field, String value)
     analysisFieldUpdated,
     required TResult Function(String title) titleUpdated,
@@ -1176,7 +977,6 @@ class _$NoteUpdatedImpl implements _NoteUpdated {
     TResult? Function(String noteId)? loadRequested,
     TResult? Function()? deleteRequested,
     TResult? Function()? retryProcessing,
-    TResult? Function()? deleteLocalAudioRequested,
     TResult? Function(StartupAnalysisEditableField field, String value)?
     analysisFieldUpdated,
     TResult? Function(String title)? titleUpdated,
@@ -1191,7 +991,6 @@ class _$NoteUpdatedImpl implements _NoteUpdated {
     TResult Function(String noteId)? loadRequested,
     TResult Function()? deleteRequested,
     TResult Function()? retryProcessing,
-    TResult Function()? deleteLocalAudioRequested,
     TResult Function(StartupAnalysisEditableField field, String value)?
     analysisFieldUpdated,
     TResult Function(String title)? titleUpdated,
@@ -1210,8 +1009,6 @@ class _$NoteUpdatedImpl implements _NoteUpdated {
     required TResult Function(_LoadRequested value) loadRequested,
     required TResult Function(_DeleteRequested value) deleteRequested,
     required TResult Function(_RetryProcessing value) retryProcessing,
-    required TResult Function(_DeleteLocalAudioRequested value)
-    deleteLocalAudioRequested,
     required TResult Function(_AnalysisFieldUpdated value) analysisFieldUpdated,
     required TResult Function(_TitleUpdated value) titleUpdated,
     required TResult Function(_NoteUpdated value) noteUpdated,
@@ -1225,8 +1022,6 @@ class _$NoteUpdatedImpl implements _NoteUpdated {
     TResult? Function(_LoadRequested value)? loadRequested,
     TResult? Function(_DeleteRequested value)? deleteRequested,
     TResult? Function(_RetryProcessing value)? retryProcessing,
-    TResult? Function(_DeleteLocalAudioRequested value)?
-    deleteLocalAudioRequested,
     TResult? Function(_AnalysisFieldUpdated value)? analysisFieldUpdated,
     TResult? Function(_TitleUpdated value)? titleUpdated,
     TResult? Function(_NoteUpdated value)? noteUpdated,
@@ -1240,8 +1035,6 @@ class _$NoteUpdatedImpl implements _NoteUpdated {
     TResult Function(_LoadRequested value)? loadRequested,
     TResult Function(_DeleteRequested value)? deleteRequested,
     TResult Function(_RetryProcessing value)? retryProcessing,
-    TResult Function(_DeleteLocalAudioRequested value)?
-    deleteLocalAudioRequested,
     TResult Function(_AnalysisFieldUpdated value)? analysisFieldUpdated,
     TResult Function(_TitleUpdated value)? titleUpdated,
     TResult Function(_NoteUpdated value)? noteUpdated,
@@ -1276,7 +1069,6 @@ mixin _$NoteDetailState {
       AudioNote note,
       AudioNoteTranscript? transcript,
       StartupAnalysis? analysis,
-      bool localAudioExists,
     )
     loaded,
     required TResult Function() deleted,
@@ -1290,7 +1082,6 @@ mixin _$NoteDetailState {
       AudioNote note,
       AudioNoteTranscript? transcript,
       StartupAnalysis? analysis,
-      bool localAudioExists,
     )?
     loaded,
     TResult? Function()? deleted,
@@ -1304,7 +1095,6 @@ mixin _$NoteDetailState {
       AudioNote note,
       AudioNoteTranscript? transcript,
       StartupAnalysis? analysis,
-      bool localAudioExists,
     )?
     loaded,
     TResult Function()? deleted,
@@ -1409,7 +1199,6 @@ class _$NdInitialImpl implements _NdInitial {
       AudioNote note,
       AudioNoteTranscript? transcript,
       StartupAnalysis? analysis,
-      bool localAudioExists,
     )
     loaded,
     required TResult Function() deleted,
@@ -1427,7 +1216,6 @@ class _$NdInitialImpl implements _NdInitial {
       AudioNote note,
       AudioNoteTranscript? transcript,
       StartupAnalysis? analysis,
-      bool localAudioExists,
     )?
     loaded,
     TResult? Function()? deleted,
@@ -1445,7 +1233,6 @@ class _$NdInitialImpl implements _NdInitial {
       AudioNote note,
       AudioNoteTranscript? transcript,
       StartupAnalysis? analysis,
-      bool localAudioExists,
     )?
     loaded,
     TResult Function()? deleted,
@@ -1552,7 +1339,6 @@ class _$NdLoadingImpl implements _NdLoading {
       AudioNote note,
       AudioNoteTranscript? transcript,
       StartupAnalysis? analysis,
-      bool localAudioExists,
     )
     loaded,
     required TResult Function() deleted,
@@ -1570,7 +1356,6 @@ class _$NdLoadingImpl implements _NdLoading {
       AudioNote note,
       AudioNoteTranscript? transcript,
       StartupAnalysis? analysis,
-      bool localAudioExists,
     )?
     loaded,
     TResult? Function()? deleted,
@@ -1588,7 +1373,6 @@ class _$NdLoadingImpl implements _NdLoading {
       AudioNote note,
       AudioNoteTranscript? transcript,
       StartupAnalysis? analysis,
-      bool localAudioExists,
     )?
     loaded,
     TResult Function()? deleted,
@@ -1657,7 +1441,6 @@ abstract class _$$NdLoadedImplCopyWith<$Res> {
     AudioNote note,
     AudioNoteTranscript? transcript,
     StartupAnalysis? analysis,
-    bool localAudioExists,
   });
 }
 
@@ -1678,7 +1461,6 @@ class __$$NdLoadedImplCopyWithImpl<$Res>
     Object? note = null,
     Object? transcript = freezed,
     Object? analysis = freezed,
-    Object? localAudioExists = null,
   }) {
     return _then(
       _$NdLoadedImpl(
@@ -1694,10 +1476,6 @@ class __$$NdLoadedImplCopyWithImpl<$Res>
             ? _value.analysis
             : analysis // ignore: cast_nullable_to_non_nullable
                   as StartupAnalysis?,
-        localAudioExists: null == localAudioExists
-            ? _value.localAudioExists
-            : localAudioExists // ignore: cast_nullable_to_non_nullable
-                  as bool,
       ),
     );
   }
@@ -1706,12 +1484,7 @@ class __$$NdLoadedImplCopyWithImpl<$Res>
 /// @nodoc
 
 class _$NdLoadedImpl implements _NdLoaded {
-  const _$NdLoadedImpl({
-    required this.note,
-    this.transcript,
-    this.analysis,
-    required this.localAudioExists,
-  });
+  const _$NdLoadedImpl({required this.note, this.transcript, this.analysis});
 
   @override
   final AudioNote note;
@@ -1719,12 +1492,10 @@ class _$NdLoadedImpl implements _NdLoaded {
   final AudioNoteTranscript? transcript;
   @override
   final StartupAnalysis? analysis;
-  @override
-  final bool localAudioExists;
 
   @override
   String toString() {
-    return 'NoteDetailState.loaded(note: $note, transcript: $transcript, analysis: $analysis, localAudioExists: $localAudioExists)';
+    return 'NoteDetailState.loaded(note: $note, transcript: $transcript, analysis: $analysis)';
   }
 
   @override
@@ -1736,14 +1507,11 @@ class _$NdLoadedImpl implements _NdLoaded {
             (identical(other.transcript, transcript) ||
                 other.transcript == transcript) &&
             (identical(other.analysis, analysis) ||
-                other.analysis == analysis) &&
-            (identical(other.localAudioExists, localAudioExists) ||
-                other.localAudioExists == localAudioExists));
+                other.analysis == analysis));
   }
 
   @override
-  int get hashCode =>
-      Object.hash(runtimeType, note, transcript, analysis, localAudioExists);
+  int get hashCode => Object.hash(runtimeType, note, transcript, analysis);
 
   /// Create a copy of NoteDetailState
   /// with the given fields replaced by the non-null parameter values.
@@ -1762,13 +1530,12 @@ class _$NdLoadedImpl implements _NdLoaded {
       AudioNote note,
       AudioNoteTranscript? transcript,
       StartupAnalysis? analysis,
-      bool localAudioExists,
     )
     loaded,
     required TResult Function() deleted,
     required TResult Function(String message) failure,
   }) {
-    return loaded(note, transcript, analysis, localAudioExists);
+    return loaded(note, transcript, analysis);
   }
 
   @override
@@ -1780,13 +1547,12 @@ class _$NdLoadedImpl implements _NdLoaded {
       AudioNote note,
       AudioNoteTranscript? transcript,
       StartupAnalysis? analysis,
-      bool localAudioExists,
     )?
     loaded,
     TResult? Function()? deleted,
     TResult? Function(String message)? failure,
   }) {
-    return loaded?.call(note, transcript, analysis, localAudioExists);
+    return loaded?.call(note, transcript, analysis);
   }
 
   @override
@@ -1798,7 +1564,6 @@ class _$NdLoadedImpl implements _NdLoaded {
       AudioNote note,
       AudioNoteTranscript? transcript,
       StartupAnalysis? analysis,
-      bool localAudioExists,
     )?
     loaded,
     TResult Function()? deleted,
@@ -1806,7 +1571,7 @@ class _$NdLoadedImpl implements _NdLoaded {
     required TResult orElse(),
   }) {
     if (loaded != null) {
-      return loaded(note, transcript, analysis, localAudioExists);
+      return loaded(note, transcript, analysis);
     }
     return orElse();
   }
@@ -1857,13 +1622,11 @@ abstract class _NdLoaded implements NoteDetailState {
     required final AudioNote note,
     final AudioNoteTranscript? transcript,
     final StartupAnalysis? analysis,
-    required final bool localAudioExists,
   }) = _$NdLoadedImpl;
 
   AudioNote get note;
   AudioNoteTranscript? get transcript;
   StartupAnalysis? get analysis;
-  bool get localAudioExists;
 
   /// Create a copy of NoteDetailState
   /// with the given fields replaced by the non-null parameter values.
@@ -1921,7 +1684,6 @@ class _$NdDeletedImpl implements _NdDeleted {
       AudioNote note,
       AudioNoteTranscript? transcript,
       StartupAnalysis? analysis,
-      bool localAudioExists,
     )
     loaded,
     required TResult Function() deleted,
@@ -1939,7 +1701,6 @@ class _$NdDeletedImpl implements _NdDeleted {
       AudioNote note,
       AudioNoteTranscript? transcript,
       StartupAnalysis? analysis,
-      bool localAudioExists,
     )?
     loaded,
     TResult? Function()? deleted,
@@ -1957,7 +1718,6 @@ class _$NdDeletedImpl implements _NdDeleted {
       AudioNote note,
       AudioNoteTranscript? transcript,
       StartupAnalysis? analysis,
-      bool localAudioExists,
     )?
     loaded,
     TResult Function()? deleted,
@@ -2091,7 +1851,6 @@ class _$NdFailureImpl implements _NdFailure {
       AudioNote note,
       AudioNoteTranscript? transcript,
       StartupAnalysis? analysis,
-      bool localAudioExists,
     )
     loaded,
     required TResult Function() deleted,
@@ -2109,7 +1868,6 @@ class _$NdFailureImpl implements _NdFailure {
       AudioNote note,
       AudioNoteTranscript? transcript,
       StartupAnalysis? analysis,
-      bool localAudioExists,
     )?
     loaded,
     TResult? Function()? deleted,
@@ -2127,7 +1885,6 @@ class _$NdFailureImpl implements _NdFailure {
       AudioNote note,
       AudioNoteTranscript? transcript,
       StartupAnalysis? analysis,
-      bool localAudioExists,
     )?
     loaded,
     TResult Function()? deleted,

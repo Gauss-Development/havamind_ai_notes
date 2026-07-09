@@ -7,8 +7,11 @@ import 'package:sample/features/auth/data/repositories/auth_repository_impl.dart
 import 'package:sample/features/auth/domain/repositories/auth_repository.dart';
 import 'package:sample/features/auth/domain/usecases/get_initial_session_usecase.dart';
 import 'package:sample/features/auth/domain/usecases/observe_auth_state_usecase.dart';
+import 'package:sample/features/auth/domain/usecases/sign_in_with_apple_usecase.dart';
+import 'package:sample/features/auth/domain/usecases/sign_in_with_email_password_usecase.dart';
 import 'package:sample/features/auth/domain/usecases/sign_in_with_google_usecase.dart';
 import 'package:sample/features/auth/domain/usecases/sign_out_usecase.dart';
+import 'package:sample/features/auth/domain/usecases/sign_up_with_email_password_usecase.dart';
 import 'package:sample/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:sample/features/audio_notes/data/datasources/audio_notes_local_data_source.dart';
 import 'package:sample/features/audio_notes/data/datasources/audio_notes_remote_data_source.dart';
@@ -18,7 +21,6 @@ import 'package:sample/features/audio_notes/data/services/audio_recording_servic
 import 'package:sample/features/audio_notes/domain/repositories/audio_notes_repository.dart';
 import 'package:sample/features/audio_notes/domain/usecases/count_audio_notes_usecase.dart';
 import 'package:sample/features/audio_notes/domain/usecases/delete_audio_note_usecase.dart';
-import 'package:sample/features/audio_notes/domain/usecases/delete_local_audio_file_usecase.dart';
 import 'package:sample/features/audio_notes/domain/usecases/get_audio_note_usecase.dart';
 import 'package:sample/features/audio_notes/domain/usecases/get_note_analysis_usecase.dart';
 import 'package:sample/features/audio_notes/domain/usecases/get_note_transcript_usecase.dart';
@@ -80,6 +82,9 @@ Future<void> configureDependencies() async {
 
   getIt.registerFactory(() => GetInitialSessionUseCase(getIt()));
   getIt.registerFactory(() => SignInWithGoogleUseCase(getIt()));
+  getIt.registerFactory(() => SignInWithAppleUseCase(getIt()));
+  getIt.registerFactory(() => SignInWithEmailPasswordUseCase(getIt()));
+  getIt.registerFactory(() => SignUpWithEmailPasswordUseCase(getIt()));
   getIt.registerFactory(() => SignOutUseCase(getIt()));
   getIt.registerFactory(() => ObserveAuthStateUseCase(getIt()));
 
@@ -87,6 +92,9 @@ Future<void> configureDependencies() async {
     () => AuthBloc(
       getInitialSession: getIt(),
       signInWithGoogle: getIt(),
+      signInWithApple: getIt(),
+      signInWithEmailPassword: getIt(),
+      signUpWithEmailPassword: getIt(),
       signOut: getIt(),
       observeAuthState: getIt(),
     ),
@@ -124,7 +132,6 @@ Future<void> configureDependencies() async {
   getIt.registerFactory(() => SaveAudioRecordingUseCase(getIt()));
   getIt.registerFactory(() => ProcessLocalAudioNoteUseCase(getIt()));
   getIt.registerFactory(() => DeleteAudioNoteUseCase(getIt()));
-  getIt.registerFactory(() => DeleteLocalAudioFileUseCase(getIt()));
   getIt.registerFactory(() => RequestProcessingUseCase(getIt()));
   getIt.registerFactory(() => GetNoteTranscriptUseCase(getIt()));
   getIt.registerFactory(() => GetNoteAnalysisUseCase(getIt()));
@@ -134,9 +141,7 @@ Future<void> configureDependencies() async {
 
   getIt.registerFactory(() => AudioNotesListBloc(listAudioNotes: getIt()));
   getIt.registerFactory(() => NotesCountCubit(countNotes: getIt()));
-  getIt.registerFactory(
-    () => PlanReadinessHomeCubit(getAnalysis: getIt()),
-  );
+  getIt.registerFactory(() => PlanReadinessHomeCubit(getAnalysis: getIt()));
   getIt.registerFactory(
     () => RecordingBloc(
       recordingService: getIt(),
@@ -144,9 +149,7 @@ Future<void> configureDependencies() async {
       getCurrentUsage: getIt(),
     ),
   );
-  getIt.registerFactory(
-    () => PlanVersionHistoryCubit(repository: getIt()),
-  );
+  getIt.registerFactory(() => PlanVersionHistoryCubit(repository: getIt()));
   getIt.registerFactory(
     () => PlanRefinementCubit(
       recordingService: getIt(),
@@ -158,7 +161,6 @@ Future<void> configureDependencies() async {
     (noteId, _) => NoteDetailBloc(
       getAudioNote: getIt(),
       deleteAudioNote: getIt(),
-      deleteLocalAudioFile: getIt(),
       getTranscript: getIt(),
       getAnalysis: getIt(),
       updateAnalysisField: getIt(),
@@ -231,7 +233,6 @@ Future<void> configureDependencies() async {
       purchasePackage: getIt(),
       repository: getIt(),
       getCurrentUsage: getIt(),
-      profileRemote: getIt(),
     ),
   );
 }

@@ -18,6 +18,8 @@ part 'recording_bloc.freezed.dart';
 @freezed
 class RecordingEvent with _$RecordingEvent {
   const factory RecordingEvent.startPressed() = _StartPressed;
+  const factory RecordingEvent.pausePressed() = _PausePressed;
+  const factory RecordingEvent.resumePressed() = _ResumePressed;
   const factory RecordingEvent.stopPressed() = _StopPressed;
   const factory RecordingEvent.cancelPressed() = _CancelPressed;
   const factory RecordingEvent.savePressed() = _SavePressed;
@@ -34,6 +36,7 @@ class RecordingState with _$RecordingState {
   const factory RecordingState.recording({
     required int elapsedSeconds,
     required String filePath,
+    @Default(false) bool isPaused,
   }) = _Recording;
   const factory RecordingState.readyToSave({
     required String filePath,
@@ -68,6 +71,8 @@ class RecordingBloc extends Bloc<RecordingEvent, RecordingState> {
           ),
         ) {
     on<_StartPressed>(_onStart);
+    on<_PausePressed>(_onPause);
+    on<_ResumePressed>(_onResume);
     on<_StopPressed>(_onStop);
     on<_CancelPressed>(_onCancel);
     on<_SavePressed>(_onSave);
@@ -145,6 +150,10 @@ class RecordingBloc extends Bloc<RecordingEvent, RecordingState> {
     }
 
     emit(RecordingState.recording(elapsedSeconds: 0, filePath: path));
+    _startTimer();
+  }
+
+  void _startTimer() {
     _timer?.cancel();
     _timer = Timer.periodic(
       const Duration(seconds: 1),
@@ -154,7 +163,9 @@ class RecordingBloc extends Bloc<RecordingEvent, RecordingState> {
 
   Future<void> _onTick(_Tick event, Emitter<RecordingState> emit) async {
     await state.maybeWhen(
-      recording: (elapsedSeconds, filePath) async {
+      recording: (elapsedSeconds, filePath, isPaused) async {
+        // Paused wall time must not move the timer or consume quota.
+        if (isPaused) return;
         final next = elapsedSeconds + 1;
         if (next >= _effectiveMaxSeconds) {
           _timer?.cancel();
@@ -169,9 +180,62 @@ class RecordingBloc extends Bloc<RecordingEvent, RecordingState> {
     );
   }
 
+  Future<void> _onPause(
+    _PausePressed event,
+    Emitter<RecordingState> emit,
+  ) async {
+    await state.maybeWhen(
+      recording: (elapsedSeconds, filePath, isPaused) async {
+        if (isPaused) return;
+        _timer?.cancel();
+        try {
+          await _recording.pauseRecording();
+        } catch (e) {
+          emit(RecordingState.failure(e.toString()));
+          emit(_idleState());
+          return;
+        }
+        emit(
+          RecordingState.recording(
+            elapsedSeconds: elapsedSeconds,
+            filePath: filePath,
+            isPaused: true,
+          ),
+        );
+      },
+      orElse: () async {},
+    );
+  }
+
+  Future<void> _onResume(
+    _ResumePressed event,
+    Emitter<RecordingState> emit,
+  ) async {
+    await state.maybeWhen(
+      recording: (elapsedSeconds, filePath, isPaused) async {
+        if (!isPaused) return;
+        try {
+          await _recording.resumeRecording();
+        } catch (e) {
+          emit(RecordingState.failure(e.toString()));
+          emit(_idleState());
+          return;
+        }
+        emit(
+          RecordingState.recording(
+            elapsedSeconds: elapsedSeconds,
+            filePath: filePath,
+          ),
+        );
+        _startTimer();
+      },
+      orElse: () async {},
+    );
+  }
+
   Future<void> _onStop(_StopPressed event, Emitter<RecordingState> emit) async {
     await state.maybeWhen(
-      recording: (elapsedSeconds, filePath) async {
+      recording: (elapsedSeconds, filePath, isPaused) async {
         _timer?.cancel();
         await _finalizeStop(emit, filePath, elapsedSeconds);
       },
@@ -205,7 +269,7 @@ class RecordingBloc extends Bloc<RecordingEvent, RecordingState> {
   ) async {
     _timer?.cancel();
     await state.maybeWhen(
-      recording: (elapsedSeconds, filePath) async {
+      recording: (elapsedSeconds, filePath, isPaused) async {
         try {
           await _recording.cancelRecording();
           final f = File(filePath);
@@ -251,7 +315,7 @@ class RecordingBloc extends Bloc<RecordingEvent, RecordingState> {
     // documents directory doesn't accumulate orphan recordings when the
     // page is closed mid-session.
     await state.maybeWhen(
-      recording: (_, filePath) async {
+      recording: (_, filePath, _) async {
         try {
           await _recording.cancelRecording();
           final f = File(filePath);

@@ -62,7 +62,7 @@ class _AuthGate extends StatelessWidget {
         await state.when(
           unknown: () async {},
           loading: () async {},
-          unauthenticated: (_) async {
+          unauthenticated: (message, emailConfirmationSent, isSubmitting) async {
             final result = await repo.logOut();
             result.fold(
               (failure) => debugPrint(
@@ -93,8 +93,12 @@ class _AuthGate extends StatelessWidget {
               backgroundColor: surface,
               body: const Center(child: CircularProgressIndicator()),
             ),
-            unauthenticated: (errorMessage) =>
-                LoginPage(errorMessage: errorMessage),
+            unauthenticated: (errorMessage, emailConfirmationSent, isSubmitting) =>
+                LoginPage(
+              errorMessage: errorMessage,
+              emailConfirmationSent: emailConfirmationSent,
+              isSubmitting: isSubmitting,
+            ),
             authenticated: (profile) => DashboardPage(profile: profile),
           );
         },

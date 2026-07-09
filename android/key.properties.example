@@ -10,4 +10,7 @@
 storePassword=your-store-password
 keyPassword=your-key-password
 keyAlias=upload
+# Relative to android/app (recommended — works with paths that contain spaces):
 storeFile=../upload-keystore.jks
+# If you must use an absolute path with spaces, quote it:
+# storeFile="/path/with spaces/upload-keystore.jks"

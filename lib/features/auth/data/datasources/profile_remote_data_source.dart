@@ -52,21 +52,4 @@ class ProfileRemoteDataSource {
     }
     return UserProfileMapper.fromRow(Map<String, dynamic>.from(row));
   }
-
-  /// Mirrors the RevenueCat tier into `profiles.subscription_tier` so the
-  /// Edge Functions that gate usage (`process-audio-note`, `refine-plan`)
-  /// can read it server-side. Best-effort: a transient failure is
-  /// swallowed so it never breaks the auth/subscription UI.
-  Future<void> updateSubscriptionTier(String tier) async {
-    final userId = _client.auth.currentUser?.id;
-    if (userId == null) return;
-    try {
-      await _client
-          .from('profiles')
-          .update({'subscription_tier': tier})
-          .eq('id', userId);
-    } catch (_) {
-      // Best-effort — silently retried on the next RC status emit.
-    }
-  }
 }

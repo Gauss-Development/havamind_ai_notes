@@ -96,9 +96,7 @@ void main() {
         ),
       ).thenAnswer((_) async {});
 
-      when(
-        () => remote.invokeProcessing(any()),
-      ).thenAnswer((_) async {});
+      when(() => remote.invokeProcessing(any())).thenAnswer((_) async {});
 
       when(() => remote.fetchById(any())).thenAnswer((invocation) async {
         final id = invocation.positionalArguments[0] as String;
@@ -112,6 +110,7 @@ void main() {
       );
 
       expect(result.isRight(), true);
+      expect(await file.exists(), false);
       verify(
         () => storage.uploadObject(
           objectPath: any(named: 'objectPath'),
@@ -125,8 +124,7 @@ void main() {
 
     test('marks failed when edge function throws', () async {
       when(() => auth.currentUser).thenReturn(testUser);
-      final dir =
-          Directory.systemTemp.createTempSync('audio_notes_test_fail_');
+      final dir = Directory.systemTemp.createTempSync('audio_notes_test_fail_');
       final file = File('${dir.path}/rec.m4a')..writeAsStringSync('x');
 
       when(
@@ -171,6 +169,7 @@ void main() {
         (f) => expect(f, isA<ServerFailure>()),
         (_) => fail('expected Left'),
       );
+      expect(await file.exists(), false);
 
       await dir.delete(recursive: true);
     });
@@ -184,9 +183,7 @@ void main() {
       );
       expect(
         result,
-        const Left<Failure, AudioNote>(
-          AuthFailure('Authentication required'),
-        ),
+        const Left<Failure, AudioNote>(AuthFailure('Authentication required')),
       );
     });
   });
@@ -207,16 +204,16 @@ void main() {
       final result = await repo.searchNotes(query: 'found');
 
       expect(result.isRight(), true);
-      result.fold(
-        (_) => fail('expected Right'),
-        (hits) => expect(hits, [hit]),
-      );
+      result.fold((_) => fail('expected Right'), (hits) => expect(hits, [hit]));
       verify(() => remote.searchNotes(query: 'found', limit: 20)).called(1);
     });
 
     test('maps remote errors to UnexpectedFailure', () async {
       when(
-        () => remote.searchNotes(query: any(named: 'query'), limit: any(named: 'limit')),
+        () => remote.searchNotes(
+          query: any(named: 'query'),
+          limit: any(named: 'limit'),
+        ),
       ).thenThrow(Exception('rpc failed'));
 
       final result = await repo.searchNotes(query: 'test');
@@ -233,14 +230,14 @@ void main() {
     test('removes storage object then row', () async {
       final n = noteForId('note-1');
       when(() => remote.fetchById('note-1')).thenAnswer((_) async => n);
-      when(() => storage.removeObject(n.audioPath)).thenAnswer((_) async {});
+      when(() => storage.removeObject(n.audioPath!)).thenAnswer((_) async {});
       when(() => remote.deleteRow('note-1')).thenAnswer((_) async {});
 
       final result = await repo.deleteNote('note-1');
 
       expect(result, const Right<Failure, Unit>(unit));
       verify(() => remote.fetchById('note-1')).called(1);
-      verify(() => storage.removeObject(n.audioPath)).called(1);
+      verify(() => storage.removeObject(n.audioPath!)).called(1);
       verify(() => remote.deleteRow('note-1')).called(1);
     });
   });

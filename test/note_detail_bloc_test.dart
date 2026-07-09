@@ -1,11 +1,11 @@
 import 'package:dartz/dartz.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
+import 'package:sample/core/error/failure.dart';
 import 'package:sample/features/audio_notes/domain/entities/audio_note.dart';
 import 'package:sample/features/audio_notes/domain/entities/audio_note_status.dart';
 import 'package:sample/features/audio_notes/domain/repositories/audio_notes_repository.dart';
 import 'package:sample/features/audio_notes/domain/usecases/delete_audio_note_usecase.dart';
-import 'package:sample/features/audio_notes/domain/usecases/delete_local_audio_file_usecase.dart';
 import 'package:sample/features/audio_notes/domain/usecases/get_audio_note_usecase.dart';
 import 'package:sample/features/audio_notes/domain/usecases/get_note_analysis_usecase.dart';
 import 'package:sample/features/audio_notes/domain/usecases/get_note_transcript_usecase.dart';
@@ -41,7 +41,6 @@ void main() {
     bloc = NoteDetailBloc(
       getAudioNote: GetAudioNoteUseCase(repo),
       deleteAudioNote: DeleteAudioNoteUseCase(repo),
-      deleteLocalAudioFile: DeleteLocalAudioFileUseCase(repo),
       getTranscript: GetNoteTranscriptUseCase(repo),
       getAnalysis: GetNoteAnalysisUseCase(repo),
       updateAnalysisField: UpdateAnalysisFieldUseCase(repo),
@@ -59,25 +58,20 @@ void main() {
   test('loads note on create', () async {
     final state = await bloc.stream.firstWhere(
       (s) => s.maybeWhen(
-        loaded: (note, transcript, analysis, localAudioExists) => true,
+        loaded: (note, transcript, analysis) => true,
         orElse: () => false,
       ),
     );
     expect(
       state,
-      NoteDetailState.loaded(
-        note: note,
-        transcript: null,
-        analysis: null,
-        localAudioExists: false,
-      ),
+      NoteDetailState.loaded(note: note, transcript: null, analysis: null),
     );
   });
 
   test('delete success emits deleted', () async {
     await bloc.stream.firstWhere(
       (s) => s.maybeWhen(
-        loaded: (note, transcript, analysis, localAudioExists) => true,
+        loaded: (note, transcript, analysis) => true,
         orElse: () => false,
       ),
     );
@@ -90,6 +84,42 @@ void main() {
       emitsInOrder(<NoteDetailState>[
         const NoteDetailState.loading(),
         const NoteDetailState.deleted(),
+      ]),
+    );
+  });
+
+  test('retry failure restores loaded note with processing error', () async {
+    await bloc.stream.firstWhere(
+      (s) => s.maybeWhen(
+        loaded: (note, transcript, analysis) => true,
+        orElse: () => false,
+      ),
+    );
+    when(() => repo.requestProcessing('n1')).thenAnswer(
+      (_) async => const Left(ServerFailure('Audio file not found')),
+    );
+
+    bloc.add(const NoteDetailEvent.retryProcessing());
+
+    await expectLater(
+      bloc.stream,
+      emitsInOrder([
+        predicate<NoteDetailState>(
+          (state) => state.maybeWhen(
+            loaded: (note, _, _) =>
+                note.status == AudioNoteStatus.processingTranscription &&
+                note.lastProcessingError == null,
+            orElse: () => false,
+          ),
+        ),
+        predicate<NoteDetailState>(
+          (state) => state.maybeWhen(
+            loaded: (note, _, _) =>
+                note.status == AudioNoteStatus.failed &&
+                note.lastProcessingError == 'Audio file not found',
+            orElse: () => false,
+          ),
+        ),
       ]),
     );
   });

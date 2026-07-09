@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:io';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
@@ -9,7 +8,6 @@ import 'package:sample/features/audio_notes/domain/entities/audio_note_status.da
 import 'package:sample/features/audio_notes/domain/entities/audio_note_transcript.dart';
 import 'package:sample/features/audio_notes/domain/entities/startup_analysis.dart';
 import 'package:sample/features/audio_notes/domain/usecases/delete_audio_note_usecase.dart';
-import 'package:sample/features/audio_notes/domain/usecases/delete_local_audio_file_usecase.dart';
 import 'package:sample/features/audio_notes/domain/usecases/get_audio_note_usecase.dart';
 import 'package:sample/features/audio_notes/domain/usecases/get_note_analysis_usecase.dart';
 import 'package:sample/features/audio_notes/domain/usecases/get_note_transcript_usecase.dart';
@@ -25,8 +23,6 @@ class NoteDetailEvent with _$NoteDetailEvent {
   const factory NoteDetailEvent.loadRequested(String noteId) = _LoadRequested;
   const factory NoteDetailEvent.deleteRequested() = _DeleteRequested;
   const factory NoteDetailEvent.retryProcessing() = _RetryProcessing;
-  const factory NoteDetailEvent.deleteLocalAudioRequested() =
-      _DeleteLocalAudioRequested;
   const factory NoteDetailEvent.analysisFieldUpdated({
     required StartupAnalysisEditableField field,
     required String value,
@@ -43,7 +39,6 @@ class NoteDetailState with _$NoteDetailState {
     required AudioNote note,
     AudioNoteTranscript? transcript,
     StartupAnalysis? analysis,
-    required bool localAudioExists,
   }) = _NdLoaded;
   const factory NoteDetailState.deleted() = _NdDeleted;
   const factory NoteDetailState.failure(String message) = _NdFailure;
@@ -53,7 +48,6 @@ class NoteDetailBloc extends Bloc<NoteDetailEvent, NoteDetailState> {
   NoteDetailBloc({
     required GetAudioNoteUseCase getAudioNote,
     required DeleteAudioNoteUseCase deleteAudioNote,
-    required DeleteLocalAudioFileUseCase deleteLocalAudioFile,
     required GetNoteTranscriptUseCase getTranscript,
     required GetNoteAnalysisUseCase getAnalysis,
     required UpdateAnalysisFieldUseCase updateAnalysisField,
@@ -63,7 +57,6 @@ class NoteDetailBloc extends Bloc<NoteDetailEvent, NoteDetailState> {
     required String noteId,
   }) : _getAudioNote = getAudioNote,
        _deleteAudioNote = deleteAudioNote,
-       _deleteLocalAudioFile = deleteLocalAudioFile,
        _getTranscript = getTranscript,
        _getAnalysis = getAnalysis,
        _updateAnalysisField = updateAnalysisField,
@@ -75,7 +68,6 @@ class NoteDetailBloc extends Bloc<NoteDetailEvent, NoteDetailState> {
     on<_LoadRequested>(_onLoad);
     on<_DeleteRequested>(_onDelete);
     on<_RetryProcessing>(_onRetry);
-    on<_DeleteLocalAudioRequested>(_onDeleteLocalAudio);
     on<_AnalysisFieldUpdated>(_onAnalysisFieldUpdated);
     on<_TitleUpdated>(_onTitleUpdated);
     on<_NoteUpdated>(_onNoteUpdated);
@@ -84,7 +76,6 @@ class NoteDetailBloc extends Bloc<NoteDetailEvent, NoteDetailState> {
 
   final GetAudioNoteUseCase _getAudioNote;
   final DeleteAudioNoteUseCase _deleteAudioNote;
-  final DeleteLocalAudioFileUseCase _deleteLocalAudioFile;
   final GetNoteTranscriptUseCase _getTranscript;
   final GetNoteAnalysisUseCase _getAnalysis;
   final UpdateAnalysisFieldUseCase _updateAnalysisField;
@@ -94,28 +85,18 @@ class NoteDetailBloc extends Bloc<NoteDetailEvent, NoteDetailState> {
   final String _noteId;
   StreamSubscription<AudioNote?>? _watchSub;
 
-  // Cache for `_localAudioFileExists`. The file-existence check fires
-  // on every realtime row UPDATE; without caching, every event triggers
-  // a filesystem syscall even though the audioPath rarely changes after
-  // the first upload.
-  String? _lastCheckedAudioPath;
-  bool _lastLocalAudioExists = false;
-
   void _startWatching() {
     _watchSub?.cancel();
-    _watchSub = _watchNote(_noteId).listen(
-      (note) {
-        if (note == null) {
-          // Empty rows on a row-level `.stream()` subscription means the
-          // watched note was deleted remotely. Re-issue load so the
-          // `_onLoad` not-found branch can emit the `deleted` state.
-          add(NoteDetailEvent.loadRequested(_noteId));
-        } else {
-          add(NoteDetailEvent.noteUpdated(note));
-        }
-      },
-      onError: (_) {},
-    );
+    _watchSub = _watchNote(_noteId).listen((note) {
+      if (note == null) {
+        // Empty rows on a row-level `.stream()` subscription means the
+        // watched note was deleted remotely. Re-issue load so the
+        // `_onLoad` not-found branch can emit the `deleted` state.
+        add(NoteDetailEvent.loadRequested(_noteId));
+      } else {
+        add(NoteDetailEvent.noteUpdated(note));
+      }
+    }, onError: (_) {});
   }
 
   Future<void> _onLoad(
@@ -129,32 +110,32 @@ class NoteDetailBloc extends Bloc<NoteDetailEvent, NoteDetailState> {
     _watchSub = null;
     emit(const NoteDetailState.loading());
     final result = await _getAudioNote(GetAudioNoteParams(event.noteId));
-    await result.fold((f) async {
-      // Distinguish "the note was deleted between load and now" (drives
-      // a `deleted` state so the UI pops) from generic errors.
-      if (f is NotFoundFailure) {
-        emit(const NoteDetailState.deleted());
-      } else {
-        emit(NoteDetailState.failure(f.message));
-      }
-    }, (
-      note,
-    ) async {
-      AudioNoteTranscript? transcript;
-      StartupAnalysis? analysis;
+    await result.fold(
+      (f) async {
+        // Distinguish "the note was deleted between load and now" (drives
+        // a `deleted` state so the UI pops) from generic errors.
+        if (f is NotFoundFailure) {
+          emit(const NoteDetailState.deleted());
+        } else {
+          emit(NoteDetailState.failure(f.message));
+        }
+      },
+      (note) async {
+        AudioNoteTranscript? transcript;
+        StartupAnalysis? analysis;
 
-      if (note.status == AudioNoteStatus.completed) {
-        final tRes = await _getTranscript(note.id);
-        tRes.fold((_) {}, (t) => transcript = t);
-        final aRes = await _getAnalysis(note.id);
-        aRes.fold((_) {}, (a) => analysis = a);
-      }
+        if (note.status == AudioNoteStatus.completed) {
+          final tRes = await _getTranscript(note.id);
+          tRes.fold((_) {}, (t) => transcript = t);
+          final aRes = await _getAnalysis(note.id);
+          aRes.fold((_) {}, (a) => analysis = a);
+        }
 
-      final localAudioExists = await _localAudioFileExists(note.audioPath);
-      emit(_buildLoaded(note, transcript, analysis, localAudioExists));
+        emit(_buildLoaded(note, transcript, analysis));
 
-      _startWatching();
-    });
+        _startWatching();
+      },
+    );
   }
 
   Future<void> _onNoteUpdated(
@@ -167,7 +148,7 @@ class NoteDetailBloc extends Bloc<NoteDetailEvent, NoteDetailState> {
     var wasCompletedBefore = false;
 
     state.maybeWhen(
-      loaded: (currentNote, t, a, _) {
+      loaded: (currentNote, t, a) {
         transcript = t;
         analysis = a;
         wasCompletedBefore = currentNote.status == AudioNoteStatus.completed;
@@ -179,7 +160,8 @@ class NoteDetailBloc extends Bloc<NoteDetailEvent, NoteDetailState> {
     // (or if we somehow landed in completed state without cached data).
     // Without this guard, every Supabase row UPDATE (e.g. updated_at bumps
     // from refinement edits) would cause two extra network calls per event.
-    final needsFetch = note.status == AudioNoteStatus.completed &&
+    final needsFetch =
+        note.status == AudioNoteStatus.completed &&
         (!wasCompletedBefore || transcript == null || analysis == null);
 
     if (needsFetch) {
@@ -205,8 +187,7 @@ class NoteDetailBloc extends Bloc<NoteDetailEvent, NoteDetailState> {
       }
     }
 
-    final localAudioExists = await _localAudioFileExists(note.audioPath);
-    emit(_buildLoaded(note, transcript, analysis, localAudioExists));
+    emit(_buildLoaded(note, transcript, analysis));
   }
 
   Future<void> _onDelete(
@@ -230,9 +211,16 @@ class NoteDetailBloc extends Bloc<NoteDetailEvent, NoteDetailState> {
     _RetryProcessing event,
     Emitter<NoteDetailState> emit,
   ) async {
-    // Optimistically update UI to show processing
+    AudioNote? originalNote;
+    AudioNoteTranscript? originalTranscript;
+    StartupAnalysis? originalAnalysis;
+
+    // Optimistically update UI to show processing.
     state.maybeWhen(
-      loaded: (note, transcript, analysis, localAudioExists) {
+      loaded: (note, transcript, analysis) {
+        originalNote = note;
+        originalTranscript = transcript;
+        originalAnalysis = analysis;
         emit(
           _buildLoaded(
             AudioNote(
@@ -249,40 +237,39 @@ class NoteDetailBloc extends Bloc<NoteDetailEvent, NoteDetailState> {
             ),
             transcript,
             analysis,
-            localAudioExists,
           ),
         );
       },
       orElse: () {},
     );
 
-    await _requestProcessing(_noteId);
-  }
+    final result = await _requestProcessing(_noteId);
+    result.fold((f) {
+      final note = originalNote;
+      if (note == null) {
+        emit(NoteDetailState.failure(f.message));
+        return;
+      }
 
-  Future<void> _onDeleteLocalAudio(
-    _DeleteLocalAudioRequested event,
-    Emitter<NoteDetailState> emit,
-  ) async {
-    await state.maybeWhen(
-      loaded: (note, transcript, analysis, localAudioExists) async {
-        if (!localAudioExists) {
-          emit(const NoteDetailState.failure('Local audio file already deleted'));
-          return;
-        }
-        final result = await _deleteLocalAudioFile(note.id);
-        result.fold(
-          (f) => emit(NoteDetailState.failure(f.message)),
-          (_) {
-            // Invalidate the existence cache so the next realtime update
-            // doesn't return stale `true` from the just-deleted path.
-            _lastCheckedAudioPath = note.audioPath;
-            _lastLocalAudioExists = false;
-            emit(_buildLoaded(note, transcript, analysis, false));
-          },
-        );
-      },
-      orElse: () async {},
-    );
+      emit(
+        _buildLoaded(
+          AudioNote(
+            id: note.id,
+            userId: note.userId,
+            title: note.title,
+            audioPath: note.audioPath,
+            durationSeconds: note.durationSeconds,
+            status: AudioNoteStatus.failed,
+            createdAt: note.createdAt,
+            updatedAt: note.updatedAt,
+            lastProcessingError: f.message,
+            templateId: note.templateId,
+          ),
+          originalTranscript,
+          originalAnalysis,
+        ),
+      );
+    }, (_) {});
   }
 
   Future<void> _onTitleUpdated(
@@ -290,35 +277,25 @@ class NoteDetailBloc extends Bloc<NoteDetailEvent, NoteDetailState> {
     Emitter<NoteDetailState> emit,
   ) async {
     await state.maybeWhen(
-      loaded: (note, transcript, analysis, localAudioExists) async {
+      loaded: (note, transcript, analysis) async {
         final result = await _updateNoteTitle(
           UpdateNoteTitleParams(noteId: note.id, title: event.title),
         );
-        result.fold(
-          (f) => emit(NoteDetailState.failure(f.message)),
-          (_) {
-            final updatedNote = AudioNote(
-              id: note.id,
-              userId: note.userId,
-              title: event.title.trim(),
-              audioPath: note.audioPath,
-              durationSeconds: note.durationSeconds,
-              status: note.status,
-              createdAt: note.createdAt,
-              updatedAt: note.updatedAt,
-              lastProcessingError: note.lastProcessingError,
-              templateId: note.templateId,
-            );
-            emit(
-              _buildLoaded(
-                updatedNote,
-                transcript,
-                analysis,
-                localAudioExists,
-              ),
-            );
-          },
-        );
+        result.fold((f) => emit(NoteDetailState.failure(f.message)), (_) {
+          final updatedNote = AudioNote(
+            id: note.id,
+            userId: note.userId,
+            title: event.title.trim(),
+            audioPath: note.audioPath,
+            durationSeconds: note.durationSeconds,
+            status: note.status,
+            createdAt: note.createdAt,
+            updatedAt: note.updatedAt,
+            lastProcessingError: note.lastProcessingError,
+            templateId: note.templateId,
+          );
+          emit(_buildLoaded(updatedNote, transcript, analysis));
+        });
       },
       orElse: () async {},
     );
@@ -329,7 +306,7 @@ class NoteDetailBloc extends Bloc<NoteDetailEvent, NoteDetailState> {
     Emitter<NoteDetailState> emit,
   ) async {
     await state.maybeWhen(
-      loaded: (note, transcript, analysis, localAudioExists) async {
+      loaded: (note, transcript, analysis) async {
         if (analysis == null) {
           emit(
             const NoteDetailState.failure(
@@ -367,9 +344,7 @@ class NoteDetailBloc extends Bloc<NoteDetailEvent, NoteDetailState> {
                     value: event.value.trim(),
                   ),
             );
-            emit(
-              _buildLoaded(note, transcript, nextAnalysis, localAudioExists),
-            );
+            emit(_buildLoaded(note, transcript, nextAnalysis));
           },
         );
       },
@@ -427,42 +402,12 @@ class NoteDetailBloc extends Bloc<NoteDetailEvent, NoteDetailState> {
     AudioNote note,
     AudioNoteTranscript? transcript,
     StartupAnalysis? analysis,
-    bool localAudioExists,
   ) {
     return NoteDetailState.loaded(
       note: note,
       transcript: transcript,
       analysis: analysis,
-      localAudioExists: localAudioExists,
     );
-  }
-
-  Future<bool> _localAudioFileExists(String audioPath) async {
-    if (_lastCheckedAudioPath == audioPath) {
-      return _lastLocalAudioExists;
-    }
-    final localPath = _normalizeLocalPath(audioPath);
-    bool exists;
-    if (localPath == null) {
-      exists = false;
-    } else {
-      exists = await File(localPath).exists();
-    }
-    _lastCheckedAudioPath = audioPath;
-    _lastLocalAudioExists = exists;
-    return exists;
-  }
-
-  String? _normalizeLocalPath(String value) {
-    final trimmed = value.trim();
-    if (trimmed.isEmpty) return null;
-    if (trimmed.startsWith('file://')) {
-      return Uri.tryParse(trimmed)?.toFilePath();
-    }
-    if (trimmed.startsWith('/') || trimmed.contains(':\\')) {
-      return trimmed;
-    }
-    return null;
   }
 
   @override

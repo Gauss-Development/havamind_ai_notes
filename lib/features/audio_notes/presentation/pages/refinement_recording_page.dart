@@ -9,6 +9,7 @@ import 'package:sample/features/audio_notes/presentation/widgets/audio_note_dura
 import 'package:sample/features/audio_notes/presentation/widgets/recording/recording_mic_action_button.dart';
 import 'package:sample/features/audio_notes/presentation/widgets/recording/recording_waveform_sketch.dart';
 import 'package:sample/features/subscription/presentation/widgets/paywall_sheet.dart';
+import 'package:sample/l10n/generated/app_localizations.dart';
 
 /// Recording page for plan refinement — either free-form "continue recording"
 /// or targeted follow-up question response.
@@ -53,9 +54,9 @@ class _RefinementRecordingView extends StatelessWidget {
       listener: (context, state) {
         if (state.status == PlanRefinementStatus.failure &&
             state.error != null) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(state.error!)),
-          );
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(SnackBar(content: Text(state.error!)));
         }
         if (state.status == PlanRefinementStatus.limitReached) {
           showPaywallSheet(context, limitReached: true);
@@ -67,9 +68,11 @@ class _RefinementRecordingView extends StatelessWidget {
       builder: (context, state) {
         final t = context.appTokens;
         final theme = Theme.of(context);
+        final l10n = AppLocalizations.of(context)!;
 
-        final isRecording =
-            state.status == PlanRefinementStatus.recording;
+        final isRecording = state.status == PlanRefinementStatus.recording;
+        final isPaused = isRecording && state.isPaused;
+        final isActivelyRecording = isRecording && !state.isPaused;
         final elapsed = state.elapsedSeconds;
 
         return Scaffold(
@@ -78,20 +81,19 @@ class _RefinementRecordingView extends StatelessWidget {
             leading: IconButton(
               onPressed: () => Navigator.of(context).maybePop(false),
               icon: const Icon(Icons.close_rounded),
-              tooltip: 'Close',
+              tooltip: MaterialLocalizations.of(context).closeButtonTooltip,
             ),
             title: Text(
               followUpQuestionText != null
-                  ? 'Answer Question'
-                  : 'Refine Plan',
+                  ? l10n.answerQuestion
+                  : l10n.refinePlan,
               style: theme.textTheme.titleMedium,
             ),
             centerTitle: true,
           ),
           body: SafeArea(
             child: Padding(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: AppSpacing.xl),
+              padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xl),
               child: Column(
                 children: [
                   // Question context banner
@@ -106,7 +108,8 @@ class _RefinementRecordingView extends StatelessWidget {
                       decoration: BoxDecoration(
                         color: t.primaryContainer,
                         borderRadius: BorderRadius.circular(
-                            ObsidianUiTokens.radiusMd),
+                          ObsidianUiTokens.radiusMd,
+                        ),
                       ),
                       child: Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -140,8 +143,7 @@ class _RefinementRecordingView extends StatelessWidget {
                           Text(
                             AudioNoteDurationFormatter.mmSs(elapsed),
                             textAlign: TextAlign.center,
-                            style:
-                                theme.textTheme.displayLarge?.copyWith(
+                            style: theme.textTheme.displayLarge?.copyWith(
                               fontSize: 56,
                               fontWeight: FontWeight.w800,
                               letterSpacing: -1.4,
@@ -149,39 +151,49 @@ class _RefinementRecordingView extends StatelessWidget {
                           ),
                           const SizedBox(height: AppSpacing.sm),
                           Text(
-                            _statusLabel(state.status),
+                            _statusLabel(l10n, state.status, isPaused),
                             textAlign: TextAlign.center,
-                            style:
-                                theme.textTheme.labelSmall?.copyWith(
-                              color: isRecording
+                            style: theme.textTheme.labelSmall?.copyWith(
+                              color: isActivelyRecording
                                   ? t.primary
-                                  : t.onSurfaceVariant
-                                      .withValues(alpha: 0.75),
+                                  : t.onSurfaceVariant.withValues(alpha: 0.75),
                             ),
                           ),
                           const SizedBox(height: AppSpacing.xxl),
                           RecordingWaveformSketch(
                             color: t.primary,
-                            isAnimating: isRecording,
+                            isAnimating: isActivelyRecording,
                           ),
                           const SizedBox(height: AppSpacing.xxl),
-                          RecordingMicActionButton(
-                            color: t.primary,
-                            iconColor: t.onPrimaryButton,
-                            icon: isRecording
-                                ? Icons.stop_rounded
-                                : Icons.mic_rounded,
-                            onPressed: () {
-                              if (!_canInteract(state.status)) return;
-                              final cubit =
-                                  context.read<PlanRefinementCubit>();
-                              if (isRecording) {
-                                cubit.stopRecording();
-                              } else {
-                                cubit.startRecording();
-                              }
-                            },
-                          ),
+                          if (state.status == PlanRefinementStatus.idle ||
+                              isRecording ||
+                              state.status == PlanRefinementStatus.failure)
+                            RecordingMicActionButton(
+                              color: t.primary,
+                              iconColor: t.onPrimaryButton,
+                              icon: !isRecording
+                                  ? Icons.mic_rounded
+                                  : isPaused
+                                  ? Icons.mic_rounded
+                                  : Icons.pause_rounded,
+                              semanticLabel: !isRecording
+                                  ? l10n.record
+                                  : isPaused
+                                  ? l10n.resumeRecording
+                                  : l10n.pauseRecording,
+                              onPressed: () {
+                                if (!_canInteract(state.status)) return;
+                                final cubit = context
+                                    .read<PlanRefinementCubit>();
+                                if (!isRecording) {
+                                  cubit.startRecording();
+                                } else if (isPaused) {
+                                  cubit.resumeRecording();
+                                } else {
+                                  cubit.pauseRecording();
+                                }
+                              },
+                            ),
                         ],
                       ),
                     ),
@@ -200,7 +212,7 @@ class _RefinementRecordingView extends StatelessWidget {
                   ),
                   const SizedBox(height: AppSpacing.lg),
                   Text(
-                    'Max ${kMaxRecordingDurationSeconds ~/ 60} minutes',
+                    l10n.maxMinutes(kMaxRecordingDurationSeconds ~/ 60),
                     textAlign: TextAlign.center,
                     style: theme.textTheme.bodySmall?.copyWith(
                       color: t.onSurfaceVariant.withValues(alpha: 0.6),
@@ -223,16 +235,23 @@ class _RefinementRecordingView extends StatelessWidget {
         status == PlanRefinementStatus.limitReached;
   }
 
-  String _statusLabel(PlanRefinementStatus status) {
+  String _statusLabel(
+    AppLocalizations l10n,
+    PlanRefinementStatus status,
+    bool isPaused,
+  ) {
+    if (status == PlanRefinementStatus.recording && isPaused) {
+      return l10n.paused;
+    }
     return switch (status) {
-      PlanRefinementStatus.idle => 'READY TO CAPTURE',
-      PlanRefinementStatus.recording => 'RECORDING',
-      PlanRefinementStatus.readyToSave => 'REVIEW RECORDING',
-      PlanRefinementStatus.uploading => 'UPLOADING...',
-      PlanRefinementStatus.refining => 'REFINING YOUR PLAN...',
-      PlanRefinementStatus.success => 'DONE',
-      PlanRefinementStatus.failure => 'READY TO CAPTURE',
-      PlanRefinementStatus.limitReached => 'LIMIT REACHED',
+      PlanRefinementStatus.idle => l10n.readyToCapture,
+      PlanRefinementStatus.recording => l10n.recording,
+      PlanRefinementStatus.readyToSave => l10n.reviewRecording,
+      PlanRefinementStatus.uploading => l10n.uploading,
+      PlanRefinementStatus.refining => l10n.refiningYourPlan,
+      PlanRefinementStatus.success => l10n.done,
+      PlanRefinementStatus.failure => l10n.readyToCapture,
+      PlanRefinementStatus.limitReached => l10n.limitReached,
     };
   }
 }
@@ -252,6 +271,7 @@ class _FooterControls extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final cubit = context.read<PlanRefinementCubit>();
+    final l10n = AppLocalizations.of(context)!;
 
     switch (state.status) {
       case PlanRefinementStatus.readyToSave:
@@ -260,14 +280,14 @@ class _FooterControls extends StatelessWidget {
             Expanded(
               child: OutlinedButton(
                 onPressed: cubit.cancelRecording,
-                child: const Text('Cancel'),
+                child: Text(l10n.cancel),
               ),
             ),
             const SizedBox(width: AppSpacing.md),
             Expanded(
               child: FilledButton(
                 onPressed: cubit.submitRecording,
-                child: const Text('Refine'),
+                child: Text(l10n.refine),
               ),
             ),
           ],
@@ -281,8 +301,8 @@ class _FooterControls extends StatelessWidget {
             const SizedBox(height: AppSpacing.md),
             Text(
               state.status == PlanRefinementStatus.refining
-                  ? 'Refining your plan...'
-                  : 'Uploading...',
+                  ? l10n.refiningYourPlan
+                  : l10n.uploading,
               textAlign: TextAlign.center,
               style: theme.textTheme.bodyMedium?.copyWith(
                 color: tokens.onSurfaceVariant,
@@ -291,10 +311,23 @@ class _FooterControls extends StatelessWidget {
           ],
         );
       case PlanRefinementStatus.recording:
-        return TextButton.icon(
-          onPressed: cubit.cancelRecording,
-          icon: const Icon(Icons.close_rounded),
-          label: const Text('Cancel recording'),
+        return Row(
+          children: [
+            Expanded(
+              child: OutlinedButton(
+                onPressed: cubit.cancelRecording,
+                child: Text(l10n.cancel),
+              ),
+            ),
+            const SizedBox(width: AppSpacing.md),
+            Expanded(
+              child: FilledButton.icon(
+                onPressed: cubit.stopRecording,
+                icon: const Icon(Icons.check_rounded, size: 20),
+                label: Text(l10n.finishRecording),
+              ),
+            ),
+          ],
         );
       default:
         return const SizedBox.shrink();

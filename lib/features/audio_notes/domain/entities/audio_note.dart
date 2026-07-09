@@ -21,7 +21,11 @@ class AudioNote extends Equatable {
   final String title;
 
   /// Path within bucket `audio-notes` (user_id/note_id/file.m4a).
-  final String audioPath;
+  ///
+  /// Null once the note is completed: the audio is ephemeral staging data and
+  /// gets removed after processing, leaving the transcript/analysis as the
+  /// durable artifacts.
+  final String? audioPath;
   final int durationSeconds;
   final AudioNoteStatus status;
   final DateTime createdAt;

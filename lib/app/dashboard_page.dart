@@ -13,6 +13,7 @@ import 'package:sample/features/tags/presentation/bloc/tags_cubit.dart';
 import 'package:sample/features/favorites/presentation/pages/favorites_page.dart';
 import 'package:sample/features/home/presentation/pages/home_page.dart';
 import 'package:sample/features/profile/presentation/pages/profile_page.dart';
+import 'package:sample/l10n/generated/app_localizations.dart';
 
 class DashboardPage extends StatefulWidget {
   const DashboardPage({super.key, required this.profile});
@@ -43,10 +44,8 @@ class _DashboardPageState extends State<DashboardPage> {
     // Refreshes on construction so the count is ready by first paint.
     _notesCountCubit = getIt<NotesCountCubit>();
     _planReadinessHomeCubit = getIt<PlanReadinessHomeCubit>();
-    // Load early — the RC status callback mirrors the tier into
-    // `profiles.subscription_tier`, which the Edge Function usage gate
-    // reads server-side. Without this, the first recording attempt by
-    // a freshly signed-in paid user gets gated as if they were free.
+    // Load early so paywall/usage UI is ready by first paint. Server-side
+    // gates read subscription state that is written by trusted backend paths.
     _subscriptionCubit = getIt<SubscriptionCubit>()..loadStatus();
   }
 
@@ -61,31 +60,33 @@ class _DashboardPageState extends State<DashboardPage> {
     super.dispose();
   }
 
-  static const _items = [
+  List<ObsidianNavItem> _items(AppLocalizations l10n) => [
     ObsidianNavItem(
       icon: Icons.home_outlined,
       activeIcon: Icons.home_rounded,
-      label: 'Home',
+      label: l10n.home,
     ),
     ObsidianNavItem(
       icon: Icons.description_outlined,
       activeIcon: Icons.description_rounded,
-      label: 'Notes',
+      label: l10n.notes,
     ),
     ObsidianNavItem(
       icon: Icons.favorite_border_rounded,
       activeIcon: Icons.favorite_rounded,
-      label: 'Favorites',
+      label: l10n.favorites,
     ),
     ObsidianNavItem(
       icon: Icons.person_outline_rounded,
       activeIcon: Icons.person_rounded,
-      label: 'Profile',
+      label: l10n.profile,
     ),
   ];
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
     return MultiBlocProvider(
       providers: [
         BlocProvider<AudioNotesListBloc>.value(value: _audioNotesListBloc),
@@ -108,9 +109,7 @@ class _DashboardPageState extends State<DashboardPage> {
           state.maybeWhen(
             loaded: (notes, _, _) {
               context.read<NotesCountCubit>().refresh();
-              context
-                  .read<PlanReadinessHomeCubit>()
-                  .refreshFromNotes(notes);
+              context.read<PlanReadinessHomeCubit>().refreshFromNotes(notes);
             },
             orElse: () {},
           );
@@ -127,7 +126,7 @@ class _DashboardPageState extends State<DashboardPage> {
           ),
           extendBody: true,
           bottomNavigationBar: ObsidianFloatingNavBar(
-            items: _items,
+            items: _items(l10n),
             currentIndex: _currentIndex,
             onTap: (i) => setState(() => _currentIndex = i),
           ),

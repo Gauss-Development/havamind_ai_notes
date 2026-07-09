@@ -15,7 +15,56 @@ class AppLocalizationsRu extends AppLocalizations {
   String get signIn => 'Войти через Google';
 
   @override
+  String get signInWithGoogle => 'Войти через Google';
+
+  @override
+  String get signInWithApple => 'Войти через Apple';
+
+  @override
+  String get signInWithEmail => 'Войти';
+
+  @override
+  String get signUp => 'Создать аккаунт';
+
+  @override
   String get signInSubtitle => 'Войдите, чтобы сохранять заметки и анализ.';
+
+  @override
+  String get email => 'Email';
+
+  @override
+  String get password => 'Пароль';
+
+  @override
+  String get orContinueWith => 'или продолжить через';
+
+  @override
+  String get checkEmailToConfirm =>
+      'Проверьте почту, чтобы подтвердить аккаунт, затем войдите.';
+
+  @override
+  String get emailRequired => 'Введите email';
+
+  @override
+  String get invalidEmail => 'Введите корректный email';
+
+  @override
+  String get passwordRequired => 'Введите пароль';
+
+  @override
+  String get passwordTooShort => 'Пароль должен быть не короче 6 символов';
+
+  @override
+  String get showPassword => 'Показать пароль';
+
+  @override
+  String get hidePassword => 'Скрыть пароль';
+
+  @override
+  String get alreadyHaveAccount => 'Уже есть аккаунт? Войти';
+
+  @override
+  String get dontHaveAccount => 'Нет аккаунта? Создать';
 
   @override
   String get home => 'Главная';
@@ -96,6 +145,9 @@ class AppLocalizationsRu extends AppLocalizations {
   String get recording => 'ЗАПИСЬ';
 
   @override
+  String get paused => 'ПАУЗА';
+
+  @override
   String get cancel => 'Отмена';
 
   @override
@@ -105,7 +157,43 @@ class AppLocalizationsRu extends AppLocalizations {
   String get cancelRecording => 'Отменить запись';
 
   @override
+  String get pauseRecording => 'Пауза';
+
+  @override
+  String get resumeRecording => 'Продолжить';
+
+  @override
+  String get finishRecording => 'Готово';
+
+  @override
+  String get submitForAnalysis => 'Отправить на анализ';
+
+  @override
   String get transcribingAndAnalyzing => 'Транскрибация и анализ...';
+
+  @override
+  String get answerQuestion => 'Ответить на вопрос';
+
+  @override
+  String get refinePlan => 'Уточнить план';
+
+  @override
+  String get reviewRecording => 'ПРОВЕРКА ЗАПИСИ';
+
+  @override
+  String get uploading => 'ЗАГРУЗКА...';
+
+  @override
+  String get refiningYourPlan => 'УТОЧНЯЕМ ПЛАН...';
+
+  @override
+  String get done => 'ГОТОВО';
+
+  @override
+  String get limitReached => 'ЛИМИТ ИСЧЕРПАН';
+
+  @override
+  String get refine => 'Уточнить';
 
   @override
   String maxMinutes(int count) {

@@ -57,7 +57,7 @@ class AudioNotesLocalDataSource {
     id: json['id'] as String,
     userId: json['userId'] as String,
     title: json['title'] as String,
-    audioPath: json['audioPath'] as String,
+    audioPath: json['audioPath'] as String?,
     durationSeconds: json['durationSeconds'] as int,
     status: AudioNoteStatus.values.firstWhere(
       (s) => s.name == json['status'],

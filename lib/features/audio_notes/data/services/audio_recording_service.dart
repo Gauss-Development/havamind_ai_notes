@@ -50,11 +50,24 @@ class AudioRecordingService {
     await _recorder.stop();
   }
 
+  /// Pauses the active recording. The session and the underlying file stay
+  /// open so [resumeRecording] appends to the same take.
+  Future<void> pauseRecording() async {
+    await _recorder.pause();
+  }
+
+  /// Resumes a previously paused recording into the same file.
+  Future<void> resumeRecording() async {
+    await _recorder.resume();
+  }
+
   Future<void> cancelRecording() async {
     await _recorder.cancel();
   }
 
   Future<bool> isRecording() => _recorder.isRecording();
+
+  Future<bool> isPaused() => _recorder.isPaused();
 
   Future<void> dispose() => _recorder.dispose();
 }

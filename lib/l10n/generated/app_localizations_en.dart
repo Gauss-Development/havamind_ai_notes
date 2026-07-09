@@ -15,7 +15,56 @@ class AppLocalizationsEn extends AppLocalizations {
   String get signIn => 'Sign in with Google';
 
   @override
+  String get signInWithGoogle => 'Sign in with Google';
+
+  @override
+  String get signInWithApple => 'Sign in with Apple';
+
+  @override
+  String get signInWithEmail => 'Sign in';
+
+  @override
+  String get signUp => 'Create account';
+
+  @override
   String get signInSubtitle => 'Sign in to save your notes and analysis.';
+
+  @override
+  String get email => 'Email';
+
+  @override
+  String get password => 'Password';
+
+  @override
+  String get orContinueWith => 'or continue with';
+
+  @override
+  String get checkEmailToConfirm =>
+      'Check your email to confirm your account, then sign in.';
+
+  @override
+  String get emailRequired => 'Enter your email';
+
+  @override
+  String get invalidEmail => 'Enter a valid email address';
+
+  @override
+  String get passwordRequired => 'Enter your password';
+
+  @override
+  String get passwordTooShort => 'Password must be at least 6 characters';
+
+  @override
+  String get showPassword => 'Show password';
+
+  @override
+  String get hidePassword => 'Hide password';
+
+  @override
+  String get alreadyHaveAccount => 'Already have an account? Sign in';
+
+  @override
+  String get dontHaveAccount => 'Don\'t have an account? Create one';
 
   @override
   String get home => 'Home';
@@ -96,6 +145,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get recording => 'RECORDING';
 
   @override
+  String get paused => 'PAUSED';
+
+  @override
   String get cancel => 'Cancel';
 
   @override
@@ -105,7 +157,43 @@ class AppLocalizationsEn extends AppLocalizations {
   String get cancelRecording => 'Cancel recording';
 
   @override
+  String get pauseRecording => 'Pause';
+
+  @override
+  String get resumeRecording => 'Resume';
+
+  @override
+  String get finishRecording => 'Done';
+
+  @override
+  String get submitForAnalysis => 'Submit for analysis';
+
+  @override
   String get transcribingAndAnalyzing => 'Transcribing & analyzing...';
+
+  @override
+  String get answerQuestion => 'Answer question';
+
+  @override
+  String get refinePlan => 'Refine plan';
+
+  @override
+  String get reviewRecording => 'REVIEW RECORDING';
+
+  @override
+  String get uploading => 'UPLOADING...';
+
+  @override
+  String get refiningYourPlan => 'REFINING YOUR PLAN...';
+
+  @override
+  String get done => 'DONE';
+
+  @override
+  String get limitReached => 'LIMIT REACHED';
+
+  @override
+  String get refine => 'Refine';
 
   @override
   String maxMinutes(int count) {

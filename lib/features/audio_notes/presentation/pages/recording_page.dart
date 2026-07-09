@@ -35,6 +35,12 @@ class RecordingPage extends StatelessWidget {
 class _RecordingView extends StatelessWidget {
   const _RecordingView();
 
+  RecordingMicScale _micScaleForHeight(double height) {
+    if (height < 560) return RecordingMicScale.small;
+    if (height < 680) return RecordingMicScale.compact;
+    return RecordingMicScale.normal;
+  }
+
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
@@ -43,9 +49,9 @@ class _RecordingView extends StatelessWidget {
       listener: (context, state) {
         state.maybeWhen(
           failure: (m) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text(m)),
-            );
+            ScaffoldMessenger.of(
+              context,
+            ).showSnackBar(SnackBar(content: Text(m)));
           },
           limitReached: () {
             showPaywallSheet(context, limitReached: true);
@@ -59,14 +65,19 @@ class _RecordingView extends StatelessWidget {
         final theme = Theme.of(context);
 
         final elapsed = state.maybeWhen(
-          recording: (seconds, _) => seconds,
+          recording: (seconds, _, _) => seconds,
           readyToSave: (_, duration) => duration,
           orElse: () => 0,
         );
         final isRecording = state.maybeWhen(
-          recording: (_, _) => true,
+          recording: (_, _, _) => true,
           orElse: () => false,
         );
+        final isPaused = state.maybeWhen(
+          recording: (_, _, paused) => paused,
+          orElse: () => false,
+        );
+        final isActivelyRecording = isRecording && !isPaused;
         final templateId = state.maybeWhen(
           idle: (id) => id,
           orElse: () => RecordingTemplateIds.founderPitch,
@@ -84,78 +95,140 @@ class _RecordingView extends StatelessWidget {
             centerTitle: true,
           ),
           body: SafeArea(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(
-                horizontal: AppSpacing.xl,
-              ),
-              child: Column(
-                children: [
-                  Expanded(
-                    child: LayoutBuilder(
-                      builder: (context, constraints) {
-                        final compact = constraints.maxHeight < 640;
-                        final tipsMaxHeight =
-                            constraints.maxHeight * (compact ? 0.38 : 0.42);
+            child: LayoutBuilder(
+              builder: (context, constraints) {
+                final compact = constraints.maxHeight < 680;
+                final micScale = _micScaleForHeight(constraints.maxHeight);
 
-                        return Stack(
-                          alignment: Alignment.center,
-                          children: [
-                            _RecordingHero(
-                              elapsed: elapsed,
-                              isRecording: isRecording,
-                              compact: compact,
-                              tokens: t,
-                              theme: theme,
-                              l10n: l10n,
-                            ),
-                            if (isRecording)
-                              Positioned(
-                                top: 0,
-                                left: 0,
-                                right: 0,
-                                child: ConstrainedBox(
-                                  constraints: BoxConstraints(
-                                    maxHeight: tipsMaxHeight,
-                                  ),
-                                  child: SingleChildScrollView(
-                                    physics: const ClampingScrollPhysics(),
-                                    child: RecordingFounderPromptsCard(
-                                      templateId: templateId,
-                                      isRecording: true,
-                                      elapsedSeconds: elapsed,
-                                      compactLayout: compact,
-                                      overlayLayout: true,
-                                    ),
-                                  ),
+                return Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: AppSpacing.xl,
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      Expanded(
+                        child: SingleChildScrollView(
+                          physics: const ClampingScrollPhysics(),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: [
+                              SizedBox(
+                                height: compact ? AppSpacing.sm : AppSpacing.lg,
+                              ),
+                              Text(
+                                AudioNoteDurationFormatter.mmSs(elapsed),
+                                textAlign: TextAlign.center,
+                                style: theme.textTheme.displayLarge?.copyWith(
+                                  fontSize: compact ? 40 : 52,
+                                  fontWeight: FontWeight.w800,
+                                  letterSpacing: compact ? -0.8 : -1.2,
                                 ),
                               ),
-                          ],
-                        );
-                      },
-                    ),
+                              SizedBox(
+                                height: compact ? AppSpacing.xs : AppSpacing.sm,
+                              ),
+                              Text(
+                                !isRecording
+                                    ? l10n.readyToCapture
+                                    : isPaused
+                                    ? l10n.paused
+                                    : l10n.recording,
+                                textAlign: TextAlign.center,
+                                style: theme.textTheme.labelSmall?.copyWith(
+                                  color: isActivelyRecording
+                                      ? t.primary
+                                      : t.onSurfaceVariant.withValues(
+                                          alpha: 0.75,
+                                        ),
+                                ),
+                              ),
+                              SizedBox(
+                                height: compact ? AppSpacing.lg : AppSpacing.xl,
+                              ),
+                              RecordingWaveformSketch(
+                                color: t.primary,
+                                isAnimating: isActivelyRecording,
+                              ),
+                              SizedBox(
+                                height: compact ? AppSpacing.lg : AppSpacing.xl,
+                              ),
+                              if (!isRecording)
+                                RecordingFounderPromptsCard(
+                                  templateId: templateId,
+                                  isRecording: false,
+                                  elapsedSeconds: 0,
+                                  compactLayout: compact,
+                                )
+                              else
+                                RecordingFounderPromptsCard(
+                                  templateId: templateId,
+                                  isRecording: true,
+                                  elapsedSeconds: elapsed,
+                                  compactLayout: compact,
+                                  overlayLayout: false,
+                                ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      if (state.maybeWhen(
+                        idle: (_) => true,
+                        recording: (_, _, _) => true,
+                        orElse: () => false,
+                      )) ...[
+                        const SizedBox(height: AppSpacing.md),
+                        Center(
+                          child: RecordingMicActionButton(
+                            color: t.primary,
+                            iconColor: t.onPrimaryButton,
+                            icon: !isRecording
+                                ? Icons.mic_rounded
+                                : isPaused
+                                ? Icons.mic_rounded
+                                : Icons.pause_rounded,
+                            semanticLabel: !isRecording
+                                ? l10n.record
+                                : isPaused
+                                ? l10n.resumeRecording
+                                : l10n.pauseRecording,
+                            scale: micScale,
+                            onPressed: () {
+                              final bloc = context.read<RecordingBloc>();
+                              if (!isRecording) {
+                                bloc.add(const RecordingEvent.startPressed());
+                              } else if (isPaused) {
+                                bloc.add(const RecordingEvent.resumePressed());
+                              } else {
+                                bloc.add(const RecordingEvent.pausePressed());
+                              }
+                            },
+                          ),
+                        ),
+                      ],
+                      const SizedBox(height: AppSpacing.md),
+                      AnimatedSize(
+                        duration: const Duration(milliseconds: 220),
+                        curve: Curves.easeOut,
+                        alignment: Alignment.topCenter,
+                        child: _RecordingFooterControls(
+                          state: state,
+                          tokens: t,
+                          l10n: l10n,
+                        ),
+                      ),
+                      Text(
+                        l10n.maxMinutes(kMaxRecordingDurationSeconds ~/ 60),
+                        textAlign: TextAlign.center,
+                        style: theme.textTheme.bodySmall?.copyWith(
+                          color: t.onSurfaceVariant.withValues(alpha: 0.6),
+                        ),
+                      ),
+                      const SizedBox(height: AppSpacing.sm),
+                    ],
                   ),
-                  AnimatedSize(
-                    duration: const Duration(milliseconds: 220),
-                    curve: Curves.easeOut,
-                    alignment: Alignment.topCenter,
-                    child: _RecordingFooterControls(
-                      state: state,
-                      isRecording: isRecording,
-                      tokens: t,
-                      l10n: l10n,
-                    ),
-                  ),
-                  const SizedBox(height: AppSpacing.lg),
-                  Text(
-                    l10n.maxMinutes(kMaxRecordingDurationSeconds ~/ 60),
-                    textAlign: TextAlign.center,
-                    style: theme.textTheme.bodySmall?.copyWith(
-                      color: t.onSurfaceVariant.withValues(alpha: 0.6),
-                    ),
-                  ),
-                  const SizedBox(height: AppSpacing.md),
-                ],
-              ),
+                );
+              },
             ),
           ),
         );
@@ -164,87 +237,14 @@ class _RecordingView extends StatelessWidget {
   }
 }
 
-class _RecordingHero extends StatelessWidget {
-  const _RecordingHero({
-    required this.elapsed,
-    required this.isRecording,
-    required this.compact,
-    required this.tokens,
-    required this.theme,
-    required this.l10n,
-  });
-
-  final int elapsed;
-  final bool isRecording;
-  final bool compact;
-  final AppTokens tokens;
-  final ThemeData theme;
-  final AppLocalizations l10n;
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Text(
-          AudioNoteDurationFormatter.mmSs(elapsed),
-          textAlign: TextAlign.center,
-          style: theme.textTheme.displayLarge?.copyWith(
-            fontSize: compact ? 44 : 56,
-            fontWeight: FontWeight.w800,
-            letterSpacing: compact ? -1.0 : -1.4,
-          ),
-        ),
-        SizedBox(height: compact ? AppSpacing.xs : AppSpacing.sm),
-        Text(
-          isRecording ? l10n.recording : l10n.readyToCapture,
-          textAlign: TextAlign.center,
-          style: theme.textTheme.labelSmall?.copyWith(
-            color: isRecording
-                ? tokens.primary
-                : tokens.onSurfaceVariant.withValues(alpha: 0.75),
-          ),
-        ),
-        SizedBox(height: compact ? AppSpacing.lg : AppSpacing.xxl),
-        RecordingWaveformSketch(
-          color: tokens.primary,
-          isAnimating: isRecording,
-        ),
-        SizedBox(height: compact ? AppSpacing.lg : AppSpacing.xxl),
-        Transform.scale(
-          scale: compact ? 0.88 : 1.0,
-          child: RecordingMicActionButton(
-            color: tokens.primary,
-            iconColor: tokens.onPrimaryButton,
-            icon: isRecording ? Icons.stop_rounded : Icons.mic_rounded,
-            onPressed: () {
-              if (isRecording) {
-                context.read<RecordingBloc>().add(
-                      const RecordingEvent.stopPressed(),
-                    );
-              } else {
-                context.read<RecordingBloc>().add(
-                      const RecordingEvent.startPressed(),
-                    );
-              }
-            },
-          ),
-        ),
-      ],
-    );
-  }
-}
-
 class _RecordingFooterControls extends StatelessWidget {
   const _RecordingFooterControls({
     required this.state,
-    required this.isRecording,
     required this.tokens,
     required this.l10n,
   });
 
   final RecordingState state;
-  final bool isRecording;
   final AppTokens tokens;
   final AppLocalizations l10n;
 
@@ -253,58 +253,83 @@ class _RecordingFooterControls extends StatelessWidget {
     final theme = Theme.of(context);
 
     return state.maybeWhen(
-      readyToSave: (path, duration) => Row(
-        children: [
-          Expanded(
-            child: OutlinedButton(
-              onPressed: () => context.read<RecordingBloc>().add(
-                    const RecordingEvent.cancelPressed(),
-                  ),
-              child: Text(l10n.cancel),
+      recording: (_, _, _) => Padding(
+        padding: const EdgeInsets.only(bottom: AppSpacing.sm),
+        child: Row(
+          children: [
+            Expanded(
+              child: OutlinedButton(
+                onPressed: () => context.read<RecordingBloc>().add(
+                  const RecordingEvent.cancelPressed(),
+                ),
+                child: Text(l10n.cancel),
+              ),
             ),
-          ),
-          const SizedBox(width: AppSpacing.md),
-          Expanded(
-            child: FilledButton(
-              onPressed: () => context.read<RecordingBloc>().add(
-                    const RecordingEvent.savePressed(),
-                  ),
-              child: Text(l10n.save),
+            const SizedBox(width: AppSpacing.md),
+            Expanded(
+              child: FilledButton.icon(
+                onPressed: () => context.read<RecordingBloc>().add(
+                  const RecordingEvent.stopPressed(),
+                ),
+                icon: const Icon(Icons.check_rounded, size: 20),
+                label: Text(l10n.finishRecording),
+              ),
             ),
-          ),
-        ],
-      ),
-      uploading: () => Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          CircularProgressIndicator(color: tokens.primary),
-          const SizedBox(height: AppSpacing.md),
-          Text(
-            l10n.transcribingAndAnalyzing,
-            textAlign: TextAlign.center,
-            style: theme.textTheme.bodyMedium?.copyWith(
-              color: tokens.onSurfaceVariant,
-            ),
-          ),
-        ],
-      ),
-      failure: (message) => Text(
-        message,
-        textAlign: TextAlign.center,
-        style: theme.textTheme.bodySmall?.copyWith(
-          color: Theme.of(context).colorScheme.error,
+          ],
         ),
       ),
-      orElse: () {
-        if (!isRecording) return const SizedBox.shrink();
-        return TextButton.icon(
-          onPressed: () => context.read<RecordingBloc>().add(
-                const RecordingEvent.cancelPressed(),
+      readyToSave: (path, duration) => Padding(
+        padding: const EdgeInsets.only(bottom: AppSpacing.sm),
+        child: Row(
+          children: [
+            Expanded(
+              child: OutlinedButton(
+                onPressed: () => context.read<RecordingBloc>().add(
+                  const RecordingEvent.cancelPressed(),
+                ),
+                child: Text(l10n.cancel),
               ),
-          icon: const Icon(Icons.close_rounded),
-          label: Text(l10n.cancelRecording),
-        );
-      },
+            ),
+            const SizedBox(width: AppSpacing.md),
+            Expanded(
+              child: FilledButton(
+                onPressed: () => context.read<RecordingBloc>().add(
+                  const RecordingEvent.savePressed(),
+                ),
+                child: Text(l10n.submitForAnalysis),
+              ),
+            ),
+          ],
+        ),
+      ),
+      uploading: () => Padding(
+        padding: const EdgeInsets.only(bottom: AppSpacing.sm),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            CircularProgressIndicator(color: tokens.primary),
+            const SizedBox(height: AppSpacing.md),
+            Text(
+              l10n.transcribingAndAnalyzing,
+              textAlign: TextAlign.center,
+              style: theme.textTheme.bodyMedium?.copyWith(
+                color: tokens.onSurfaceVariant,
+              ),
+            ),
+          ],
+        ),
+      ),
+      failure: (message) => Padding(
+        padding: const EdgeInsets.only(bottom: AppSpacing.sm),
+        child: Text(
+          message,
+          textAlign: TextAlign.center,
+          style: theme.textTheme.bodySmall?.copyWith(
+            color: Theme.of(context).colorScheme.error,
+          ),
+        ),
+      ),
+      orElse: () => const SizedBox.shrink(),
     );
   }
 }

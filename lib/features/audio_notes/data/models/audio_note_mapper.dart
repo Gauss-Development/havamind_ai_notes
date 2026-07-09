@@ -8,7 +8,7 @@ class AudioNoteMapper {
       id: row['id'] as String,
       userId: row['user_id'] as String,
       title: row['title'] as String,
-      audioPath: row['audio_path'] as String,
+      audioPath: row['audio_path'] as String?,
       durationSeconds: (row['duration_seconds'] as num).toInt(),
       status: AudioNoteStatus.fromDb(row['status'] as String),
       createdAt: DateTime.parse(row['created_at'] as String),
