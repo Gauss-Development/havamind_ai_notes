@@ -123,6 +123,31 @@ class AuthRepositoryImpl implements AuthRepository {
   }
 
   @override
+  Future<Either<Failure, Unit>> deleteAccount() async {
+    try {
+      if (_client.auth.currentSession == null) {
+        return const Left(AuthFailure('Not signed in'));
+      }
+      // The SDK attaches the current session's access token, which the
+      // `delete-account` Edge Function validates with `auth.getUser`.
+      final res = await _client.functions.invoke('delete-account');
+      if (res.status >= 400) {
+        return Left(ServerFailure('Account deletion failed (${res.status})'));
+      }
+      // The account is gone server-side; clear the local session so the auth
+      // stream emits signed-out and the app routes back to sign-in.
+      await _client.auth.signOut();
+      return const Right(unit);
+    } on FunctionException catch (e) {
+      return Left(ServerFailure('Account deletion failed (${e.status})'));
+    } on AuthException catch (e) {
+      return Left(AuthFailure(e.message));
+    } catch (e) {
+      return Left(UnexpectedFailure(e.toString()));
+    }
+  }
+
+  @override
   Stream<AuthSnapshot> watchAuthState() {
     return _client.auth.onAuthStateChange.asyncMap((data) async {
       final session = data.session;

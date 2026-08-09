@@ -1,5 +1,6 @@
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.49.8";
+import { readMp4DurationSeconds } from "./mp4_duration.ts";
 
 const corsHeaders: Record<string, string> = {
   "Access-Control-Allow-Origin": "*",
@@ -303,6 +304,29 @@ Deno.serve(async (req: Request) => {
       throw new Error(
         "Recording is too long for transcription. Please record a " +
           "shorter clip (under ~10 minutes / 25 MB).",
+      );
+    }
+
+    // Server-authoritative recording length: read it from the audio container
+    // instead of trusting the client-supplied `duration_seconds` that the
+    // quota gate sums. A tampered client could otherwise send 0 to record for
+    // free. Falls back to the client value only if the atom can't be parsed.
+    const measuredDuration = readMp4DurationSeconds(bytes);
+    if (
+      measuredDuration != null && Number.isFinite(measuredDuration) &&
+      measuredDuration >= 0
+    ) {
+      const clamped = Math.min(measuredDuration, 24 * 60 * 60);
+      const { error: durErr } = await supabase
+        .from("audio_notes")
+        .update({ duration_seconds: clamped })
+        .eq("id", audioNoteId);
+      if (durErr) {
+        console.error("duration_seconds override failed:", durErr.message);
+      }
+    } else {
+      console.warn(
+        `Could not measure audio duration server-side for note ${audioNoteId}; keeping client value`,
       );
     }
 

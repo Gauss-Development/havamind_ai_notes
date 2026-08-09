@@ -22,3 +22,20 @@ verify_jwt = false
 # GAU-95: Plan version history (list, detail, restore). Custom JWT validation.
 [functions.plan-versions]
 verify_jwt = false
+
+# RevenueCat → Supabase bridge. RevenueCat cannot send a Supabase JWT, so the
+# gateway check is disabled; the function authenticates with a shared secret
+# (REVENUECAT_WEBHOOK_AUTH) sent in the Authorization header.
+# Secrets to set:
+#   supabase secrets set REVENUECAT_WEBHOOK_AUTH=<random-string>
+#   supabase secrets set REVENUECAT_REST_API_KEY=<rcat-secret-key>   # sk_… (v1 REST)
+# Configure the same REVENUECAT_WEBHOOK_AUTH value in RevenueCat dashboard →
+# Integrations → Webhooks → Authorization header.
+[functions.revenuecat-webhook]
+verify_jwt = false
+
+# In-app account deletion (App Store Guideline 5.1.1(v)). The caller's JWT is
+# validated inside the function (verify_jwt disabled for parity with the
+# others, avoiding the ES256 gateway 401 noted above).
+[functions.delete-account]
+verify_jwt = false

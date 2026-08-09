@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 54;
+	objectVersion = 60;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -292,7 +292,7 @@
 			);
 			mainGroup = 97C146E51CF9000F007C117D;
 			packageReferences = (
-				781AD8BC2B33823900A9FFBB /* XCLocalSwiftPackageReference "FlutterGeneratedPluginSwiftPackage" */,
+				781AD8BC2B33823900A9FFBB /* XCLocalSwiftPackageReference "Flutter/ephemeral/Packages/FlutterGeneratedPluginSwiftPackage" */,
 			);
 			productRefGroup = 97C146EF1CF9000F007C117D /* Products */;
 			projectDirPath = "";
@@ -397,9 +397,13 @@
 			inputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-Runner/Pods-Runner-resources-${CONFIGURATION}-input-files.xcfilelist",
 			);
+			inputPaths = (
+			);
 			name = "[CP] Copy Pods Resources";
 			outputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-Runner/Pods-Runner-resources-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -626,6 +630,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
+				DEVELOPMENT_TEAM = 75K8CS869U;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = Runner/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -694,6 +699,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 00073CC67636A5CC06829F4E /* developmentProfile.xcconfig */;
 			buildSettings = {
+				DEVELOPMENT_TEAM = 75K8CS869U;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = "Profile-development";
@@ -776,6 +782,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = A652BB818E6B86134C0734AE /* developmentDebug.xcconfig */;
 			buildSettings = {
+				DEVELOPMENT_TEAM = 75K8CS869U;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = "Debug-development";
@@ -902,6 +909,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
+				DEVELOPMENT_TEAM = 75K8CS869U;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = Runner/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -924,6 +932,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
+				DEVELOPMENT_TEAM = 75K8CS869U;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = Runner/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -1014,6 +1023,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = D63292F12AF5CDF253156B6C /* productionProfile.xcconfig */;
 			buildSettings = {
+				DEVELOPMENT_TEAM = 75K8CS869U;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = "Profile-production";
@@ -1022,6 +1032,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = AEFA7E4FFB1AEB70BA957772 /* developmentRelease.xcconfig */;
 			buildSettings = {
+				DEVELOPMENT_TEAM = 75K8CS869U;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = "Release-development";
@@ -1175,10 +1186,53 @@
 			};
 			name = "Debug-development";
 		};
+		D8C6AA6A3027C4EA00E75691 /* Debug-development */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = RunnerTests;
+			};
+			name = "Debug-development";
+		};
+		D8C6AA6B3027C4EA00E75691 /* Profile-development */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = RunnerTests;
+			};
+			name = "Profile-development";
+		};
+		D8C6AA6C3027C4EA00E75691 /* Release-development */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = RunnerTests;
+			};
+			name = "Release-development";
+		};
+		D8C6AA6D3027C4EA00E75691 /* Debug-production */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = RunnerTests;
+			};
+			name = "Debug-production";
+		};
+		D8C6AA6E3027C4EA00E75691 /* Profile-production */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = RunnerTests;
+			};
+			name = "Profile-production";
+		};
+		D8C6AA6F3027C4EA00E75691 /* Release-production */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = RunnerTests;
+			};
+			name = "Release-production";
+		};
 		F479BCB21C15D97CEB6B9E07 /* Release-production */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 2287313DF99ACF93E4C82138 /* productionRelease.xcconfig */;
 			buildSettings = {
+				DEVELOPMENT_TEAM = 75K8CS869U;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = "Release-production";
@@ -1187,6 +1241,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = F156315B70C60C0CA19DA2B0 /* productionDebug.xcconfig */;
 			buildSettings = {
+				DEVELOPMENT_TEAM = 75K8CS869U;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = "Debug-production";
@@ -1274,6 +1329,12 @@
 				331C8088294A63A400263BE5 /* Debug */,
 				331C8089294A63A400263BE5 /* Release */,
 				331C808A294A63A400263BE5 /* Profile */,
+				D8C6AA6A3027C4EA00E75691 /* Debug-development */,
+				D8C6AA6B3027C4EA00E75691 /* Profile-development */,
+				D8C6AA6C3027C4EA00E75691 /* Release-development */,
+				D8C6AA6D3027C4EA00E75691 /* Debug-production */,
+				D8C6AA6E3027C4EA00E75691 /* Profile-production */,
+				D8C6AA6F3027C4EA00E75691 /* Release-production */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -1313,7 +1374,7 @@
 /* End XCConfigurationList section */
 
 /* Begin XCLocalSwiftPackageReference section */
-		781AD8BC2B33823900A9FFBB /* XCLocalSwiftPackageReference "FlutterGeneratedPluginSwiftPackage" */ = {
+		781AD8BC2B33823900A9FFBB /* XCLocalSwiftPackageReference "Flutter/ephemeral/Packages/FlutterGeneratedPluginSwiftPackage" */ = {
 			isa = XCLocalSwiftPackageReference;
 			relativePath = Flutter/ephemeral/Packages/FlutterGeneratedPluginSwiftPackage;
 		};

@@ -10,6 +10,7 @@ import 'package:sample/features/auth/domain/usecases/observe_auth_state_usecase.
 import 'package:sample/features/auth/domain/usecases/sign_in_with_apple_usecase.dart';
 import 'package:sample/features/auth/domain/usecases/sign_in_with_email_password_usecase.dart';
 import 'package:sample/features/auth/domain/usecases/sign_in_with_google_usecase.dart';
+import 'package:sample/features/auth/domain/usecases/delete_account_usecase.dart';
 import 'package:sample/features/auth/domain/usecases/sign_out_usecase.dart';
 import 'package:sample/features/auth/domain/usecases/sign_up_with_email_password_usecase.dart';
 import 'package:sample/features/auth/presentation/bloc/auth_bloc.dart';
@@ -86,6 +87,7 @@ Future<void> configureDependencies() async {
   getIt.registerFactory(() => SignInWithEmailPasswordUseCase(getIt()));
   getIt.registerFactory(() => SignUpWithEmailPasswordUseCase(getIt()));
   getIt.registerFactory(() => SignOutUseCase(getIt()));
+  getIt.registerFactory(() => DeleteAccountUseCase(getIt()));
   getIt.registerFactory(() => ObserveAuthStateUseCase(getIt()));
 
   getIt.registerFactory(

@@ -28,6 +28,10 @@
     <string>$(FLUTTER_BUILD_NUMBER)</string>
     <key>LSRequiresIPhoneOS</key>
     <true/>
+    <!-- App uses only standard/exempt encryption (HTTPS). Declaring this
+         skips the export-compliance prompt on every App Store Connect upload. -->
+    <key>ITSAppUsesNonExemptEncryption</key>
+    <false/>
     <!-- Let Supabase/app_links handle havamind:// OAuth callback; Flutter's built-in
 	     route parser cannot map custom schemes and logs "Failed to handle route information". -->
     <key>FlutterDeepLinkingEnabled</key>

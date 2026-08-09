@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:purchases_flutter/purchases_flutter.dart';
+import 'package:sample/core/config/environment_config.dart';
 import 'package:sample/core/constants/audio_notes_constants.dart';
 import 'package:sample/core/theme/app_spacing.dart';
 import 'package:sample/core/theme/obsidian_ui_tokens.dart';
 import 'package:sample/features/subscription/domain/entities/subscription_status.dart';
 import 'package:sample/features/subscription/presentation/cubit/subscription_cubit.dart';
 import 'package:sample/features/subscription/presentation/cubit/subscription_state.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 /// Shared paywall body. Hosted inside [PaywallPage] (full-screen) or
 /// inside [showPaywallSheet] (bottom sheet). Reads the active
@@ -801,6 +803,10 @@ class _FooterLinks extends StatelessWidget {
     final t = context.appTokens;
     final theme = Theme.of(context);
 
+    final cfg = EnvironmentConfig.instance;
+    final privacy = cfg.privacyPolicyUrl.trim();
+    final terms = cfg.termsOfServiceUrl.trim();
+
     return Column(
       children: [
         TextButton(
@@ -822,7 +828,59 @@ class _FooterLinks extends StatelessWidget {
             height: 1.4,
           ),
         ),
+        if (privacy.isNotEmpty || terms.isNotEmpty) ...[
+          const SizedBox(height: AppSpacing.xs),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              if (privacy.isNotEmpty)
+                _LegalTextLink(label: 'Privacy Policy', url: privacy),
+              if (privacy.isNotEmpty && terms.isNotEmpty)
+                Text(
+                  '  ·  ',
+                  style: theme.textTheme.bodySmall?.copyWith(
+                    color: t.onSurfaceVariant,
+                  ),
+                ),
+              if (terms.isNotEmpty)
+                _LegalTextLink(label: 'Terms of Use', url: terms),
+            ],
+          ),
+        ],
       ],
+    );
+  }
+}
+
+class _LegalTextLink extends StatelessWidget {
+  const _LegalTextLink({required this.label, required this.url});
+
+  final String label;
+  final String url;
+
+  Future<void> _open() async {
+    final uri = Uri.tryParse(url);
+    if (uri == null || !(uri.isScheme('https') || uri.isScheme('http'))) {
+      return;
+    }
+    await launchUrl(uri, mode: LaunchMode.externalApplication);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final t = context.appTokens;
+    final theme = Theme.of(context);
+    return GestureDetector(
+      onTap: _open,
+      child: Text(
+        label,
+        style: theme.textTheme.bodySmall?.copyWith(
+          color: t.onSurfaceVariant,
+          fontWeight: FontWeight.w600,
+          decoration: TextDecoration.underline,
+        ),
+      ),
     );
   }
 }

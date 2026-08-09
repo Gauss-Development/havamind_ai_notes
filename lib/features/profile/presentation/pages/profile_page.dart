@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sample/core/config/environment_config.dart';
+import 'package:sample/core/di/injection.dart';
 import 'package:sample/core/theme/app_spacing.dart';
 import 'package:sample/core/theme/app_theme_cubit.dart';
 import 'package:sample/core/theme/obsidian_ui_tokens.dart';
+import 'package:sample/core/usecases/usecase.dart';
 import 'package:sample/features/auth/domain/entities/user_profile.dart';
+import 'package:sample/features/auth/domain/usecases/delete_account_usecase.dart';
 import 'package:sample/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:sample/features/subscription/presentation/widgets/subscription_status_card.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -52,6 +55,8 @@ class ProfilePage extends StatelessWidget {
               const _LegalLinksCard(),
               const SizedBox(height: AppSpacing.xxl),
               const _LogOutButton(),
+              const SizedBox(height: AppSpacing.md),
+              const _DeleteAccountButton(),
             ],
           ),
         ),
@@ -477,6 +482,94 @@ class _LogOutButton extends StatelessWidget {
             fontWeight: FontWeight.w700,
           ),
         ),
+      ),
+    );
+  }
+}
+
+// ─── Delete account (Guideline 5.1.1(v)) ─────────────────────────────────────
+
+class _DeleteAccountButton extends StatefulWidget {
+  const _DeleteAccountButton();
+
+  @override
+  State<_DeleteAccountButton> createState() => _DeleteAccountButtonState();
+}
+
+class _DeleteAccountButtonState extends State<_DeleteAccountButton> {
+  bool _busy = false;
+
+  Future<void> _confirmAndDelete() async {
+    final colorScheme = Theme.of(context).colorScheme;
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Delete account?'),
+        content: const Text(
+          'This permanently deletes your account and all your notes, '
+          'transcripts and analyses. This cannot be undone.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(false),
+            child: const Text('Cancel'),
+          ),
+          FilledButton(
+            style: FilledButton.styleFrom(
+              backgroundColor: colorScheme.error,
+              foregroundColor: colorScheme.onError,
+            ),
+            onPressed: () => Navigator.of(ctx).pop(true),
+            child: const Text('Delete'),
+          ),
+        ],
+      ),
+    );
+    if (confirmed != true || !mounted) return;
+
+    setState(() => _busy = true);
+    final result = await getIt<DeleteAccountUseCase>()(const NoParams());
+    if (!mounted) return;
+    setState(() => _busy = false);
+    result.fold(
+      (f) => ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Could not delete account: ${f.message}')),
+      ),
+      // On success the session is cleared and the top-level auth listener
+      // routes back to sign-in, so there is nothing more to do here.
+      (_) {},
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+
+    return SizedBox(
+      width: double.infinity,
+      child: TextButton(
+        onPressed: _busy ? null : _confirmAndDelete,
+        style: TextButton.styleFrom(
+          foregroundColor: colorScheme.error,
+          padding: const EdgeInsets.symmetric(vertical: AppSpacing.base),
+        ),
+        child: _busy
+            ? SizedBox(
+                width: 20,
+                height: 20,
+                child: CircularProgressIndicator(
+                  strokeWidth: 2.2,
+                  color: colorScheme.error,
+                ),
+              )
+            : Text(
+                'Delete Account',
+                style: theme.textTheme.titleSmall?.copyWith(
+                  fontWeight: FontWeight.w700,
+                  color: colorScheme.error,
+                ),
+              ),
       ),
     );
   }

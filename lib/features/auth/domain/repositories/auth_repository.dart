@@ -22,5 +22,8 @@ abstract class AuthRepository {
 
   Future<Either<Failure, Unit>> signOut();
 
+  /// Permanently deletes the signed-in user's account and all their data.
+  Future<Either<Failure, Unit>> deleteAccount();
+
   Stream<AuthSnapshot> watchAuthState();
 }
