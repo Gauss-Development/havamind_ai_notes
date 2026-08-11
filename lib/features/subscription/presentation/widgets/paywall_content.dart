@@ -223,14 +223,34 @@ class _PaywallContentState extends State<PaywallContent> {
   List<Package> _packagesFor(Offerings? offerings, _BillingPeriod period) {
     final current = offerings?.current;
     if (current == null) return const [];
-    return current.availablePackages.where((p) {
-      switch (period) {
-        case _BillingPeriod.monthly:
-          return p.packageType == PackageType.monthly;
-        case _BillingPeriod.annual:
-          return p.packageType == PackageType.annual;
-      }
-    }).toList();
+    return current.availablePackages
+        .where((p) => _periodOf(p) == period)
+        .toList();
+  }
+
+  /// Billing period of a package, classified by the store product rather than
+  /// `Package.packageType`. A two-tier offering (Basic + Pro, each monthly and
+  /// annual) cannot use the reserved `$rc_monthly`/`$rc_annual` identifiers —
+  /// RevenueCat allows only one package per duration in an offering, so the
+  /// extra tier is forced onto a custom identifier and reports
+  /// `packageType == custom`. We therefore read the reserved types when present
+  /// (single-tier offerings) and otherwise fall back to the product-id keyword
+  /// convention used by `_inferPeriod` in SubscriptionRepositoryImpl.
+  _BillingPeriod? _periodOf(Package p) {
+    switch (p.packageType) {
+      case PackageType.monthly:
+        return _BillingPeriod.monthly;
+      case PackageType.annual:
+        return _BillingPeriod.annual;
+      default:
+        break;
+    }
+    final id = p.storeProduct.identifier.toLowerCase();
+    if (id.contains('year') || id.contains('annual')) {
+      return _BillingPeriod.annual;
+    }
+    if (id.contains('month')) return _BillingPeriod.monthly;
+    return null;
   }
 
   Package? _packageForTier(List<Package> packages, _PaywallTier tier) {
