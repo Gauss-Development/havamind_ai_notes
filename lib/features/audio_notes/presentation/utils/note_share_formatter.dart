@@ -15,7 +15,9 @@ class NoteShareFormatter {
     final buf = StringBuffer();
 
     buf.writeln(note.title);
-    buf.writeln('Duration: ${AudioNoteDurationFormatter.mmSs(note.durationSeconds)}');
+    buf.writeln(
+      'Duration: ${AudioNoteDurationFormatter.mmSs(note.durationSeconds)}',
+    );
     buf.writeln();
 
     if (analysis != null) {

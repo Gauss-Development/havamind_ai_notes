@@ -10,8 +10,8 @@ class SubscriptionRepositoryImpl implements SubscriptionRepository {
   SubscriptionRepositoryImpl({
     required RevenueCatDataSource dataSource,
     required String apiKey,
-  })  : _dataSource = dataSource,
-        _apiKey = apiKey;
+  }) : _dataSource = dataSource,
+       _apiKey = apiKey;
 
   final RevenueCatDataSource _dataSource;
   final String _apiKey;
@@ -189,9 +189,13 @@ class SubscriptionRepositoryImpl implements SubscriptionRepository {
       case PurchasesErrorCode.productAlreadyPurchasedError:
         return const PurchaseFailure('This product is already purchased');
       case PurchasesErrorCode.networkError:
-        return const PurchaseFailure('Network error. Please check your connection');
+        return const PurchaseFailure(
+          'Network error. Please check your connection',
+        );
       default:
-        return PurchaseFailure(e.message ?? 'An unexpected purchase error occurred');
+        return PurchaseFailure(
+          e.message ?? 'An unexpected purchase error occurred',
+        );
     }
   }
 }

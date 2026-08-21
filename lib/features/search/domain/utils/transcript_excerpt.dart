@@ -25,7 +25,10 @@ String? buildTranscriptExcerpt({
   }
 
   final start = (index - radius).clamp(0, transcript.length);
-  final end = (index + trimmedQuery.length + radius).clamp(0, transcript.length);
+  final end = (index + trimmedQuery.length + radius).clamp(
+    0,
+    transcript.length,
+  );
   final slice = transcript.substring(start, end).trim();
 
   final prefix = start > 0 ? '…' : '';

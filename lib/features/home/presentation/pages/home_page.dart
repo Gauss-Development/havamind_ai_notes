@@ -71,9 +71,7 @@ class HomePage extends StatelessWidget {
                 context.read<AudioNotesListBloc>().add(
                   const AudioNotesListEvent.refreshed(),
                 );
-                await Future<void>.delayed(
-                  const Duration(milliseconds: 350),
-                );
+                await Future<void>.delayed(const Duration(milliseconds: 350));
               },
               child: CustomScrollView(
                 physics: const AlwaysScrollableScrollPhysics(),
@@ -217,9 +215,7 @@ Future<void> _openNoteDetail(BuildContext context, String noteId) async {
     ),
   );
   if (!context.mounted) return;
-  context.read<AudioNotesListBloc>().add(
-    const AudioNotesListEvent.refreshed(),
-  );
+  context.read<AudioNotesListBloc>().add(const AudioNotesListEvent.refreshed());
 }
 
 String _noteSubtitle(AudioNote note) {
@@ -345,8 +341,9 @@ class _Avatar extends StatelessWidget {
   Widget build(BuildContext context) {
     final t = context.appTokens;
     final theme = Theme.of(context);
-    final initial =
-        name.trim().isEmpty ? '?' : name.characters.first.toUpperCase();
+    final initial = name.trim().isEmpty
+        ? '?'
+        : name.characters.first.toUpperCase();
 
     return Container(
       width: 48,
@@ -355,7 +352,10 @@ class _Avatar extends StatelessWidget {
       decoration: BoxDecoration(
         color: t.surfaceContainerLowest,
         shape: BoxShape.circle,
-        border: Border.all(color: t.primary.withValues(alpha: 0.25), width: 1.5),
+        border: Border.all(
+          color: t.primary.withValues(alpha: 0.25),
+          width: 1.5,
+        ),
       ),
       child: Text(
         initial,
@@ -379,10 +379,10 @@ class _StatsChips extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final total = totalCount ?? notes.length;
-    final ready =
-        notes.where((n) => n.status == AudioNoteStatus.completed).length;
-    final processing =
-        notes.where((n) => n.status.isPendingPipeline).length;
+    final ready = notes
+        .where((n) => n.status == AudioNoteStatus.completed)
+        .length;
+    final processing = notes.where((n) => n.status.isPendingPipeline).length;
 
     return Wrap(
       spacing: AppSpacing.sm,
@@ -424,7 +424,9 @@ class _HeroCtaCard extends StatelessWidget {
     final theme = Theme.of(context);
     final isFirstRun = notes.isEmpty;
 
-    final headline = isFirstRun ? 'Capture your first thought' : 'Ready when you are';
+    final headline = isFirstRun
+        ? 'Capture your first thought'
+        : 'Ready when you are';
     final body = isFirstRun
         ? 'Tap record and we’ll transcribe, summarize, and tag it for you.'
         : 'Pick up where you left off — record a new note in one tap.';
@@ -472,11 +474,7 @@ class _HeroCtaCard extends StatelessWidget {
                 width: 1.5,
               ),
             ),
-            child: Icon(
-              Icons.mic_rounded,
-              color: t.onPrimaryButton,
-              size: 26,
-            ),
+            child: Icon(Icons.mic_rounded, color: t.onPrimaryButton, size: 26),
           ),
         ],
       ),

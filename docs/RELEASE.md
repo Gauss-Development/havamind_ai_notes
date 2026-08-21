@@ -16,7 +16,7 @@ Checklist for **Hava Mind** (Flutter, `development` / `production` flavors). Kee
 ### Production env file
 
 - Production loads [`assets/env/.env.production`](../assets/env/.env.production) (see [`.gitignore`](../.gitignore)). Copy from [`assets/env/.env.example`](../assets/env/.env.example).
-- Required keys: `SUPABASE_URL`, `SUPABASE_ANON_KEY`, `REVENUECAT_API_KEY`.
+- Required keys: `SUPABASE_URL`, `SUPABASE_ANON_KEY`, plus platform RevenueCat keys `REVENUECAT_API_KEY_ANDROID` (`goog_…` for Play) and `REVENUECAT_API_KEY_IOS` (`appl_…`). Legacy `REVENUECAT_API_KEY` is a fallback only.
 - Optional (in-app **Legal** on Profile): `PRIVACY_POLICY_URL`, `TERMS_OF_SERVICE_URL` — HTTPS URLs shown when non-empty.
 
 ### `--dart-define` (CI / headless builds)
@@ -27,7 +27,8 @@ Same keys can be passed at build time (see [`lib/core/config/environment_config.
 flutter build appbundle --flavor production -t lib/main_production.dart \
   --dart-define=SUPABASE_URL=https://xxx.supabase.co \
   --dart-define=SUPABASE_ANON_KEY=eyJ... \
-  --dart-define=REVENUECAT_API_KEY=appl_... \
+  --dart-define=REVENUECAT_API_KEY_ANDROID=goog_... \
+  --dart-define=REVENUECAT_API_KEY_IOS=appl_... \
   --dart-define=PRIVACY_POLICY_URL=https://example.com/privacy \
   --dart-define=TERMS_OF_SERVICE_URL=https://example.com/terms
 ```

@@ -172,7 +172,8 @@ class _AppearanceRow extends StatelessWidget {
 
     return BlocBuilder<AppThemeCubit, ThemeMode>(
       builder: (context, mode) {
-        final isLight = mode == ThemeMode.light ||
+        final isLight =
+            mode == ThemeMode.light ||
             (mode == ThemeMode.system &&
                 MediaQuery.platformBrightnessOf(context) == Brightness.light);
 
@@ -210,16 +211,14 @@ class _ThemePillToggle extends StatelessWidget {
           _PillButton(
             label: 'Light',
             selected: isLight,
-            onTap: () => context
-                .read<AppThemeCubit>()
-                .setThemeMode(ThemeMode.light),
+            onTap: () =>
+                context.read<AppThemeCubit>().setThemeMode(ThemeMode.light),
           ),
           _PillButton(
             label: 'Dark',
             selected: !isLight,
-            onTap: () => context
-                .read<AppThemeCubit>()
-                .setThemeMode(ThemeMode.dark),
+            onTap: () =>
+                context.read<AppThemeCubit>().setThemeMode(ThemeMode.dark),
           ),
         ],
       ),
@@ -250,8 +249,7 @@ class _PillButton extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
         decoration: BoxDecoration(
           color: selected ? t.surfaceContainerLowest : Colors.transparent,
-          borderRadius:
-              BorderRadius.circular(ObsidianUiTokens.radiusFull),
+          borderRadius: BorderRadius.circular(ObsidianUiTokens.radiusFull),
           boxShadow: selected
               ? [
                   BoxShadow(
@@ -381,17 +379,17 @@ class _LegalLinksCard extends StatelessWidget {
     final uri = Uri.tryParse(url);
     if (uri == null || !(uri.isScheme('https') || uri.isScheme('http'))) {
       if (!context.mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Invalid link')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Invalid link')));
       return;
     }
     final ok = await launchUrl(uri, mode: LaunchMode.externalApplication);
     if (!context.mounted) return;
     if (!ok) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Could not open link')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Could not open link')));
     }
   }
 }
@@ -433,12 +431,7 @@ class _LegalLinkTile extends StatelessWidget {
                 child: Icon(icon, color: t.primary, size: 22),
               ),
               const SizedBox(width: AppSpacing.md),
-              Expanded(
-                child: Text(
-                  label,
-                  style: theme.textTheme.titleSmall,
-                ),
-              ),
+              Expanded(child: Text(label, style: theme.textTheme.titleSmall)),
               Icon(
                 Icons.open_in_new_rounded,
                 size: 18,
@@ -465,9 +458,8 @@ class _LogOutButton extends StatelessWidget {
     return SizedBox(
       width: double.infinity,
       child: OutlinedButton.icon(
-        onPressed: () => context.read<AuthBloc>().add(
-          const AuthEvent.signOutPressed(),
-        ),
+        onPressed: () =>
+            context.read<AuthBloc>().add(const AuthEvent.signOutPressed()),
         icon: const Icon(Icons.logout_rounded, size: 20),
         label: const Text('Log Out'),
         style: OutlinedButton.styleFrom(
@@ -475,8 +467,7 @@ class _LogOutButton extends StatelessWidget {
           side: BorderSide(color: colorScheme.error.withValues(alpha: 0.3)),
           padding: const EdgeInsets.symmetric(vertical: AppSpacing.base),
           shape: RoundedRectangleBorder(
-            borderRadius:
-                BorderRadius.circular(ObsidianUiTokens.radiusMd),
+            borderRadius: BorderRadius.circular(ObsidianUiTokens.radiusMd),
           ),
           textStyle: theme.textTheme.titleSmall?.copyWith(
             fontWeight: FontWeight.w700,

@@ -61,8 +61,9 @@ class _PaywallSheetBody extends StatelessWidget {
                 height: 4,
                 decoration: BoxDecoration(
                   color: t.onSurfaceVariant.withValues(alpha: 0.30),
-                  borderRadius:
-                      BorderRadius.circular(ObsidianUiTokens.radiusFull),
+                  borderRadius: BorderRadius.circular(
+                    ObsidianUiTokens.radiusFull,
+                  ),
                 ),
               ),
               // Close button row.

@@ -35,10 +35,7 @@ void main() {
     lastSignInAt: DateTime.utc(2025),
   );
 
-  final params = const EmailPasswordParams(
-    email: 'a@b.c',
-    password: 'secret',
-  );
+  final params = const EmailPasswordParams(email: 'a@b.c', password: 'secret');
 
   setUp(() {
     repository = _MockAuthRepository();
@@ -200,12 +197,9 @@ void main() {
   test(
     'signUpWithEmailPassword with confirmation yields emailConfirmationSent',
     () async {
-      when(
-        () => repository.signUpWithEmailPassword(params),
-      ).thenAnswer(
-        (_) async => const Right(
-          EmailSignUpResult(emailConfirmationRequired: true),
-        ),
+      when(() => repository.signUpWithEmailPassword(params)).thenAnswer(
+        (_) async =>
+            const Right(EmailSignUpResult(emailConfirmationRequired: true)),
       );
       bloc.add(const AuthEvent.started());
       await bloc.stream.firstWhere(

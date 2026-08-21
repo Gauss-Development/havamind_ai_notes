@@ -264,9 +264,7 @@ class _RecordingFounderPromptsCardState
       );
     }
 
-    final cardPadding = widget.compactLayout
-        ? AppSpacing.sm
-        : AppSpacing.base;
+    final cardPadding = widget.compactLayout ? AppSpacing.sm : AppSpacing.base;
     final visiblePrompts = widget.onboardingMode || _showAllPrompts
         ? prompts
         : prompts.take(_kCollapsedPromptCount).toList();
@@ -352,7 +350,9 @@ class _RecordingFounderPromptsCardState
                           children: [
                             TextSpan(
                               text: '${prompt.title}: ',
-                              style: const TextStyle(fontWeight: FontWeight.w600),
+                              style: const TextStyle(
+                                fontWeight: FontWeight.w600,
+                              ),
                             ),
                             TextSpan(
                               text: prompt.hint,

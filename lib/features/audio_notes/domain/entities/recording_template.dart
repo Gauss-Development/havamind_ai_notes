@@ -13,6 +13,5 @@ abstract final class RecordingTemplateIds {
 
   static bool isValid(String? id) => id != null && all.contains(id);
 
-  static String normalize(String? id) =>
-      isValid(id) ? id! : founderPitch;
+  static String normalize(String? id) => isValid(id) ? id! : founderPitch;
 }

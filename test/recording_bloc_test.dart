@@ -49,11 +49,11 @@ void main() {
     TestWidgetsFlutterBinding.ensureInitialized();
     TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
         .setMockMethodCallHandler(permissionsChannel, (call) async {
-      // microphone == 7; PermissionStatus.granted == 1.
-      if (call.method == 'checkPermissionStatus') return 1;
-      if (call.method == 'requestPermissions') return <int, int>{7: 1};
-      return null;
-    });
+          // microphone == 7; PermissionStatus.granted == 1.
+          if (call.method == 'checkPermissionStatus') return 1;
+          if (call.method == 'requestPermissions') return <int, int>{7: 1};
+          return null;
+        });
 
     when(() => getCurrentUsage(any())).thenAnswer((_) async => Right(usage));
     when(() => recording.createRecordingPath()).thenAnswer((_) async => path);
@@ -71,10 +71,10 @@ void main() {
   });
 
   RecordingBloc buildBloc() => RecordingBloc(
-        recordingService: recording,
-        processLocalAudioNote: processLocalAudioNote,
-        getCurrentUsage: getCurrentUsage,
-      );
+    recordingService: recording,
+    processLocalAudioNote: processLocalAudioNote,
+    getCurrentUsage: getCurrentUsage,
+  );
 
   test('start enters recording (not paused)', () async {
     final bloc = buildBloc();

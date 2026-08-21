@@ -53,6 +53,9 @@ class RevenueCatDataSource {
   }
 
   Future<CustomerInfo> logOut() async {
+    if (await Purchases.isAnonymous) {
+      return Purchases.getCustomerInfo();
+    }
     return Purchases.logOut();
   }
 

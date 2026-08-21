@@ -28,10 +28,8 @@ class FavoriteButton extends StatelessWidget {
             padding: const EdgeInsets.all(6),
             child: AnimatedSwitcher(
               duration: const Duration(milliseconds: 250),
-              transitionBuilder: (child, animation) => ScaleTransition(
-                scale: animation,
-                child: child,
-              ),
+              transitionBuilder: (child, animation) =>
+                  ScaleTransition(scale: animation, child: child),
               child: Icon(
                 isFavorite
                     ? Icons.favorite_rounded

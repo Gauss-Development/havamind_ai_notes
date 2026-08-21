@@ -56,10 +56,7 @@ class AppSectionHeader extends StatelessWidget {
                   ),
                   const SizedBox(height: 4),
                 ],
-                Text(
-                  title,
-                  style: theme.textTheme.headlineSmall,
-                ),
+                Text(title, style: theme.textTheme.headlineSmall),
                 if (subtitle != null) ...[
                   const SizedBox(height: 4),
                   Text(

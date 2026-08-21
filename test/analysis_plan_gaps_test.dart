@@ -66,14 +66,11 @@ void main() {
 
       final gaps = findAnalysisPlanGaps(analysis);
 
-      expect(
-        gaps.map((g) => g.field).toList(),
-        [
-          StartupAnalysisEditableField.problem,
-          StartupAnalysisEditableField.businessModel,
-          StartupAnalysisEditableField.keyMetrics,
-        ],
-      );
+      expect(gaps.map((g) => g.field).toList(), [
+        StartupAnalysisEditableField.problem,
+        StartupAnalysisEditableField.businessModel,
+        StartupAnalysisEditableField.keyMetrics,
+      ]);
     });
 
     test('returns empty list when all core fields are complete', () {

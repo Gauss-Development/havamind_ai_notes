@@ -32,9 +32,7 @@ class UsageCircularIndicator extends StatelessWidget {
         decoration: BoxDecoration(
           color: t.surfaceContainerHigh.withValues(alpha: 0.35),
           borderRadius: BorderRadius.circular(ObsidianUiTokens.radiusMd),
-          border: Border.all(
-            color: t.outlineVariant.withValues(alpha: 0.08),
-          ),
+          border: Border.all(color: t.outlineVariant.withValues(alpha: 0.08)),
         ),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.center,

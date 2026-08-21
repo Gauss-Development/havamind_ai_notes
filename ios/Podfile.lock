@@ -1,22 +1,99 @@
 PODS:
+  - app_links (6.4.1):
+    - Flutter
+  - audio_session (0.0.1):
+    - Flutter
   - Flutter (1.0.0)
+  - just_audio (0.0.1):
+    - Flutter
+    - FlutterMacOS
   - permission_handler_apple (9.3.0):
+    - Flutter
+  - purchases_flutter (9.16.0):
+    - Flutter
+    - PurchasesHybridCommon (= 17.54.0)
+  - purchases_ui_flutter (9.16.0):
+    - Flutter
+    - PurchasesHybridCommonUI (= 17.54.0)
+  - PurchasesHybridCommon (17.54.0):
+    - RevenueCat (= 5.67.0)
+  - PurchasesHybridCommonUI (17.54.0):
+    - PurchasesHybridCommon (= 17.54.0)
+    - RevenueCatUI (= 5.67.0)
+  - record_ios (1.2.0):
+    - Flutter
+  - RevenueCat (5.67.0)
+  - RevenueCatUI (5.67.0):
+    - RevenueCat (= 5.67.0)
+  - share_plus (0.0.1):
+    - Flutter
+  - shared_preferences_foundation (0.0.1):
+    - Flutter
+    - FlutterMacOS
+  - url_launcher_ios (0.0.1):
     - Flutter
 
 DEPENDENCIES:
+  - app_links (from `.symlinks/plugins/app_links/ios`)
+  - audio_session (from `.symlinks/plugins/audio_session/ios`)
   - Flutter (from `Flutter`)
+  - just_audio (from `.symlinks/plugins/just_audio/darwin`)
   - permission_handler_apple (from `.symlinks/plugins/permission_handler_apple/ios`)
+  - purchases_flutter (from `.symlinks/plugins/purchases_flutter/ios`)
+  - purchases_ui_flutter (from `.symlinks/plugins/purchases_ui_flutter/ios`)
+  - record_ios (from `.symlinks/plugins/record_ios/ios`)
+  - share_plus (from `.symlinks/plugins/share_plus/ios`)
+  - shared_preferences_foundation (from `.symlinks/plugins/shared_preferences_foundation/darwin`)
+  - url_launcher_ios (from `.symlinks/plugins/url_launcher_ios/ios`)
+
+SPEC REPOS:
+  trunk:
+    - PurchasesHybridCommon
+    - PurchasesHybridCommonUI
+    - RevenueCat
+    - RevenueCatUI
 
 EXTERNAL SOURCES:
+  app_links:
+    :path: ".symlinks/plugins/app_links/ios"
+  audio_session:
+    :path: ".symlinks/plugins/audio_session/ios"
   Flutter:
     :path: Flutter
+  just_audio:
+    :path: ".symlinks/plugins/just_audio/darwin"
   permission_handler_apple:
     :path: ".symlinks/plugins/permission_handler_apple/ios"
+  purchases_flutter:
+    :path: ".symlinks/plugins/purchases_flutter/ios"
+  purchases_ui_flutter:
+    :path: ".symlinks/plugins/purchases_ui_flutter/ios"
+  record_ios:
+    :path: ".symlinks/plugins/record_ios/ios"
+  share_plus:
+    :path: ".symlinks/plugins/share_plus/ios"
+  shared_preferences_foundation:
+    :path: ".symlinks/plugins/shared_preferences_foundation/darwin"
+  url_launcher_ios:
+    :path: ".symlinks/plugins/url_launcher_ios/ios"
 
 SPEC CHECKSUMS:
+  app_links: 3dbc685f76b1693c66a6d9dd1e9ab6f73d97dc0a
+  audio_session: 9bb7f6c970f21241b19f5a3658097ae459681ba0
   Flutter: cabc95a1d2626b1b06e7179b784ebcf0c0cde467
+  just_audio: 4e391f57b79cad2b0674030a00453ca5ce817eed
   permission_handler_apple: 4ed2196e43d0651e8ff7ca3483a069d469701f2d
+  purchases_flutter: 3da269c2f4a1fbb7bc4b12d2ef632b06412b1ecc
+  purchases_ui_flutter: a1205e28764a27857b0329f8b0850bab3dc6aef6
+  PurchasesHybridCommon: 6a8f4e30952167d2afaccf17ebcf8f8107060e4c
+  PurchasesHybridCommonUI: 8bbf53fe39a7e65cfbd0a2aba4dec6e30cd2c5d5
+  record_ios: 412daca2350b228e698fffcd08f1f94ceb1e3844
+  RevenueCat: f0d05079b59c33c645293bbc1fa78469ea7fcae7
+  RevenueCatUI: a285e58fd30bb3810d1442b5020bd45a1772c358
+  share_plus: 50da8cb520a8f0f65671c6c6a99b3617ed10a58a
+  shared_preferences_foundation: 7036424c3d8ec98dfe75ff1667cb0cd531ec82bb
+  url_launcher_ios: 7a95fa5b60cc718a708b8f2966718e93db0cef1b
 
-PODFILE CHECKSUM: ab9e72094c69de53c98e850277d8f78bc8b2937b
+PODFILE CHECKSUM: 00933ef76e88d5bf49a8d87a0ad803322e92307c
 
 COCOAPODS: 1.16.2

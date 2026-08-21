@@ -4,10 +4,7 @@ import 'package:sample/core/usecases/usecase.dart';
 import 'package:sample/features/audio_notes/domain/repositories/audio_notes_repository.dart';
 
 class UpdateNoteTitleParams {
-  const UpdateNoteTitleParams({
-    required this.noteId,
-    required this.title,
-  });
+  const UpdateNoteTitleParams({required this.noteId, required this.title});
 
   final String noteId;
   final String title;

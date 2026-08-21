@@ -52,10 +52,12 @@ class AudioNotesListBloc
     );
     result.fold(
       (f) => emit(AudioNotesListState.failure(f.message)),
-      (notes) => emit(AudioNotesListState.loaded(
-        notes,
-        hasReachedEnd: notes.length < _pageSize,
-      )),
+      (notes) => emit(
+        AudioNotesListState.loaded(
+          notes,
+          hasReachedEnd: notes.length < _pageSize,
+        ),
+      ),
     );
   }
 
@@ -69,10 +71,12 @@ class AudioNotesListBloc
     );
     result.fold(
       (f) => emit(AudioNotesListState.failure(f.message)),
-      (notes) => emit(AudioNotesListState.loaded(
-        notes,
-        hasReachedEnd: notes.length < _pageSize,
-      )),
+      (notes) => emit(
+        AudioNotesListState.loaded(
+          notes,
+          hasReachedEnd: notes.length < _pageSize,
+        ),
+      ),
     );
   }
 
@@ -96,10 +100,12 @@ class AudioNotesListBloc
     );
     result.fold(
       (f) => emit(current.copyWith(isLoadingMore: false)),
-      (newNotes) => emit(AudioNotesListState.loaded(
-        [...current.notes, ...newNotes],
-        hasReachedEnd: newNotes.length < _pageSize,
-      )),
+      (newNotes) => emit(
+        AudioNotesListState.loaded([
+          ...current.notes,
+          ...newNotes,
+        ], hasReachedEnd: newNotes.length < _pageSize),
+      ),
     );
   }
 
@@ -115,10 +121,12 @@ class AudioNotesListBloc
     );
     result.fold(
       (f) => emit(AudioNotesListState.failure(f.message)),
-      (notes) => emit(AudioNotesListState.loaded(
-        notes,
-        hasReachedEnd: notes.length < _pageSize,
-      )),
+      (notes) => emit(
+        AudioNotesListState.loaded(
+          notes,
+          hasReachedEnd: notes.length < _pageSize,
+        ),
+      ),
     );
   }
 }

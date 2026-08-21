@@ -64,9 +64,9 @@ class PlanVersionPreviewPage extends StatelessWidget {
             Navigator.of(context).pop(true);
           }
           if (state.error != null) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text(state.error!)),
-            );
+            ScaffoldMessenger.of(
+              context,
+            ).showSnackBar(SnackBar(content: Text(state.error!)));
           }
         },
         child: ListView(
@@ -89,14 +89,18 @@ class PlanVersionPreviewPage extends StatelessWidget {
                 padding: const EdgeInsets.all(AppSpacing.base),
                 decoration: BoxDecoration(
                   color: t.primaryContainer,
-                  borderRadius:
-                      BorderRadius.circular(ObsidianUiTokens.radiusMd),
+                  borderRadius: BorderRadius.circular(
+                    ObsidianUiTokens.radiusMd,
+                  ),
                 ),
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Icon(Icons.change_history_rounded,
-                        size: 16, color: t.primary),
+                    Icon(
+                      Icons.change_history_rounded,
+                      size: 16,
+                      color: t.primary,
+                    ),
                     const SizedBox(width: AppSpacing.sm),
                     Expanded(
                       child: Text(
@@ -175,7 +179,10 @@ class PlanVersionPreviewPage extends StatelessWidget {
     final ok = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: Text(l10n.versionRestoreTitle, style: theme.textTheme.titleLarge),
+        title: Text(
+          l10n.versionRestoreTitle,
+          style: theme.textTheme.titleLarge,
+        ),
         content: Text(
           l10n.versionRestoreMessage(version.roundNumber),
           style: theme.textTheme.bodyMedium,
@@ -205,10 +212,7 @@ class _Section {
 }
 
 class _SnapshotDiffSection extends StatelessWidget {
-  const _SnapshotDiffSection({
-    required this.diff,
-    required this.tokens,
-  });
+  const _SnapshotDiffSection({required this.diff, required this.tokens});
 
   final PlanSnapshotDiff diff;
   final ObsidianUiTokens tokens;
@@ -248,10 +252,7 @@ class _SnapshotDiffSection extends StatelessWidget {
 }
 
 class _FieldChangeRow extends StatelessWidget {
-  const _FieldChangeRow({
-    required this.change,
-    required this.tokens,
-  });
+  const _FieldChangeRow({required this.change, required this.tokens});
 
   final PlanSnapshotFieldChange change;
   final ObsidianUiTokens tokens;
@@ -331,9 +332,7 @@ class _ReadOnlySection extends StatelessWidget {
         children: [
           Text(
             label,
-            style: theme.textTheme.labelSmall?.copyWith(
-              color: tokens.primary,
-            ),
+            style: theme.textTheme.labelSmall?.copyWith(color: tokens.primary),
           ),
           const SizedBox(height: AppSpacing.xs),
           Text(
@@ -387,7 +386,8 @@ class _ScoreChip extends StatelessWidget {
               Expanded(
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(
-                      ObsidianUiTokens.radiusFull),
+                    ObsidianUiTokens.radiusFull,
+                  ),
                   child: LinearProgressIndicator(
                     value: value / 100,
                     minHeight: 6,

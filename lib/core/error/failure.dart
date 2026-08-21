@@ -37,16 +37,14 @@ class PurchaseFailure extends Failure {
 }
 
 class PurchaseCancelledFailure extends PurchaseFailure {
-  const PurchaseCancelledFailure()
-      : super('Purchase was cancelled');
+  const PurchaseCancelledFailure() : super('Purchase was cancelled');
 }
 
 class PurchaseNotAllowedFailure extends PurchaseFailure {
   const PurchaseNotAllowedFailure()
-      : super('Purchases are not allowed on this device');
+    : super('Purchases are not allowed on this device');
 }
 
 class PaymentPendingFailure extends PurchaseFailure {
-  const PaymentPendingFailure()
-      : super('Payment is pending approval');
+  const PaymentPendingFailure() : super('Payment is pending approval');
 }

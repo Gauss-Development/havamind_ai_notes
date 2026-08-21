@@ -65,7 +65,10 @@ class _PaywallContentState extends State<PaywallContent> {
         _loadError = 'Could not load plans. Please try again.';
       }
       // Default selected period: annual if available, else monthly.
-      final hasAnnual = _packagesFor(offerings, _BillingPeriod.annual).isNotEmpty;
+      final hasAnnual = _packagesFor(
+        offerings,
+        _BillingPeriod.annual,
+      ).isNotEmpty;
       _billing = hasAnnual ? _BillingPeriod.annual : _BillingPeriod.monthly;
     });
   }
@@ -81,20 +84,24 @@ class _PaywallContentState extends State<PaywallContent> {
       );
     }
     if (_loadError != null) {
-      return _ErrorState(message: _loadError!.toString(), onRetry: () {
-        setState(() {
-          _loading = true;
-          _loadError = null;
-        });
-        _load();
-      });
+      return _ErrorState(
+        message: _loadError!.toString(),
+        onRetry: () {
+          setState(() {
+            _loading = true;
+            _loadError = null;
+          });
+          _load();
+        },
+      );
     }
 
     final monthlyPkgs = _packagesFor(_offerings, _BillingPeriod.monthly);
     final annualPkgs = _packagesFor(_offerings, _BillingPeriod.annual);
     final hasBoth = monthlyPkgs.isNotEmpty && annualPkgs.isNotEmpty;
 
-    final visiblePkgs = _billing == _BillingPeriod.annual && annualPkgs.isNotEmpty
+    final visiblePkgs =
+        _billing == _BillingPeriod.annual && annualPkgs.isNotEmpty
         ? annualPkgs
         : monthlyPkgs;
 
@@ -119,7 +126,8 @@ class _PaywallContentState extends State<PaywallContent> {
         children: [
           _Header(
             title: widget.headline ?? 'Unlock your founder voice',
-            subtitle: widget.subhead ??
+            subtitle:
+                widget.subhead ??
                 'Capture every idea. Get AI-powered analysis on every note.',
             compact: widget.compact,
           ),
@@ -196,9 +204,9 @@ class _PaywallContentState extends State<PaywallContent> {
         // Silent — user dismissed Apple/Google sheet.
         break;
       case PurchaseError(:final message):
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(message)),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(message)));
     }
   }
 
@@ -261,11 +269,16 @@ class _PaywallContentState extends State<PaywallContent> {
       if (tier == _PaywallTier.pro && id.contains('pro')) return p;
       if (tier == _PaywallTier.basic && id.contains('basic')) return p;
     }
-    // Fallback: cheapest = basic, most expensive = pro.
+    // Single-tier offerings (Play/App Store production) have one package per
+    // period. Map it to Pro so Subscribe is bound to a real package. Cheap vs
+    // expensive is only a Basic/Pro split when both products exist.
+    if (packages.length == 1) {
+      return tier == _PaywallTier.pro ? packages.first : null;
+    }
     final sorted = [...packages]
       ..sort((a, b) => a.storeProduct.price.compareTo(b.storeProduct.price));
     if (tier == _PaywallTier.basic) return sorted.first;
-    if (tier == _PaywallTier.pro && sorted.length > 1) return sorted.last;
+    if (tier == _PaywallTier.pro) return sorted.last;
     return null;
   }
 
@@ -273,10 +286,8 @@ class _PaywallContentState extends State<PaywallContent> {
   String? _annualSavings(List<Package> monthly, List<Package> annual) {
     if (monthly.isEmpty || annual.isEmpty) return null;
     // Compare for the same tier (Pro by default, fall back to first).
-    final m = _packageForTier(monthly, _PaywallTier.pro) ??
-        monthly.first;
-    final a = _packageForTier(annual, _PaywallTier.pro) ??
-        annual.first;
+    final m = _packageForTier(monthly, _PaywallTier.pro) ?? monthly.first;
+    final a = _packageForTier(annual, _PaywallTier.pro) ?? annual.first;
     final monthlyTotal = m.storeProduct.price * 12;
     if (monthlyTotal <= 0) return null;
     final saved = (1 - (a.storeProduct.price / monthlyTotal)) * 100;
@@ -427,7 +438,9 @@ class _ValuePropList extends StatelessWidget {
                 height: 36,
                 decoration: BoxDecoration(
                   color: t.primary.withValues(alpha: 0.14),
-                  borderRadius: BorderRadius.circular(ObsidianUiTokens.radiusMd),
+                  borderRadius: BorderRadius.circular(
+                    ObsidianUiTokens.radiusMd,
+                  ),
                 ),
                 child: Icon(icon, color: t.primary, size: 20),
               ),
@@ -515,8 +528,9 @@ class _BillingToggle extends StatelessWidget {
                       color: selected
                           ? t.onPrimaryButton.withValues(alpha: 0.20)
                           : t.secondary.withValues(alpha: 0.18),
-                      borderRadius:
-                          BorderRadius.circular(ObsidianUiTokens.radiusFull),
+                      borderRadius: BorderRadius.circular(
+                        ObsidianUiTokens.radiusFull,
+                      ),
                     ),
                     child: Text(
                       trailing,
@@ -543,11 +557,7 @@ class _BillingToggle extends StatelessWidget {
       child: Row(
         children: [
           option(_BillingPeriod.monthly, 'Monthly'),
-          option(
-            _BillingPeriod.annual,
-            'Annual',
-            trailing: annualSavings,
-          ),
+          option(_BillingPeriod.annual, 'Annual', trailing: annualSavings),
         ],
       ),
     );
@@ -720,15 +730,12 @@ class _PriceLabel extends StatelessWidget {
     if (package == null) {
       return Text(
         '—',
-        style: theme.textTheme.titleLarge?.copyWith(
-          color: t.onSurfaceVariant,
-        ),
+        style: theme.textTheme.titleLarge?.copyWith(color: t.onSurfaceVariant),
       );
     }
 
     final price = package!.storeProduct.priceString;
-    final perLabel =
-        billing == _BillingPeriod.annual ? '/ year' : '/ month';
+    final perLabel = billing == _BillingPeriod.annual ? '/ year' : '/ month';
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.end,
@@ -741,9 +748,7 @@ class _PriceLabel extends StatelessWidget {
         ),
         Text(
           perLabel,
-          style: theme.textTheme.bodySmall?.copyWith(
-            color: t.onSurfaceVariant,
-          ),
+          style: theme.textTheme.bodySmall?.copyWith(color: t.onSurfaceVariant),
         ),
       ],
     );
@@ -768,9 +773,7 @@ class _ContinueButton extends StatelessWidget {
 
     final enabled = package != null && !isPurchasing;
     final price = package?.storeProduct.priceString;
-    final label = price == null
-        ? 'Continue'
-        : 'Start with $price';
+    final label = price == null ? 'Continue' : 'Start with $price';
 
     return Container(
       decoration: BoxDecoration(

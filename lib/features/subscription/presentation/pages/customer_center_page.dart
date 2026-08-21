@@ -32,10 +32,13 @@ class CustomerCenterPage extends StatelessWidget {
               children: [
                 Material(
                   color: t.surfaceContainerHigh.withValues(alpha: 0.5),
-                  borderRadius:
-                      BorderRadius.circular(ObsidianUiTokens.radiusFull),
+                  borderRadius: BorderRadius.circular(
+                    ObsidianUiTokens.radiusFull,
+                  ),
                   child: IconButton(
-                    tooltip: MaterialLocalizations.of(context).backButtonTooltip,
+                    tooltip: MaterialLocalizations.of(
+                      context,
+                    ).backButtonTooltip,
                     icon: Icon(
                       Icons.arrow_back_ios_new_rounded,
                       size: 20,
@@ -87,8 +90,9 @@ class CustomerCenterPage extends StatelessWidget {
               child: Container(
                 decoration: BoxDecoration(
                   color: t.surfaceContainerLowest,
-                  borderRadius:
-                      BorderRadius.circular(ObsidianUiTokens.radiusLg),
+                  borderRadius: BorderRadius.circular(
+                    ObsidianUiTokens.radiusLg,
+                  ),
                   border: Border.all(
                     color: t.outlineVariant.withValues(alpha: 0.14),
                   ),
@@ -109,8 +113,8 @@ class CustomerCenterPage extends StatelessWidget {
                   },
                   onPromotionalOfferSucceeded:
                       (customerInfo, transaction, offerId) {
-                    context.read<SubscriptionCubit>().loadStatus();
-                  },
+                        context.read<SubscriptionCubit>().loadStatus();
+                      },
                 ),
               ),
             ),
@@ -134,18 +138,12 @@ class _IntroPanel extends StatelessWidget {
       decoration: BoxDecoration(
         color: t.primary.withValues(alpha: 0.06),
         borderRadius: BorderRadius.circular(ObsidianUiTokens.radiusMd),
-        border: Border.all(
-          color: t.primary.withValues(alpha: 0.12),
-        ),
+        border: Border.all(color: t.primary.withValues(alpha: 0.12)),
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Icon(
-            Icons.info_outline_rounded,
-            color: t.primary,
-            size: 22,
-          ),
+          Icon(Icons.info_outline_rounded, color: t.primary, size: 22),
           const SizedBox(width: AppSpacing.sm),
           Expanded(
             child: Text(

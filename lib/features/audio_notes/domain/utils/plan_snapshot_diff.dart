@@ -64,11 +64,7 @@ PlanSnapshotDiff diffPlanSnapshots({
     if (after == null) continue;
 
     changes.add(
-      PlanSnapshotFieldChange(
-        fieldKey: key,
-        before: before,
-        after: after,
-      ),
+      PlanSnapshotFieldChange(fieldKey: key, before: before, after: after),
     );
   }
 

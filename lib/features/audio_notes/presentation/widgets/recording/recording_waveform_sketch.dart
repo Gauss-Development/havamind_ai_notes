@@ -90,7 +90,17 @@ class _WaveformPainter extends CustomPainter {
   }) : super(repaint: animation);
 
   static const _baseHeights = <double>[
-    6, 12, 18, 24, 18, 30, 20, 36, 24, 14, 8,
+    6,
+    12,
+    18,
+    24,
+    18,
+    30,
+    20,
+    36,
+    24,
+    14,
+    8,
   ];
   static const _barWidth = 5.0;
   static const _barGap = 4.0; // 2dp horizontal padding on each side

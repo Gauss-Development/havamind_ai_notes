@@ -36,14 +36,8 @@ class RecordingAutoTranscriptionCard extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  'Auto-Transcription',
-                  style: theme.textTheme.titleSmall,
-                ),
-                Text(
-                  'Enabled: English (US)',
-                  style: theme.textTheme.bodySmall,
-                ),
+                Text('Auto-Transcription', style: theme.textTheme.titleSmall),
+                Text('Enabled: English (US)', style: theme.textTheme.bodySmall),
               ],
             ),
           ),

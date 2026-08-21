@@ -19,8 +19,8 @@ class StartupAnalysisMapper {
       risksGaps: row['risks_gaps'] as String?,
       followUpQuestions: _parseQuestions(row['follow_up_questions']),
       marketPotentialScore: (row['market_potential_score'] as num?)?.toInt(),
-      technicalComplexityScore:
-          (row['technical_complexity_score'] as num?)?.toInt(),
+      technicalComplexityScore: (row['technical_complexity_score'] as num?)
+          ?.toInt(),
       createdAt: DateTime.parse(row['created_at'] as String),
     );
   }

@@ -57,19 +57,19 @@ class RecordingBloc extends Bloc<RecordingEvent, RecordingState> {
     required ProcessLocalAudioNoteUseCase processLocalAudioNote,
     required GetCurrentUsageUseCase getCurrentUsage,
     String? initialTemplateId,
-  })  : _recording = recordingService,
-        _processLocalAudioNote = processLocalAudioNote,
-        _getCurrentUsage = getCurrentUsage,
-        _templateId = RecordingTemplateIds.normalize(
-          initialTemplateId ?? RecordingTemplateIds.founderPitch,
-        ),
-        super(
-          RecordingState.idle(
-            templateId: RecordingTemplateIds.normalize(
-              initialTemplateId ?? RecordingTemplateIds.founderPitch,
-            ),
-          ),
-        ) {
+  }) : _recording = recordingService,
+       _processLocalAudioNote = processLocalAudioNote,
+       _getCurrentUsage = getCurrentUsage,
+       _templateId = RecordingTemplateIds.normalize(
+         initialTemplateId ?? RecordingTemplateIds.founderPitch,
+       ),
+       super(
+         RecordingState.idle(
+           templateId: RecordingTemplateIds.normalize(
+             initialTemplateId ?? RecordingTemplateIds.founderPitch,
+           ),
+         ),
+       ) {
     on<_StartPressed>(_onStart);
     on<_PausePressed>(_onPause);
     on<_ResumePressed>(_onResume);
@@ -96,10 +96,7 @@ class RecordingBloc extends Bloc<RecordingEvent, RecordingState> {
     Emitter<RecordingState> emit,
   ) {
     _templateId = RecordingTemplateIds.normalize(event.templateId);
-    state.maybeWhen(
-      idle: (_) => emit(_idleState()),
-      orElse: () {},
-    );
+    state.maybeWhen(idle: (_) => emit(_idleState()), orElse: () {});
   }
 
   Future<void> _onStart(

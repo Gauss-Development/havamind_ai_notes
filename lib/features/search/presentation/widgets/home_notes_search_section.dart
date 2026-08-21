@@ -254,7 +254,15 @@ class _SearchBar extends StatelessWidget {
                       style: theme.textTheme.bodyMedium,
                       decoration: InputDecoration(
                         isCollapsed: true,
+                        isDense: true,
+                        filled: false,
+                        contentPadding: EdgeInsets.zero,
                         border: InputBorder.none,
+                        enabledBorder: InputBorder.none,
+                        focusedBorder: InputBorder.none,
+                        disabledBorder: InputBorder.none,
+                        errorBorder: InputBorder.none,
+                        focusedErrorBorder: InputBorder.none,
                         hintText: hint,
                         hintStyle: hintStyle,
                       ),
@@ -459,7 +467,8 @@ class _SearchSuggestionTile extends StatelessWidget {
       fontWeight: FontWeight.w600,
     );
     final dateStr = _dateFmt.format(note.createdAt);
-    final showExcerpt = hit.matchType == NoteSearchMatchType.transcript &&
+    final showExcerpt =
+        hit.matchType == NoteSearchMatchType.transcript &&
         hit.excerpt != null &&
         hit.excerpt!.trim().isNotEmpty;
 
@@ -481,8 +490,9 @@ class _SearchSuggestionTile extends StatelessWidget {
                 alignment: Alignment.center,
                 decoration: BoxDecoration(
                   color: t.primaryContainer,
-                  borderRadius:
-                      BorderRadius.circular(ObsidianUiTokens.radiusSm),
+                  borderRadius: BorderRadius.circular(
+                    ObsidianUiTokens.radiusSm,
+                  ),
                 ),
                 child: Icon(
                   Icons.graphic_eq_rounded,

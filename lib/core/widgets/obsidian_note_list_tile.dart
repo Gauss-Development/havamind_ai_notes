@@ -152,11 +152,11 @@ class ObsidianNoteListTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => AppNoteListTile(
-        title: title,
-        subtitle: subtitle,
-        onTap: onTap,
-        status: status,
-        index: index,
-        trailing: trailing,
-      );
+    title: title,
+    subtitle: subtitle,
+    onTap: onTap,
+    status: status,
+    index: index,
+    trailing: trailing,
+  );
 }

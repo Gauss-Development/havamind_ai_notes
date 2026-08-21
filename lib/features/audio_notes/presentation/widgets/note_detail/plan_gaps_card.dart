@@ -15,7 +15,7 @@ class PlanGapsCard extends StatelessWidget {
 
   final List<AnalysisPlanGap> gaps;
   final void Function(StartupAnalysisEditableField field, String question)
-      onAnswerByVoice;
+  onAnswerByVoice;
 
   @override
   Widget build(BuildContext context) {
@@ -37,14 +37,16 @@ class PlanGapsCard extends StatelessWidget {
         children: [
           Row(
             children: [
-              Icon(Icons.playlist_add_check_rounded, size: 18, color: t.primary),
+              Icon(
+                Icons.playlist_add_check_rounded,
+                size: 18,
+                color: t.primary,
+              ),
               const SizedBox(width: AppSpacing.sm),
               Expanded(
                 child: Text(
                   l10n.planGapsTitle,
-                  style: theme.textTheme.labelSmall?.copyWith(
-                    color: t.primary,
-                  ),
+                  style: theme.textTheme.labelSmall?.copyWith(color: t.primary),
                 ),
               ),
             ],
@@ -97,8 +99,10 @@ class PlanGapsCard extends StatelessWidget {
     return switch (field) {
       StartupAnalysisEditableField.problem => l10n.planGapAskProblem,
       StartupAnalysisEditableField.solution => l10n.planGapAskSolution,
-      StartupAnalysisEditableField.targetAudience => l10n.planGapAskTargetAudience,
-      StartupAnalysisEditableField.businessModel => l10n.planGapAskBusinessModel,
+      StartupAnalysisEditableField.targetAudience =>
+        l10n.planGapAskTargetAudience,
+      StartupAnalysisEditableField.businessModel =>
+        l10n.planGapAskBusinessModel,
       StartupAnalysisEditableField.keyMetrics => l10n.planGapAskKeyMetrics,
       StartupAnalysisEditableField.advantages => l10n.planGapAskAdvantages,
       StartupAnalysisEditableField.risksGaps => l10n.planGapAskRisksGaps,
@@ -109,10 +113,7 @@ class PlanGapsCard extends StatelessWidget {
 }
 
 class _PlanGapRow extends StatelessWidget {
-  const _PlanGapRow({
-    required this.label,
-    required this.onAnswer,
-  });
+  const _PlanGapRow({required this.label, required this.onAnswer});
 
   final String label;
   final VoidCallback onAnswer;

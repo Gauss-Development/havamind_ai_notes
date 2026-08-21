@@ -150,8 +150,9 @@ class _NavButton extends StatelessWidget {
                 selected ? item.activeIcon : item.icon,
                 key: ValueKey(selected),
                 size: 26,
-                color:
-                    selected ? tokens.onPrimaryButton : tokens.onSurfaceVariant,
+                color: selected
+                    ? tokens.onPrimaryButton
+                    : tokens.onSurfaceVariant,
               ),
             ),
           ),
@@ -186,9 +187,6 @@ class ObsidianFloatingNavBar extends StatelessWidget {
   final ValueChanged<int> onTap;
 
   @override
-  Widget build(BuildContext context) => AppFloatingNavBar(
-        items: items,
-        currentIndex: currentIndex,
-        onTap: onTap,
-      );
+  Widget build(BuildContext context) =>
+      AppFloatingNavBar(items: items, currentIndex: currentIndex, onTap: onTap);
 }

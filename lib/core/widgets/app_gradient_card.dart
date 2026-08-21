@@ -27,8 +27,8 @@ class AppGradientCard extends StatelessWidget {
     this.onTap,
     this.padding = const EdgeInsets.all(AppSpacing.lg),
     this.margin = EdgeInsets.zero,
-  })  : gradient = null,
-        _useAccent = true;
+  }) : gradient = null,
+       _useAccent = true;
 
   final Widget child;
   final VoidCallback? onTap;
@@ -45,8 +45,8 @@ class AppGradientCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final t = context.appTokens;
     final shape = BorderRadius.circular(ObsidianUiTokens.radiusXl);
-    final resolved = gradient ??
-        (_useAccent ? t.accentGradient : t.primaryGradient);
+    final resolved =
+        gradient ?? (_useAccent ? t.accentGradient : t.primaryGradient);
 
     final card = DecoratedBox(
       decoration: BoxDecoration(

@@ -120,9 +120,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
             height: 420,
             child: IgnorePointer(
               child: DecoratedBox(
-                decoration: BoxDecoration(
-                  gradient: t.heroBackdropGradient,
-                ),
+                decoration: BoxDecoration(gradient: t.heroBackdropGradient),
               ),
             ),
           ),
@@ -143,20 +141,21 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                       children: [
                         _Reveal(
                           animation: _entrance,
-                          interval: const Interval(0, 0.45,
-                              curve: Curves.easeOutCubic),
+                          interval: const Interval(
+                            0,
+                            0.45,
+                            curve: Curves.easeOutCubic,
+                          ),
                           child: Column(
                             children: [
                               _BrandMark(pulse: _pulse, tokens: t),
                               SizedBox(
-                                height:
-                                    compact ? AppSpacing.md : AppSpacing.lg,
+                                height: compact ? AppSpacing.md : AppSpacing.lg,
                               ),
                               Text(
                                 l10n.appTitle,
                                 textAlign: TextAlign.center,
-                                style:
-                                    theme.textTheme.headlineMedium?.copyWith(
+                                style: theme.textTheme.headlineMedium?.copyWith(
                                   fontWeight: FontWeight.w800,
                                 ),
                               ),
@@ -193,8 +192,11 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                         ),
                         _Reveal(
                           animation: _entrance,
-                          interval: const Interval(0.2, 0.65,
-                              curve: Curves.easeOutCubic),
+                          interval: const Interval(
+                            0.2,
+                            0.65,
+                            curve: Curves.easeOutCubic,
+                          ),
                           child: _AuthModeToggle(
                             isSignUp: _isSignUp,
                             enabled: !loading,
@@ -209,8 +211,11 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                         ),
                         _Reveal(
                           animation: _entrance,
-                          interval: const Interval(0.35, 0.8,
-                              curve: Curves.easeOutCubic),
+                          interval: const Interval(
+                            0.35,
+                            0.8,
+                            curve: Curves.easeOutCubic,
+                          ),
                           child: Form(
                             key: _formKey,
                             child: Column(
@@ -228,8 +233,9 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                                   ),
                                   decoration: InputDecoration(
                                     labelText: l10n.email,
-                                    prefixIcon:
-                                        const Icon(Icons.mail_outline_rounded),
+                                    prefixIcon: const Icon(
+                                      Icons.mail_outline_rounded,
+                                    ),
                                   ),
                                   validator: (value) {
                                     final email = value?.trim() ?? '';
@@ -261,8 +267,9 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                                   ),
                                   decoration: InputDecoration(
                                     labelText: l10n.password,
-                                    prefixIcon:
-                                        const Icon(Icons.lock_outline_rounded),
+                                    prefixIcon: const Icon(
+                                      Icons.lock_outline_rounded,
+                                    ),
                                     suffixIcon: IconButton(
                                       tooltip: _obscurePassword
                                           ? l10n.showPassword
@@ -298,8 +305,11 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                         ),
                         _Reveal(
                           animation: _entrance,
-                          interval: const Interval(0.5, 1,
-                              curve: Curves.easeOutCubic),
+                          interval: const Interval(
+                            0.5,
+                            1,
+                            curve: Curves.easeOutCubic,
+                          ),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.stretch,
                             children: [
@@ -310,8 +320,9 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                                 switchOutCurve: Curves.easeInCubic,
                                 child: AppGradientButton(
                                   key: ValueKey(_isSignUp),
-                                  onPressed:
-                                      loading ? null : _submitEmailPassword,
+                                  onPressed: loading
+                                      ? null
+                                      : _submitEmailPassword,
                                   isLoading: loading,
                                   expand: true,
                                   icon: _isSignUp
@@ -343,9 +354,8 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                                     onPressed: loading
                                         ? null
                                         : () => context.read<AuthBloc>().add(
-                                              const AuthEvent
-                                                  .signInWithGooglePressed(),
-                                            ),
+                                            const AuthEvent.signInWithGooglePressed(),
+                                          ),
                                   ),
                                   const SizedBox(width: AppSpacing.lg),
                                   _SocialIconButton(
@@ -359,9 +369,8 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                                     onPressed: loading
                                         ? null
                                         : () => context.read<AuthBloc>().add(
-                                              const AuthEvent
-                                                  .signInWithApplePressed(),
-                                            ),
+                                            const AuthEvent.signInWithApplePressed(),
+                                          ),
                                   ),
                                 ],
                               ),
@@ -391,9 +400,10 @@ class _BrandMark extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ScaleTransition(
-      scale: Tween<double>(begin: 1, end: 1.05).animate(
-        CurvedAnimation(parent: pulse, curve: Curves.easeInOut),
-      ),
+      scale: Tween<double>(
+        begin: 1,
+        end: 1.05,
+      ).animate(CurvedAnimation(parent: pulse, curve: Curves.easeInOut)),
       child: Container(
         width: 84,
         height: 84,
@@ -447,16 +457,16 @@ class _AuthModeToggle extends StatelessWidget {
           AnimatedAlign(
             duration: const Duration(milliseconds: 280),
             curve: Curves.easeOutCubic,
-            alignment:
-                isSignUp ? Alignment.centerRight : Alignment.centerLeft,
+            alignment: isSignUp ? Alignment.centerRight : Alignment.centerLeft,
             child: FractionallySizedBox(
               widthFactor: 0.5,
               heightFactor: 1,
               child: DecoratedBox(
                 decoration: BoxDecoration(
                   gradient: tokens.primaryGradient,
-                  borderRadius:
-                      BorderRadius.circular(ObsidianUiTokens.radiusFull),
+                  borderRadius: BorderRadius.circular(
+                    ObsidianUiTokens.radiusFull,
+                  ),
                   boxShadow: tokens.elevationMd,
                 ),
               ),
@@ -522,11 +532,7 @@ class _ToggleSegment extends StatelessWidget {
                     ? tokens.onPrimaryButton
                     : tokens.onSurfaceVariant,
               ),
-              child: Text(
-                label,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-              ),
+              child: Text(label, maxLines: 1, overflow: TextOverflow.ellipsis),
             ),
           ),
         ),
@@ -568,9 +574,7 @@ class _InfoBanner extends StatelessWidget {
                 ? Icons.mark_email_read_outlined
                 : Icons.error_outline_rounded,
             size: 18,
-            color: isInfo
-                ? tokens.primary
-                : theme.colorScheme.onErrorContainer,
+            color: isInfo ? tokens.primary : theme.colorScheme.onErrorContainer,
           ),
           const SizedBox(width: AppSpacing.sm),
           Expanded(

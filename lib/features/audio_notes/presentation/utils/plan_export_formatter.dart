@@ -97,9 +97,7 @@ class PlanExportFormatter {
     }
 
     if (problem != null && audience != null && solution != null) {
-      buf.writeln(
-        "We're solving $problem for $audience with $solution.",
-      );
+      buf.writeln("We're solving $problem for $audience with $solution.");
     } else if (problem != null && solution != null) {
       buf.writeln("We're solving $problem with $solution.");
     } else if (problem != null) {

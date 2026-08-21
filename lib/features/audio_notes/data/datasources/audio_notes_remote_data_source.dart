@@ -56,8 +56,7 @@ class AudioNotesRemoteDataSource {
           .range(offset, offset + limit - 1);
       return (rows as List<dynamic>)
           .map(
-            (e) =>
-                AudioNoteMapper.fromRow(Map<String, dynamic>.from(e as Map)),
+            (e) => AudioNoteMapper.fromRow(Map<String, dynamic>.from(e as Map)),
           )
           .toList();
     }
@@ -116,16 +115,11 @@ class AudioNotesRemoteDataSource {
 
     final response = await _client.rpc(
       'search_audio_notes',
-      params: {
-        'p_query': trimmed,
-        'p_limit': limit,
-      },
+      params: {'p_query': trimmed, 'p_limit': limit},
     );
 
     return (response as List<dynamic>)
-        .map(
-          (e) => _mapSearchHit(Map<String, dynamic>.from(e as Map)),
-        )
+        .map((e) => _mapSearchHit(Map<String, dynamic>.from(e as Map)))
         .toList();
   }
 
@@ -159,8 +153,10 @@ class AudioNotesRemoteDataSource {
         .eq('user_id', userId);
   }
 
-  String _escapeIlike(String input) =>
-      input.replaceAll(r'\', r'\\').replaceAll('%', r'\%').replaceAll('_', r'\_');
+  String _escapeIlike(String input) => input
+      .replaceAll(r'\', r'\\')
+      .replaceAll('%', r'\%')
+      .replaceAll('_', r'\_');
 
   Future<AudioNote> fetchById(String id) async {
     final row = await _client
@@ -411,8 +407,7 @@ class AudioNotesRemoteDataSource {
         planId: row['plan_id'] as String,
         audioNoteId: row['audio_note_id'] as String,
         roundNumber: row['round_number'] as int,
-        planSnapshot:
-            Map<String, dynamic>.from(row['plan_snapshot'] as Map),
+        planSnapshot: Map<String, dynamic>.from(row['plan_snapshot'] as Map),
         transcription: row['transcription'] as String?,
         diffSummary: row['diff_summary'] as String?,
         followUpQuestions: (row['follow_up_questions'] as List?)
@@ -448,10 +443,7 @@ class AudioNotesRemoteDataSource {
     String? followUpQuestionText,
   }) async {
     try {
-      final body = <String, dynamic>{
-        'planId': planId,
-        'audioPath': audioPath,
-      };
+      final body = <String, dynamic>{'planId': planId, 'audioPath': audioPath};
       if (followUpQuestionId != null) {
         body['followUpQuestionId'] = followUpQuestionId;
       }

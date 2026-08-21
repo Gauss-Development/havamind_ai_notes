@@ -1,10 +1,7 @@
 import 'package:equatable/equatable.dart';
 
 class EmailPasswordParams extends Equatable {
-  const EmailPasswordParams({
-    required this.email,
-    required this.password,
-  });
+  const EmailPasswordParams({required this.email, required this.password});
 
   final String email;
   final String password;

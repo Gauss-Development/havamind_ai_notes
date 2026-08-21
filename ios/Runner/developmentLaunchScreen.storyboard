@@ -20,15 +20,17 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <imageView opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleAspectFit" image="developmentLaunchImage" translatesAutoresizingMaskIntoConstraints="NO" id="YRO-k0-Ey4">
-                                <rect key="frame" x="34" y="139" width="307" height="389"/>
+                                <rect key="frame" x="107.5" y="253.5" width="160" height="160"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="160" id="launch-w"/>
+                                    <constraint firstAttribute="height" constant="160" id="launch-h"/>
+                                </constraints>
                             </imageView>
                         </subviews>
-                        <color key="backgroundColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <color key="backgroundColor" red="0.015686274509803921" green="0.027450980392156862" blue="0.11764705882352941" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
                             <constraint firstItem="YRO-k0-Ey4" firstAttribute="centerX" secondItem="Ze5-6b-2t3" secondAttribute="centerX" id="1a2-6s-vTC"/>
                             <constraint firstItem="YRO-k0-Ey4" firstAttribute="centerY" secondItem="Ze5-6b-2t3" secondAttribute="centerY" id="4X2-HB-R7a"/>
-                            <constraint firstItem="YRO-k0-Ey4" firstAttribute="leading" secondItem="Ze5-6b-2t3" secondAttribute="leadingMargin" constant="18" id="UrQ-tD-t1I"/>
-                            <constraint firstAttribute="trailingMargin" secondItem="YRO-k0-Ey4" secondAttribute="trailing" constant="18" id="bUf-Tx-AFi"/>
                         </constraints>
                     </view>
                 </viewController>
@@ -38,6 +40,6 @@
         </scene>
     </scenes>
     <resources>
-        <image name="developmentLaunchImage" width="2000" height="389"/>
+        <image name="developmentLaunchImage" width="256" height="256"/>
     </resources>
 </document>

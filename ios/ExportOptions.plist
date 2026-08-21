@@ -9,11 +9,9 @@
 	<key>method</key>
 	<string>app-store-connect</string>
 
-	<!-- Verify this is the team that owns the app in App Store Connect.
-	     XGUA3UZ6UK = team of your "Apple Development" iOS certificate.
-	     (You also have team 75K8CS869U — the macOS "Developer ID" one.) -->
+	<!-- Apple Developer Program Team ID (OU of the signing certs). -->
 	<key>teamID</key>
-	<string>XGUA3UZ6UK</string>
+	<string>75K8CS869U</string>
 
 	<key>signingStyle</key>
 	<string>automatic</string>

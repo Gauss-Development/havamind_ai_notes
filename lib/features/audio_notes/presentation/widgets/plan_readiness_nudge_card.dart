@@ -45,10 +45,7 @@ class PlanReadinessNudgeCard extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: AppSpacing.sm),
-              PlanReadinessIndicator(
-                readiness: nudge.readiness,
-                compact: true,
-              ),
+              PlanReadinessIndicator(readiness: nudge.readiness, compact: true),
               const SizedBox(height: AppSpacing.sm),
               Text(
                 l10n.planReadinessHomeBody(

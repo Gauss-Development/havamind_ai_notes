@@ -25,14 +25,14 @@ class PlanVersion extends Equatable {
 
   @override
   List<Object?> get props => [
-        id,
-        planId,
-        audioNoteId,
-        roundNumber,
-        planSnapshot,
-        transcription,
-        diffSummary,
-        followUpQuestions,
-        createdAt,
-      ];
+    id,
+    planId,
+    audioNoteId,
+    roundNumber,
+    planSnapshot,
+    transcription,
+    diffSummary,
+    followUpQuestions,
+    createdAt,
+  ];
 }

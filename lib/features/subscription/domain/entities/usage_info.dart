@@ -17,7 +17,8 @@ class UsageInfo extends Equatable {
   final DateTime periodStart;
   final DateTime periodEnd;
 
-  int get remainingSeconds => (limitSeconds - usedSeconds).clamp(0, limitSeconds);
+  int get remainingSeconds =>
+      (limitSeconds - usedSeconds).clamp(0, limitSeconds);
 
   double get usageRatio =>
       limitSeconds > 0 ? (usedSeconds / limitSeconds).clamp(0.0, 1.0) : 1.0;
@@ -30,10 +31,10 @@ class UsageInfo extends Equatable {
 
   @override
   List<Object?> get props => [
-        usedSeconds,
-        limitSeconds,
-        tier,
-        periodStart,
-        periodEnd,
-      ];
+    usedSeconds,
+    limitSeconds,
+    tier,
+    periodStart,
+    periodEnd,
+  ];
 }

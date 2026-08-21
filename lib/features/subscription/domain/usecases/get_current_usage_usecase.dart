@@ -12,8 +12,8 @@ class GetCurrentUsageUseCase implements UseCase<UsageInfo, NoParams> {
   GetCurrentUsageUseCase({
     required SubscriptionRepository subscriptionRepository,
     required AudioNotesRepository audioNotesRepository,
-  })  : _subscriptionRepository = subscriptionRepository,
-        _audioNotesRepository = audioNotesRepository;
+  }) : _subscriptionRepository = subscriptionRepository,
+       _audioNotesRepository = audioNotesRepository;
 
   final SubscriptionRepository _subscriptionRepository;
   final AudioNotesRepository _audioNotesRepository;
@@ -22,32 +22,29 @@ class GetCurrentUsageUseCase implements UseCase<UsageInfo, NoParams> {
   Future<Either<Failure, UsageInfo>> call(NoParams params) async {
     final statusResult = await _subscriptionRepository.getSubscriptionStatus();
 
-    return statusResult.fold(
-      (failure) => Left(failure),
-      (status) async {
-        final tier = status.tier;
-        final limitSeconds = _limitForTier(tier);
-        final period = _currentPeriod(status);
+    return statusResult.fold((failure) => Left(failure), (status) async {
+      final tier = status.tier;
+      final limitSeconds = _limitForTier(tier);
+      final period = _currentPeriod(status);
 
-        final usageResult = await _audioNotesRepository.getTotalUsageSeconds(
-          from: period.$1,
-          to: period.$2,
-        );
+      final usageResult = await _audioNotesRepository.getTotalUsageSeconds(
+        from: period.$1,
+        to: period.$2,
+      );
 
-        return usageResult.fold(
-          (failure) => Left(failure),
-          (usedSeconds) => Right(
-            UsageInfo(
-              usedSeconds: usedSeconds,
-              limitSeconds: limitSeconds,
-              tier: tier,
-              periodStart: period.$1,
-              periodEnd: period.$2,
-            ),
+      return usageResult.fold(
+        (failure) => Left(failure),
+        (usedSeconds) => Right(
+          UsageInfo(
+            usedSeconds: usedSeconds,
+            limitSeconds: limitSeconds,
+            tier: tier,
+            periodStart: period.$1,
+            periodEnd: period.$2,
           ),
-        );
-      },
-    );
+        ),
+      );
+    });
   }
 
   int _limitForTier(SubscriptionTier tier) {

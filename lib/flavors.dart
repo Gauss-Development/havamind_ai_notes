@@ -1,7 +1,4 @@
-enum Flavor {
-  development,
-  production,
-}
+enum Flavor { development, production }
 
 class F {
   static late final Flavor appFlavor;
@@ -16,5 +13,4 @@ class F {
         return 'Hava Mind';
     }
   }
-
 }

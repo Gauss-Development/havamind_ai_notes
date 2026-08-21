@@ -31,9 +31,9 @@ class SubscriptionStatusCard extends StatelessWidget {
           (prev is SubscriptionLoading && curr is SubscriptionLoaded),
       listener: (context, state) {
         if (state is SubscriptionError) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(state.message)),
-          );
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(SnackBar(content: Text(state.message)));
         }
       },
       builder: (context, state) {
@@ -116,10 +116,7 @@ class _ProActiveCard extends StatelessWidget {
     final theme = Theme.of(context);
     final tierGradient = status.tier == SubscriptionTier.basic
         ? LinearGradient(
-            colors: [
-              t.secondary,
-              t.secondary.withValues(alpha: 0.75),
-            ],
+            colors: [t.secondary, t.secondary.withValues(alpha: 0.75)],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
           )
@@ -147,11 +144,7 @@ class _ProActiveCard extends StatelessWidget {
                     gradient: tierGradient,
                     shape: BoxShape.circle,
                   ),
-                  child: Icon(
-                    tierIcon,
-                    color: t.onPrimaryButton,
-                    size: 24,
-                  ),
+                  child: Icon(tierIcon, color: t.onPrimaryButton, size: 24),
                 ),
                 const SizedBox(width: AppSpacing.md),
                 Expanded(
@@ -180,8 +173,7 @@ class _ProActiveCard extends StatelessWidget {
           ),
 
           // ── Usage indicator ──
-          if (usageInfo != null)
-            UsageCircularIndicator(usageInfo: usageInfo!),
+          if (usageInfo != null) UsageCircularIndicator(usageInfo: usageInfo!),
 
           // ── Billing issue / cancelled banner ──
           if (status.hasBillingIssue)
@@ -413,10 +405,7 @@ class _ActionRow extends StatelessWidget {
                   ),
                 ),
               ),
-              Icon(
-                Icons.chevron_right_rounded,
-                color: t.outlineVariant,
-              ),
+              Icon(Icons.chevron_right_rounded, color: t.outlineVariant),
             ],
           ),
         ),
@@ -481,8 +470,7 @@ class _FreeCard extends StatelessWidget {
               ],
             ),
           ),
-          if (usageInfo != null)
-            UsageCircularIndicator(usageInfo: usageInfo!),
+          if (usageInfo != null) UsageCircularIndicator(usageInfo: usageInfo!),
           Padding(
             padding: const EdgeInsets.fromLTRB(
               AppSpacing.lg,

@@ -62,15 +62,13 @@ class AuthRepositoryImpl implements AuthRepository {
               authScreenLaunchMode: LaunchMode.externalApplication,
             );
       if (!launched) {
-        return Left(
-          AuthFailure('Could not open $providerLabel sign-in page'),
-        );
+        return Left(AuthFailure('Could not open $providerLabel sign-in page'));
       }
       return const Right(unit);
     } on AuthException catch (e) {
       return Left(AuthFailure(e.message));
     } catch (e) {
-      return Left(UnexpectedFailure(e.toString()));
+      return Left(_mapUnexpectedAuthError(e));
     }
   }
 
@@ -87,7 +85,7 @@ class AuthRepositoryImpl implements AuthRepository {
     } on AuthException catch (e) {
       return Left(AuthFailure(e.message));
     } catch (e) {
-      return Left(UnexpectedFailure(e.toString()));
+      return Left(_mapUnexpectedAuthError(e));
     }
   }
 
@@ -108,7 +106,7 @@ class AuthRepositoryImpl implements AuthRepository {
     } on AuthException catch (e) {
       return Left(AuthFailure(e.message));
     } catch (e) {
-      return Left(UnexpectedFailure(e.toString()));
+      return Left(_mapUnexpectedAuthError(e));
     }
   }
 
@@ -163,5 +161,18 @@ class AuthRepositoryImpl implements AuthRepository {
         return AuthSnapshot.signedIn(UserProfileMapper.fromSupabaseUser(user));
       }
     });
+  }
+
+  Failure _mapUnexpectedAuthError(Object error) {
+    final text = error.toString();
+    if (text.contains('Failed host lookup') ||
+        text.contains('SocketException') ||
+        text.contains('Network is unreachable') ||
+        text.contains('Connection failed')) {
+      return const UnexpectedFailure(
+        'Could not reach the server. Check your internet connection.',
+      );
+    }
+    return UnexpectedFailure(text);
   }
 }

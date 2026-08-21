@@ -27,10 +27,7 @@ class AudioNotesLocalDataSource {
     if (raw == null) return null;
     try {
       final decoded = jsonDecode(raw) as List<dynamic>;
-      return decoded
-          .cast<Map<String, dynamic>>()
-          .map(_noteFromJson)
-          .toList();
+      return decoded.cast<Map<String, dynamic>>().map(_noteFromJson).toList();
     } catch (_) {
       return null;
     }
@@ -65,9 +62,7 @@ class AudioNotesLocalDataSource {
     ),
     createdAt: DateTime.parse(json['createdAt'] as String),
     updatedAt: DateTime.parse(json['updatedAt'] as String),
-    templateId: RecordingTemplateIds.normalize(
-      json['templateId'] as String?,
-    ),
+    templateId: RecordingTemplateIds.normalize(json['templateId'] as String?),
     lastProcessingError: json['lastProcessingError'] as String?,
   );
 }

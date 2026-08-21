@@ -31,11 +31,7 @@ class TagsRemoteDataSource {
     final id = _uuid.v4();
     final row = await _client
         .from('tags')
-        .insert({
-          'id': id,
-          'user_id': _userId,
-          'name': name.trim(),
-        })
+        .insert({'id': id, 'user_id': _userId, 'name': name.trim()})
         .select()
         .single();
     return _tagFromRow(Map<String, dynamic>.from(row));
@@ -57,19 +53,14 @@ class TagsRemoteDataSource {
   }
 
   Future<void> setTagsForNote(String noteId, List<String> tagIds) async {
-    await _client
-        .from('note_tags')
-        .delete()
-        .eq('audio_note_id', noteId);
+    await _client.from('note_tags').delete().eq('audio_note_id', noteId);
 
     if (tagIds.isEmpty) return;
 
     final insertRows = tagIds
-        .map((tid) => {
-              'audio_note_id': noteId,
-              'tag_id': tid,
-              'user_id': _userId,
-            })
+        .map(
+          (tid) => {'audio_note_id': noteId, 'tag_id': tid, 'user_id': _userId},
+        )
         .toList();
 
     await _client.from('note_tags').insert(insertRows);

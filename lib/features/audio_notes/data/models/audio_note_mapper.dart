@@ -13,9 +13,7 @@ class AudioNoteMapper {
       status: AudioNoteStatus.fromDb(row['status'] as String),
       createdAt: DateTime.parse(row['created_at'] as String),
       updatedAt: DateTime.parse(row['updated_at'] as String),
-      templateId: RecordingTemplateIds.normalize(
-        row['template_id'] as String?,
-      ),
+      templateId: RecordingTemplateIds.normalize(row['template_id'] as String?),
       lastProcessingError: row['last_processing_error'] as String?,
     );
   }

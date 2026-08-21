@@ -24,18 +24,17 @@ class PlanReadinessNudge extends Equatable {
 
 class PlanReadinessHomeCubit extends Cubit<PlanReadinessNudge?> {
   PlanReadinessHomeCubit({required GetNoteAnalysisUseCase getAnalysis})
-      : _getAnalysis = getAnalysis,
-        super(null);
+    : _getAnalysis = getAnalysis,
+      super(null);
 
   static const _scanLimit = 5;
 
   final GetNoteAnalysisUseCase _getAnalysis;
 
   Future<void> refreshFromNotes(List<AudioNote> notes) async {
-    final completed = notes
-        .where((note) => note.status == AudioNoteStatus.completed)
-        .toList()
-      ..sort((a, b) => b.createdAt.compareTo(a.createdAt));
+    final completed =
+        notes.where((note) => note.status == AudioNoteStatus.completed).toList()
+          ..sort((a, b) => b.createdAt.compareTo(a.createdAt));
 
     if (completed.isEmpty) {
       if (!isClosed) emit(null);
@@ -56,8 +55,7 @@ class PlanReadinessHomeCubit extends Cubit<PlanReadinessNudge?> {
 
       final noteTitle = note.title.trim();
       final analysisTitle = analysis.startupTitle?.trim() ?? '';
-      final title =
-          noteTitle.isNotEmpty ? noteTitle : analysisTitle;
+      final title = noteTitle.isNotEmpty ? noteTitle : analysisTitle;
 
       if (weakest == null ||
           readiness.percent < weakest.readiness.percent ||

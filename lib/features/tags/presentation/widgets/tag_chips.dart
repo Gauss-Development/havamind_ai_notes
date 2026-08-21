@@ -49,9 +49,7 @@ class TagChips extends StatelessWidget {
               child: FilterChip(
                 label: Text(tag.name),
                 selected: selectedIds.contains(tag.id),
-                onSelected: onToggle != null
-                    ? (_) => onToggle!(tag.id)
-                    : null,
+                onSelected: onToggle != null ? (_) => onToggle!(tag.id) : null,
                 selectedColor: t.primaryContainer,
                 checkmarkColor: t.primary,
                 backgroundColor: t.surfaceContainerLowest,

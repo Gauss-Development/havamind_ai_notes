@@ -4,21 +4,13 @@ import 'package:sample/features/tags/domain/entities/note_tag.dart';
 import 'package:sample/features/tags/domain/repositories/tags_repository.dart';
 
 class TagsState extends Equatable {
-  const TagsState({
-    this.tags = const [],
-    this.isLoading = false,
-    this.error,
-  });
+  const TagsState({this.tags = const [], this.isLoading = false, this.error});
 
   final List<NoteTag> tags;
   final bool isLoading;
   final String? error;
 
-  TagsState copyWith({
-    List<NoteTag>? tags,
-    bool? isLoading,
-    String? error,
-  }) {
+  TagsState copyWith({List<NoteTag>? tags, bool? isLoading, String? error}) {
     return TagsState(
       tags: tags ?? this.tags,
       isLoading: isLoading ?? this.isLoading,
@@ -32,8 +24,8 @@ class TagsState extends Equatable {
 
 class TagsCubit extends Cubit<TagsState> {
   TagsCubit({required TagsRepository repository})
-      : _repository = repository,
-        super(const TagsState());
+    : _repository = repository,
+      super(const TagsState());
 
   final TagsRepository _repository;
 
@@ -58,9 +50,9 @@ class TagsCubit extends Cubit<TagsState> {
     final result = await _repository.deleteTag(tagId);
     result.fold(
       (f) => emit(state.copyWith(error: f.message)),
-      (_) => emit(state.copyWith(
-        tags: state.tags.where((t) => t.id != tagId).toList(),
-      )),
+      (_) => emit(
+        state.copyWith(tags: state.tags.where((t) => t.id != tagId).toList()),
+      ),
     );
   }
 
@@ -71,9 +63,6 @@ class TagsCubit extends Cubit<TagsState> {
 
   Future<void> setTagsForNote(String noteId, List<String> tagIds) async {
     final result = await _repository.setTagsForNote(noteId, tagIds);
-    result.fold(
-      (f) => emit(state.copyWith(error: f.message)),
-      (_) {},
-    );
+    result.fold((f) => emit(state.copyWith(error: f.message)), (_) {});
   }
 }

@@ -46,11 +46,11 @@ class AppGradientButton extends StatelessWidget {
     final disabled = onPressed == null || isLoading;
 
     final textStyle = Theme.of(context).textTheme.titleSmall?.copyWith(
-          fontWeight: FontWeight.w700,
-          color: variant == AppButtonVariant.outlined
-              ? t.primary
-              : t.onPrimaryButton,
-        );
+      fontWeight: FontWeight.w700,
+      color: variant == AppButtonVariant.outlined
+          ? t.primary
+          : t.onPrimaryButton,
+    );
 
     final child = _ButtonContent(
       label: label,
@@ -66,40 +66,39 @@ class AppGradientButton extends StatelessWidget {
       opacity: disabled ? 0.5 : 1,
       child: switch (variant) {
         AppButtonVariant.gradient => _GradientSurface(
-            tokens: t,
-            disabled: disabled,
-            onPressed: disabled ? null : onPressed,
-            textStyle: textStyle,
-            expand: expand,
-            child: child,
-          ),
+          tokens: t,
+          disabled: disabled,
+          onPressed: disabled ? null : onPressed,
+          textStyle: textStyle,
+          expand: expand,
+          child: child,
+        ),
         AppButtonVariant.filled => FilledButton(
-            onPressed: disabled ? null : onPressed,
-            style: FilledButton.styleFrom(
-              backgroundColor: t.primary,
-              foregroundColor: t.onPrimaryButton,
-              disabledBackgroundColor: t.primary.withValues(alpha: 0.5),
-              disabledForegroundColor:
-                  t.onPrimaryButton.withValues(alpha: 0.7),
-              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
-              minimumSize: const Size(0, AppTapTarget.minSize),
-              shape: const StadiumBorder(),
-              textStyle: textStyle,
-            ),
-            child: child,
+          onPressed: disabled ? null : onPressed,
+          style: FilledButton.styleFrom(
+            backgroundColor: t.primary,
+            foregroundColor: t.onPrimaryButton,
+            disabledBackgroundColor: t.primary.withValues(alpha: 0.5),
+            disabledForegroundColor: t.onPrimaryButton.withValues(alpha: 0.7),
+            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
+            minimumSize: const Size(0, AppTapTarget.minSize),
+            shape: const StadiumBorder(),
+            textStyle: textStyle,
           ),
+          child: child,
+        ),
         AppButtonVariant.outlined => OutlinedButton(
-            onPressed: disabled ? null : onPressed,
-            style: OutlinedButton.styleFrom(
-              foregroundColor: t.primary,
-              side: BorderSide(color: t.primary, width: 1.5),
-              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
-              minimumSize: const Size(0, AppTapTarget.minSize),
-              shape: const StadiumBorder(),
-              textStyle: textStyle,
-            ),
-            child: child,
+          onPressed: disabled ? null : onPressed,
+          style: OutlinedButton.styleFrom(
+            foregroundColor: t.primary,
+            side: BorderSide(color: t.primary, width: 1.5),
+            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
+            minimumSize: const Size(0, AppTapTarget.minSize),
+            shape: const StadiumBorder(),
+            textStyle: textStyle,
           ),
+          child: child,
+        ),
       },
     );
 
@@ -152,13 +151,8 @@ class _GradientSurface extends StatelessWidget {
           child: ConstrainedBox(
             constraints: const BoxConstraints(minHeight: AppTapTarget.minSize),
             child: Padding(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-              child: expand
-                  ? body
-                  : Center(
-                      child: body,
-                    ),
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+              child: expand ? body : Center(child: body),
             ),
           ),
         ),
@@ -197,10 +191,7 @@ class _ButtonContent extends StatelessWidget {
           SizedBox(
             width: 20,
             height: 20,
-            child: CircularProgressIndicator(
-              strokeWidth: 2,
-              color: foreground,
-            ),
+            child: CircularProgressIndicator(strokeWidth: 2, color: foreground),
           ),
           const SizedBox(width: 10),
         ] else if (icon != null) ...[
@@ -209,10 +200,7 @@ class _ButtonContent extends StatelessWidget {
         ],
         // Flexible (not Expanded) so the centered Row shrink-wraps its
         // content while long labels still ellipsize instead of overflowing.
-        if (expand)
-          Flexible(child: labelWidget)
-        else
-          labelWidget,
+        if (expand) Flexible(child: labelWidget) else labelWidget,
       ],
     );
   }
@@ -255,8 +243,7 @@ class AppGradientFab extends StatelessWidget {
           child: ConstrainedBox(
             constraints: const BoxConstraints(minHeight: AppTapTarget.minSize),
             child: Padding(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
@@ -264,11 +251,10 @@ class AppGradientFab extends StatelessWidget {
                   const SizedBox(width: 10),
                   Text(
                     label,
-                    style:
-                        Theme.of(context).textTheme.titleSmall?.copyWith(
-                              color: t.onPrimaryButton,
-                              fontWeight: FontWeight.w700,
-                            ),
+                    style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                      color: t.onPrimaryButton,
+                      fontWeight: FontWeight.w700,
+                    ),
                   ),
                 ],
               ),
@@ -302,11 +288,11 @@ class ObsidianGradientButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => AppGradientButton(
-        onPressed: onPressed,
-        label: label,
-        icon: icon,
-        isLoading: isLoading,
-      );
+    onPressed: onPressed,
+    label: label,
+    icon: icon,
+    isLoading: isLoading,
+  );
 }
 
 /// Alias for [AppGradientFab].

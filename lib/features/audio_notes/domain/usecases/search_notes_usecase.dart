@@ -18,12 +18,7 @@ class SearchNotesUseCase
   final AudioNotesRepository _repository;
 
   @override
-  Future<Either<Failure, List<NoteSearchHit>>> call(
-    SearchNotesParams params,
-  ) {
-    return _repository.searchNotes(
-      query: params.query,
-      limit: params.limit,
-    );
+  Future<Either<Failure, List<NoteSearchHit>>> call(SearchNotesParams params) {
+    return _repository.searchNotes(query: params.query, limit: params.limit);
   }
 }

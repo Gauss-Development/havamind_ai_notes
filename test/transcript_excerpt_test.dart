@@ -32,20 +32,14 @@ void main() {
 
     test('returns null when query is missing', () {
       expect(
-        buildTranscriptExcerpt(
-          transcript: 'No match here',
-          query: 'missing',
-        ),
+        buildTranscriptExcerpt(transcript: 'No match here', query: 'missing'),
         isNull,
       );
     });
 
     test('returns null for empty query', () {
       expect(
-        buildTranscriptExcerpt(
-          transcript: 'Some transcript',
-          query: '   ',
-        ),
+        buildTranscriptExcerpt(transcript: 'Some transcript', query: '   '),
         isNull,
       );
     });

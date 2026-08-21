@@ -58,8 +58,7 @@ void main() {
         offset: any(named: 'offset'),
       ),
     ).thenAnswer(
-      (_) async =>
-          const Left<Failure, List<AudioNote>>(UnexpectedFailure('x')),
+      (_) async => const Left<Failure, List<AudioNote>>(UnexpectedFailure('x')),
     );
     bloc.add(const AudioNotesListEvent.started());
     await expectLater(

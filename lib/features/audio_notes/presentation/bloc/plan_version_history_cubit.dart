@@ -35,14 +35,19 @@ class PlanVersionHistoryState extends Equatable {
   }
 
   @override
-  List<Object?> get props =>
-      [versions, isLoading, isRestoring, restoredRound, error];
+  List<Object?> get props => [
+    versions,
+    isLoading,
+    isRestoring,
+    restoredRound,
+    error,
+  ];
 }
 
 class PlanVersionHistoryCubit extends Cubit<PlanVersionHistoryState> {
   PlanVersionHistoryCubit({required AudioNotesRepository repository})
-      : _repository = repository,
-        super(const PlanVersionHistoryState());
+    : _repository = repository,
+      super(const PlanVersionHistoryState());
 
   final AudioNotesRepository _repository;
 
@@ -51,8 +56,7 @@ class PlanVersionHistoryCubit extends Cubit<PlanVersionHistoryState> {
     final result = await _repository.listPlanVersions(planId);
     result.fold(
       (f) => emit(state.copyWith(isLoading: false, error: f.message)),
-      (versions) =>
-          emit(state.copyWith(versions: versions, isLoading: false)),
+      (versions) => emit(state.copyWith(versions: versions, isLoading: false)),
     );
   }
 
@@ -63,10 +67,7 @@ class PlanVersionHistoryCubit extends Cubit<PlanVersionHistoryState> {
       (f) => emit(state.copyWith(isRestoring: false, error: f.message)),
       (data) {
         final restoredFrom = data['restoredFrom'] as int?;
-        emit(state.copyWith(
-          isRestoring: false,
-          restoredRound: restoredFrom,
-        ));
+        emit(state.copyWith(isRestoring: false, restoredRound: restoredFrom));
       },
     );
   }

@@ -51,10 +51,7 @@ class _SubscriptionDetailSheet extends StatelessWidget {
     final bottom = MediaQuery.paddingOf(context).bottom;
     final tierGradient = status.tier == SubscriptionTier.basic
         ? LinearGradient(
-            colors: [
-              t.secondary,
-              t.secondary.withValues(alpha: 0.75),
-            ],
+            colors: [t.secondary, t.secondary.withValues(alpha: 0.75)],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
           )
@@ -69,7 +66,8 @@ class _SubscriptionDetailSheet extends StatelessWidget {
 
     final primaryLabel = accountDisplayName?.trim();
     final emailLabel = accountEmail?.trim();
-    final hasAccountBlock = (primaryLabel != null && primaryLabel.isNotEmpty) ||
+    final hasAccountBlock =
+        (primaryLabel != null && primaryLabel.isNotEmpty) ||
         (emailLabel != null && emailLabel.isNotEmpty) ||
         memberSince != null;
 
@@ -106,11 +104,7 @@ class _SubscriptionDetailSheet extends StatelessWidget {
                     gradient: tierGradient,
                     shape: BoxShape.circle,
                   ),
-                  child: Icon(
-                    tierIcon,
-                    color: t.onPrimaryButton,
-                    size: 28,
-                  ),
+                  child: Icon(tierIcon, color: t.onPrimaryButton, size: 28),
                 ),
                 const SizedBox(width: AppSpacing.base),
                 Expanded(
@@ -143,8 +137,9 @@ class _SubscriptionDetailSheet extends StatelessWidget {
                 padding: const EdgeInsets.all(AppSpacing.base),
                 decoration: BoxDecoration(
                   color: t.surfaceContainerLow,
-                  borderRadius:
-                      BorderRadius.circular(ObsidianUiTokens.radiusMd),
+                  borderRadius: BorderRadius.circular(
+                    ObsidianUiTokens.radiusMd,
+                  ),
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -189,8 +184,9 @@ class _SubscriptionDetailSheet extends StatelessWidget {
                 padding: const EdgeInsets.all(AppSpacing.base),
                 decoration: BoxDecoration(
                   color: t.surfaceContainerLow,
-                  borderRadius:
-                      BorderRadius.circular(ObsidianUiTokens.radiusMd),
+                  borderRadius: BorderRadius.circular(
+                    ObsidianUiTokens.radiusMd,
+                  ),
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -221,8 +217,9 @@ class _SubscriptionDetailSheet extends StatelessWidget {
                       child: LinearProgressIndicator(
                         value: usageInfo!.usageRatio.clamp(0.0, 1.0),
                         minHeight: 6,
-                        backgroundColor:
-                            t.outlineVariant.withValues(alpha: 0.2),
+                        backgroundColor: t.outlineVariant.withValues(
+                          alpha: 0.2,
+                        ),
                         color: usageInfo!.isExhausted
                             ? theme.colorScheme.error
                             : t.primary,
@@ -245,7 +242,8 @@ class _SubscriptionDetailSheet extends StatelessWidget {
             if (status.hasBillingIssue) ...[
               _WarningBanner(
                 icon: Icons.warning_amber_rounded,
-                text: 'There is a billing issue with your subscription. '
+                text:
+                    'There is a billing issue with your subscription. '
                     'Please update your payment method to avoid interruption.',
                 color: theme.colorScheme.error,
               ),
@@ -255,7 +253,8 @@ class _SubscriptionDetailSheet extends StatelessWidget {
             if (status.isCancelled && status.expirationDate != null) ...[
               _WarningBanner(
                 icon: Icons.info_outline_rounded,
-                text: 'Your subscription has been cancelled. '
+                text:
+                    'Your subscription has been cancelled. '
                     'You retain access until '
                     '${_formatDateLong(status.expirationDate!)}.',
                 color: t.warning,
@@ -266,7 +265,8 @@ class _SubscriptionDetailSheet extends StatelessWidget {
             if (status.isTrial) ...[
               _WarningBanner(
                 icon: Icons.star_outline_rounded,
-                text: 'You are currently on a free trial. '
+                text:
+                    'You are currently on a free trial. '
                     '${status.expirationDate != null ? 'Trial ends ${_formatDateLong(status.expirationDate!)}.' : ''}',
                 color: t.secondary,
               ),
@@ -293,8 +293,10 @@ class _SubscriptionDetailSheet extends StatelessWidget {
               subtitle: status.isCancelled
                   ? 'Resubscribe or update payment'
                   : 'Cancel, update payment, or get help',
-              onTap: () =>
-                  Navigator.pop(context, SubscriptionSheetAction.customerCenter),
+              onTap: () => Navigator.pop(
+                context,
+                SubscriptionSheetAction.customerCenter,
+              ),
             ),
           ],
         ),
@@ -317,17 +319,11 @@ class _SubscriptionDetailSheet extends StatelessWidget {
           value: _formatDateLong(status.originalPurchaseDate!),
         ),
       if (status.store != SubscriptionStore.unknown)
-        _DetailRow(
-          label: 'Purchased via',
-          value: status.storeDisplayName,
-        ),
+        _DetailRow(label: 'Purchased via', value: status.storeDisplayName),
       if (status.isTrial)
         const _DetailRow(label: 'Period', value: 'Free trial'),
       if (status.isIntroOffer)
-        const _DetailRow(
-          label: 'Period',
-          value: 'Introductory offer',
-        ),
+        const _DetailRow(label: 'Period', value: 'Introductory offer'),
       if (status.isSandbox)
         _DetailRow(
           label: 'Environment',
@@ -382,10 +378,7 @@ class _SectionTitle extends StatelessWidget {
 }
 
 class _DetailCard extends StatelessWidget {
-  const _DetailCard({
-    required this.t,
-    required this.children,
-  });
+  const _DetailCard({required this.t, required this.children});
 
   final ObsidianUiTokens t;
   final List<Widget> children;
@@ -434,7 +427,8 @@ class _StatusBadge extends StatelessWidget {
   }
 
   (String, Color) _resolve(ObsidianUiTokens t, ThemeData theme) {
-    if (status.hasBillingIssue) return ('Billing Issue', theme.colorScheme.error);
+    if (status.hasBillingIssue)
+      return ('Billing Issue', theme.colorScheme.error);
     if (status.isTrial) return ('Trial', t.secondary);
     if (status.isCancelled) return ('Cancelled', t.warning);
     return ('Active', t.primary);
@@ -485,11 +479,7 @@ class _WarningBanner extends StatelessWidget {
 }
 
 class _DetailRow extends StatelessWidget {
-  const _DetailRow({
-    required this.label,
-    required this.value,
-    this.valueColor,
-  });
+  const _DetailRow({required this.label, required this.value, this.valueColor});
 
   final String label;
   final String value;
@@ -563,8 +553,9 @@ class _ActionTile extends StatelessWidget {
                 height: 40,
                 decoration: BoxDecoration(
                   color: t.surfaceContainerHigh,
-                  borderRadius:
-                      BorderRadius.circular(ObsidianUiTokens.radiusSm),
+                  borderRadius: BorderRadius.circular(
+                    ObsidianUiTokens.radiusSm,
+                  ),
                 ),
                 child: Icon(icon, size: 20, color: t.onSurfaceVariant),
               ),
@@ -584,10 +575,7 @@ class _ActionTile extends StatelessWidget {
                   ],
                 ),
               ),
-              Icon(
-                Icons.chevron_right_rounded,
-                color: t.outlineVariant,
-              ),
+              Icon(Icons.chevron_right_rounded, color: t.outlineVariant),
             ],
           ),
         ),

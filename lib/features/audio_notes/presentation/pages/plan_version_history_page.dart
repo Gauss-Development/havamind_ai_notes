@@ -58,9 +58,9 @@ class _VersionHistoryView extends StatelessWidget {
             Navigator.of(context).pop(true);
           }
           if (state.error != null) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text(state.error!)),
-            );
+            ScaffoldMessenger.of(
+              context,
+            ).showSnackBar(SnackBar(content: Text(state.error!)));
           }
         },
         builder: (context, state) {
@@ -153,8 +153,8 @@ class _VersionTimelineItem extends StatelessWidget {
 
     final transcriptExcerpt = version.transcription != null
         ? (version.transcription!.length > 80
-            ? '${version.transcription!.substring(0, 80)}...'
-            : version.transcription!)
+              ? '${version.transcription!.substring(0, 80)}...'
+              : version.transcription!)
         : null;
 
     return IntrinsicHeight(
@@ -199,8 +199,9 @@ class _VersionTimelineItem extends StatelessWidget {
                   padding: const EdgeInsets.all(AppSpacing.base),
                   decoration: BoxDecoration(
                     color: t.surfaceContainerLowest,
-                    borderRadius:
-                        BorderRadius.circular(ObsidianUiTokens.radiusMd),
+                    borderRadius: BorderRadius.circular(
+                      ObsidianUiTokens.radiusMd,
+                    ),
                     border: Border.all(
                       color: isLatest
                           ? t.primary.withValues(alpha: 0.3)
@@ -216,8 +217,7 @@ class _VersionTimelineItem extends StatelessWidget {
                             l10n.versionRound(version.roundNumber),
                             style: theme.textTheme.titleSmall?.copyWith(
                               fontWeight: FontWeight.w700,
-                              color:
-                                  isLatest ? t.primary : null,
+                              color: isLatest ? t.primary : null,
                             ),
                           ),
                           if (isLatest) ...[
@@ -230,12 +230,12 @@ class _VersionTimelineItem extends StatelessWidget {
                               decoration: BoxDecoration(
                                 color: t.primary.withValues(alpha: 0.12),
                                 borderRadius: BorderRadius.circular(
-                                    ObsidianUiTokens.radiusXs),
+                                  ObsidianUiTokens.radiusXs,
+                                ),
                               ),
                               child: Text(
                                 l10n.versionCurrent,
-                                style:
-                                    theme.textTheme.labelSmall?.copyWith(
+                                style: theme.textTheme.labelSmall?.copyWith(
                                   color: t.primary,
                                   fontWeight: FontWeight.w700,
                                   fontSize: 10,

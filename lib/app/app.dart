@@ -62,21 +62,21 @@ class _AuthGate extends StatelessWidget {
         await state.when(
           unknown: () async {},
           loading: () async {},
-          unauthenticated: (message, emailConfirmationSent, isSubmitting) async {
-            final result = await repo.logOut();
-            result.fold(
-              (failure) => debugPrint(
-                'RevenueCat logOut failed: ${failure.message}',
-              ),
-              (_) {},
-            );
-          },
+          unauthenticated:
+              (message, emailConfirmationSent, isSubmitting) async {
+                final result = await repo.logOut();
+                result.fold(
+                  (failure) => debugPrint(
+                    'RevenueCat logOut failed: ${failure.message}',
+                  ),
+                  (_) {},
+                );
+              },
           authenticated: (profile) async {
             final result = await repo.logIn(profile.id);
             result.fold(
-              (failure) => debugPrint(
-                'RevenueCat logIn failed: ${failure.message}',
-              ),
+              (failure) =>
+                  debugPrint('RevenueCat logIn failed: ${failure.message}'),
               (_) {},
             );
           },
@@ -93,12 +93,13 @@ class _AuthGate extends StatelessWidget {
               backgroundColor: surface,
               body: const Center(child: CircularProgressIndicator()),
             ),
-            unauthenticated: (errorMessage, emailConfirmationSent, isSubmitting) =>
-                LoginPage(
-              errorMessage: errorMessage,
-              emailConfirmationSent: emailConfirmationSent,
-              isSubmitting: isSubmitting,
-            ),
+            unauthenticated:
+                (errorMessage, emailConfirmationSent, isSubmitting) =>
+                    LoginPage(
+                      errorMessage: errorMessage,
+                      emailConfirmationSent: emailConfirmationSent,
+                      isSubmitting: isSubmitting,
+                    ),
             authenticated: (profile) => DashboardPage(profile: profile),
           );
         },

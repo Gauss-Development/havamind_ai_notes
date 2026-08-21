@@ -137,14 +137,12 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   Future<void> _onSignInWithGoogle(
     _SignInWithGooglePressed event,
     Emitter<AuthState> emit,
-  ) =>
-      _startOAuthSignIn(emit, () => _signInWithGoogle(const NoParams()));
+  ) => _startOAuthSignIn(emit, () => _signInWithGoogle(const NoParams()));
 
   Future<void> _onSignInWithApple(
     _SignInWithApplePressed event,
     Emitter<AuthState> emit,
-  ) =>
-      _startOAuthSignIn(emit, () => _signInWithApple(const NoParams()));
+  ) => _startOAuthSignIn(emit, () => _signInWithApple(const NoParams()));
 
   Future<void> _startOAuthSignIn(
     Emitter<AuthState> emit,
@@ -175,7 +173,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     Emitter<AuthState> emit,
   ) async {
     final previousError = state.maybeWhen(
-      unauthenticated: (message, emailConfirmationSent, isSubmitting) => message,
+      unauthenticated: (message, emailConfirmationSent, isSubmitting) =>
+          message,
       orElse: () => null,
     );
     emit(
@@ -196,7 +195,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     Emitter<AuthState> emit,
   ) async {
     final previousError = state.maybeWhen(
-      unauthenticated: (message, emailConfirmationSent, isSubmitting) => message,
+      unauthenticated: (message, emailConfirmationSent, isSubmitting) =>
+          message,
       orElse: () => null,
     );
     emit(
@@ -206,13 +206,14 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       ),
     );
     final result = await _signUpWithEmailPassword(event.params);
-    result.fold((f) => emit(AuthState.unauthenticated(errorMessage: f.message)), (
-      signUpResult,
-    ) {
-      if (signUpResult.emailConfirmationRequired) {
-        emit(const AuthState.unauthenticated(emailConfirmationSent: true));
-      }
-    });
+    result.fold(
+      (f) => emit(AuthState.unauthenticated(errorMessage: f.message)),
+      (signUpResult) {
+        if (signUpResult.emailConfirmationRequired) {
+          emit(const AuthState.unauthenticated(emailConfirmationSent: true));
+        }
+      },
+    );
   }
 
   Future<void> _onSignOut(

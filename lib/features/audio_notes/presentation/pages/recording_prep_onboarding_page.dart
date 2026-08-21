@@ -65,9 +65,7 @@ class _RecordingPrepOnboardingPageState
           children: [
             Expanded(
               child: SingleChildScrollView(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: AppSpacing.xl,
-                ),
+                padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xl),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [

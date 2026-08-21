@@ -168,9 +168,7 @@ ThemeData _buildTheme({
         : const Color(0xFF155E75),
     error: isDark ? const Color(0xFFFCA5A5) : const Color(0xFFDC2626),
     onError: isDark ? const Color(0xFF690005) : Colors.white,
-    errorContainer: isDark
-        ? const Color(0xFF93000A)
-        : const Color(0xFFFFDAD6),
+    errorContainer: isDark ? const Color(0xFF93000A) : const Color(0xFFFFDAD6),
     onErrorContainer: isDark
         ? const Color(0xFFFFDAD6)
         : const Color(0xFF410002),
@@ -186,9 +184,7 @@ ThemeData _buildTheme({
     outlineVariant: tokens.ghostBorder(_kGhost),
     shadow: tokens.primary.withValues(alpha: isDark ? 0.20 : 0.08),
     scrim: isDark ? Colors.black54 : Colors.black45,
-    inverseSurface: isDark
-        ? tokens.surfaceBright
-        : const Color(0xFF1E1B4B),
+    inverseSurface: isDark ? tokens.surfaceBright : const Color(0xFF1E1B4B),
     onInverseSurface: isDark ? tokens.onSurface : tokens.surfaceBright,
     inversePrimary: tokens.primaryContainer,
     surfaceTint: Colors.transparent,
@@ -237,8 +233,7 @@ ThemeData _buildTheme({
     snackBarTheme: SnackBarThemeData(
       behavior: SnackBarBehavior.floating,
       backgroundColor: tokens.surfaceContainer,
-      contentTextStyle:
-          textTheme.bodyMedium?.copyWith(color: tokens.onSurface),
+      contentTextStyle: textTheme.bodyMedium?.copyWith(color: tokens.onSurface),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(ObsidianUiTokens.radiusMd),
       ),
@@ -266,8 +261,7 @@ ThemeData _buildTheme({
       style: TextButton.styleFrom(
         foregroundColor: tokens.secondary,
         minimumSize: const Size(0, AppTapTarget.minSize),
-        textStyle:
-            textTheme.labelLarge?.copyWith(fontWeight: FontWeight.w700),
+        textStyle: textTheme.labelLarge?.copyWith(fontWeight: FontWeight.w700),
       ),
     ),
     inputDecorationTheme: InputDecorationTheme(
@@ -290,7 +284,8 @@ ThemeData _buildTheme({
       ),
       labelStyle: textTheme.bodyLarge,
       floatingLabelStyle: WidgetStateTextStyle.resolveWith((states) {
-        final base = textTheme.bodySmall ??
+        final base =
+            textTheme.bodySmall ??
             TextStyle(fontSize: 12, color: tokens.onSurfaceVariant);
         if (states.contains(WidgetState.focused)) {
           return base.copyWith(color: tokens.primary);
@@ -323,8 +318,7 @@ ThemeData _buildTheme({
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(ObsidianUiTokens.radiusMd),
       ),
-      contentPadding:
-          const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
     ),
     floatingActionButtonTheme: FloatingActionButtonThemeData(
       backgroundColor: tokens.primary,

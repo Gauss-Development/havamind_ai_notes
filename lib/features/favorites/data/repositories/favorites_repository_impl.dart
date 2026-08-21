@@ -6,7 +6,7 @@ import 'package:sample/features/favorites/domain/repositories/favorites_reposito
 
 class FavoritesRepositoryImpl implements FavoritesRepository {
   FavoritesRepositoryImpl({required FavoritesRemoteDataSource remote})
-      : _remote = remote;
+    : _remote = remote;
 
   final FavoritesRemoteDataSource _remote;
 

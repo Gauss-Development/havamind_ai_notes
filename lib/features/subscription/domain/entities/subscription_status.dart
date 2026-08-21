@@ -2,7 +2,14 @@ import 'package:equatable/equatable.dart';
 
 enum SubscriptionPeriod { monthly, yearly, lifetime, unknown }
 
-enum SubscriptionStore { appStore, playStore, amazon, stripe, promotional, unknown }
+enum SubscriptionStore {
+  appStore,
+  playStore,
+  amazon,
+  stripe,
+  promotional,
+  unknown,
+}
 
 enum SubscriptionTier { free, basic, pro }
 
@@ -50,10 +57,10 @@ class SubscriptionStatus extends Equatable {
 
   /// Store-facing product line (tier). Never exposes raw store product ids.
   String get marketingProductName => switch (tier) {
-        SubscriptionTier.free => 'Havamind Voice Free',
-        SubscriptionTier.basic => 'Havamind Voice Basic',
-        SubscriptionTier.pro => 'Havamind Voice Pro',
-      };
+    SubscriptionTier.free => 'Havamind Voice Free',
+    SubscriptionTier.basic => 'Havamind Voice Basic',
+    SubscriptionTier.pro => 'Havamind Voice Pro',
+  };
 
   String get planDisplayName {
     switch (period) {
@@ -89,22 +96,22 @@ class SubscriptionStatus extends Equatable {
 
   @override
   List<Object?> get props => [
-        isActive,
-        entitlementId,
-        productId,
-        expirationDate,
-        willRenew,
-        managementUrl,
-        isLifetime,
-        isSandbox,
-        period,
-        store,
-        latestPurchaseDate,
-        originalPurchaseDate,
-        unsubscribeDetectedAt,
-        billingIssueDetectedAt,
-        isTrial,
-        isIntroOffer,
-        tier,
-      ];
+    isActive,
+    entitlementId,
+    productId,
+    expirationDate,
+    willRenew,
+    managementUrl,
+    isLifetime,
+    isSandbox,
+    period,
+    store,
+    latestPurchaseDate,
+    originalPurchaseDate,
+    unsubscribeDetectedAt,
+    billingIssueDetectedAt,
+    isTrial,
+    isIntroOffer,
+    tier,
+  ];
 }

@@ -83,9 +83,9 @@ class _NotesListViewState extends State<_NotesListView> {
               listener: (context, state) {
                 state.maybeWhen(
                   failure: (m) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text(m)),
-                    );
+                    ScaffoldMessenger.of(
+                      context,
+                    ).showSnackBar(SnackBar(content: Text(m)));
                   },
                   orElse: () {},
                 );
@@ -100,8 +100,7 @@ class _NotesListViewState extends State<_NotesListView> {
                     if (notes.isEmpty) return _buildEmpty(context, t, theme);
                     return _buildList(context, notes, t);
                   },
-                  failure: (message) =>
-                      _buildError(context, t, theme, message),
+                  failure: (message) => _buildError(context, t, theme, message),
                 );
               },
             ),
@@ -120,7 +119,11 @@ class _NotesListViewState extends State<_NotesListView> {
     );
   }
 
-  Widget _buildEmpty(BuildContext context, ObsidianUiTokens t, ThemeData theme) {
+  Widget _buildEmpty(
+    BuildContext context,
+    ObsidianUiTokens t,
+    ThemeData theme,
+  ) {
     // Empty-state for the *Notes library*. Frames the page as a journal /
     // archive — not a recording screen — so it doesn't visually compete
     // with the floating Record CTA. Uses a stack of hint rows to give
@@ -147,11 +150,7 @@ class _NotesListViewState extends State<_NotesListView> {
             ),
             borderRadius: BorderRadius.circular(ObsidianUiTokens.radiusLg),
           ),
-          child: Icon(
-            Icons.auto_stories_rounded,
-            size: 30,
-            color: t.primary,
-          ),
+          child: Icon(Icons.auto_stories_rounded, size: 30, color: t.primary),
         ),
         const SizedBox(height: AppSpacing.lg),
         Text(

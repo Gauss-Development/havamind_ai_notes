@@ -64,7 +64,9 @@ class _PlanExportSheet extends StatelessWidget {
     await Clipboard.setData(ClipboardData(text: _textFor(format)));
     if (context.mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(AppLocalizations.of(context)!.copiedToClipboard)),
+        SnackBar(
+          content: Text(AppLocalizations.of(context)!.copiedToClipboard),
+        ),
       );
     }
   }
@@ -103,7 +105,9 @@ class _PlanExportSheet extends StatelessWidget {
               margin: const EdgeInsets.only(bottom: AppSpacing.base),
               decoration: BoxDecoration(
                 color: t.outlineVariant.withValues(alpha: 0.5),
-                borderRadius: BorderRadius.circular(ObsidianUiTokens.radiusFull),
+                borderRadius: BorderRadius.circular(
+                  ObsidianUiTokens.radiusFull,
+                ),
               ),
             ),
           ),

@@ -14,10 +14,7 @@ void main() {
     test('returns true for PGRST301 JWT errors', () {
       expect(
         isAuthSessionError(
-          PostgrestException(
-            message: 'JWT expired',
-            code: 'PGRST301',
-          ),
+          PostgrestException(message: 'JWT expired', code: 'PGRST301'),
         ),
         isTrue,
       );

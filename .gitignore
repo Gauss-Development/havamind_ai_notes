@@ -11,46 +11,65 @@
 .swiftpm/
 migrate_working_dir/
 
-# IntelliJ related
+# IntelliJ / Android Studio
 *.iml
 *.ipr
 *.iws
 .idea/
 
-# The .vscode folder contains launch configuration and tasks you configure in
-# VS Code which you may wish to be included in version control, so this line
-# is commented out by default.
+# The .vscode folder is committed (launch configs). Uncomment to ignore:
 #.vscode/
 
-# Flutter/Dart/Pub related
+# Flutter / Dart / Pub
 **/doc/api/
 **/ios/Flutter/.last_build_id
 .dart_tool/
+.flutter-plugins
 .flutter-plugins-dependencies
 .pub-cache/
 .pub/
 /build/
 coverage/
 
-# Symbolication related
+# Symbolication / obfuscation (keep locally to decode store crashes)
 app.*.symbols
-
-# Obfuscation related
 app.*.map.json
 
-# Android Studio will place build artifacts here
+# Store binaries if copied out of /build
+*.ipa
+*.apk
+*.aab
+*.dSYM.zip
+
+# Android Studio places build artifacts here
 /android/app/debug
 /android/app/profile
 /android/app/release
 
-# Local env (copy from .env.example)
+# Local env (copy from assets/env/.env.example)
 assets/env/.env
 assets/env/.env.development
 assets/env/.env.production
 
-# Play Store signing (see https://docs.flutter.dev/deployment/android#signing-the-app)
+# Play / App Store signing — never commit keys or certs
 /android/key.properties
 *.jks
 *.jks.*
 *.keystore
 *.keystore.*
+*.pem
+*.p8
+*.p12
+*.mobileprovision
+
+# iOS CocoaPods / Xcode user state (also in ios/.gitignore)
+**/Pods/
+**/.symlinks/
+**/xcuserdata/
+**/DerivedData/
+
+# This app ships Android + iOS only. Ignore if `flutter create` recreates them.
+/web/
+/macos/
+/linux/
+/windows/

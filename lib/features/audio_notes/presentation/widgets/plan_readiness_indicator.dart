@@ -26,7 +26,11 @@ class PlanReadinessIndicator extends StatelessWidget {
     final t = context.obsidian;
     final theme = Theme.of(context);
     final ringSize = compact ? _compactRingSize : _ringSize;
-    final progressColor = _progressColor(t, theme.colorScheme, readiness.percent);
+    final progressColor = _progressColor(
+      t,
+      theme.colorScheme,
+      readiness.percent,
+    );
 
     return Row(
       crossAxisAlignment: CrossAxisAlignment.center,
@@ -44,14 +48,15 @@ class PlanReadinessIndicator extends StatelessWidget {
             child: Center(
               child: Text(
                 l10n.planReadinessPercent(readiness.percent),
-                style: (compact
-                        ? theme.textTheme.titleSmall
-                        : theme.textTheme.titleMedium)
-                    ?.copyWith(
-                  fontWeight: FontWeight.w800,
-                  height: 1,
-                  color: progressColor,
-                ),
+                style:
+                    (compact
+                            ? theme.textTheme.titleSmall
+                            : theme.textTheme.titleMedium)
+                        ?.copyWith(
+                          fontWeight: FontWeight.w800,
+                          height: 1,
+                          color: progressColor,
+                        ),
               ),
             ),
           ),

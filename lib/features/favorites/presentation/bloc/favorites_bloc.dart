@@ -31,10 +31,10 @@ class FavoritesBloc extends Bloc<FavoritesEvent, FavoritesState> {
     required ListFavoritesUseCase listFavorites,
     required GetFavoriteIdsUseCase getFavoriteIds,
     required ToggleFavoriteUseCase toggleFavorite,
-  })  : _listFavorites = listFavorites,
-        _getFavoriteIds = getFavoriteIds,
-        _toggleFavorite = toggleFavorite,
-        super(const FavoritesState.initial()) {
+  }) : _listFavorites = listFavorites,
+       _getFavoriteIds = getFavoriteIds,
+       _toggleFavorite = toggleFavorite,
+       super(const FavoritesState.initial()) {
     on<_Started>(_onStarted);
     on<_Refreshed>(_onRefreshed);
     on<_Toggled>(_onToggled);
@@ -44,10 +44,7 @@ class FavoritesBloc extends Bloc<FavoritesEvent, FavoritesState> {
   final GetFavoriteIdsUseCase _getFavoriteIds;
   final ToggleFavoriteUseCase _toggleFavorite;
 
-  Future<void> _onStarted(
-    _Started event,
-    Emitter<FavoritesState> emit,
-  ) async {
+  Future<void> _onStarted(_Started event, Emitter<FavoritesState> emit) async {
     emit(const FavoritesState.loading());
     await _fetchAll(emit);
   }
@@ -59,10 +56,7 @@ class FavoritesBloc extends Bloc<FavoritesEvent, FavoritesState> {
     await _fetchAll(emit);
   }
 
-  Future<void> _onToggled(
-    _Toggled event,
-    Emitter<FavoritesState> emit,
-  ) async {
+  Future<void> _onToggled(_Toggled event, Emitter<FavoritesState> emit) async {
     final noteId = event.noteId;
 
     // Optimistic update: flip the ID in/out of the set immediately.

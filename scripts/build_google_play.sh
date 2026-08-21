@@ -84,6 +84,14 @@ if [[ ! -f "$ENV_PRODUCTION" ]]; then
     y|yes) ;;
     *) exit 1 ;;
   esac
+else
+  android_rc_key="$(grep -E '^REVENUECAT_API_KEY_ANDROID=' "$ENV_PRODUCTION" | head -1 || true)"
+  android_rc_key="${android_rc_key#REVENUECAT_API_KEY_ANDROID=}"
+  if [[ "$android_rc_key" != goog_* ]]; then
+    echo "error: $ENV_PRODUCTION must set REVENUECAT_API_KEY_ANDROID=goog_... (Play production SDK key)." >&2
+    echo "       A test_ key or placeholder will be rejected by store users at purchase time." >&2
+    exit 1
+  fi
 fi
 
 echo "==> Building app bundle (production)..."

@@ -8,8 +8,8 @@ import 'package:sample/features/audio_notes/domain/usecases/count_audio_notes_us
 /// show a stale "loaded page size" number.
 class NotesCountCubit extends Cubit<int?> {
   NotesCountCubit({required CountAudioNotesUseCase countNotes})
-      : _countNotes = countNotes,
-        super(null) {
+    : _countNotes = countNotes,
+      super(null) {
     refresh();
   }
 

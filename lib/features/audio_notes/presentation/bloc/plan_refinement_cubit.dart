@@ -24,8 +24,7 @@ class PlanRefinementState extends Equatable {
     this.followUpQuestionText,
   });
 
-  const PlanRefinementState.idle()
-      : this._(status: PlanRefinementStatus.idle);
+  const PlanRefinementState.idle() : this._(status: PlanRefinementStatus.idle);
 
   final PlanRefinementStatus status;
   final int elapsedSeconds;
@@ -63,16 +62,16 @@ class PlanRefinementState extends Equatable {
 
   @override
   List<Object?> get props => [
-        status,
-        elapsedSeconds,
-        isPaused,
-        filePath,
-        result,
-        error,
-        noteId,
-        followUpQuestionId,
-        followUpQuestionText,
-      ];
+    status,
+    elapsedSeconds,
+    isPaused,
+    filePath,
+    result,
+    error,
+    noteId,
+    followUpQuestionId,
+    followUpQuestionText,
+  ];
 }
 
 enum PlanRefinementStatus {
@@ -91,10 +90,10 @@ class PlanRefinementCubit extends Cubit<PlanRefinementState> {
     required AudioRecordingService recordingService,
     required AudioNotesRepository repository,
     required GetCurrentUsageUseCase getCurrentUsage,
-  })  : _recording = recordingService,
-        _repository = repository,
-        _getCurrentUsage = getCurrentUsage,
-        super(const PlanRefinementState.idle());
+  }) : _recording = recordingService,
+       _repository = repository,
+       _getCurrentUsage = getCurrentUsage,
+       super(const PlanRefinementState.idle());
 
   final AudioRecordingService _recording;
   final AudioNotesRepository _repository;
@@ -107,11 +106,13 @@ class PlanRefinementCubit extends Cubit<PlanRefinementState> {
     String? followUpQuestionId,
     String? followUpQuestionText,
   }) {
-    emit(state.copyWith(
-      noteId: noteId,
-      followUpQuestionId: followUpQuestionId,
-      followUpQuestionText: followUpQuestionText,
-    ));
+    emit(
+      state.copyWith(
+        noteId: noteId,
+        followUpQuestionId: followUpQuestionId,
+        followUpQuestionText: followUpQuestionText,
+      ),
+    );
   }
 
   Future<void> startRecording() async {
@@ -135,10 +136,7 @@ class PlanRefinementCubit extends Cubit<PlanRefinementState> {
       final msg = micStatus.isPermanentlyDenied
           ? 'Microphone access is disabled. Enable it in Settings.'
           : 'Microphone access denied';
-      emit(state.copyWith(
-        status: PlanRefinementStatus.failure,
-        error: msg,
-      ));
+      emit(state.copyWith(status: PlanRefinementStatus.failure, error: msg));
       if (micStatus.isPermanentlyDenied) await openAppSettings();
       return;
     }
@@ -147,28 +145,29 @@ class PlanRefinementCubit extends Cubit<PlanRefinementState> {
     try {
       await _recording.startRecording(path);
     } catch (e) {
-      emit(state.copyWith(
-        status: PlanRefinementStatus.failure,
-        error: e.toString(),
-      ));
+      emit(
+        state.copyWith(
+          status: PlanRefinementStatus.failure,
+          error: e.toString(),
+        ),
+      );
       return;
     }
 
-    emit(state.copyWith(
-      status: PlanRefinementStatus.recording,
-      elapsedSeconds: 0,
-      isPaused: false,
-      filePath: path,
-    ));
+    emit(
+      state.copyWith(
+        status: PlanRefinementStatus.recording,
+        elapsedSeconds: 0,
+        isPaused: false,
+        filePath: path,
+      ),
+    );
     _startTimer();
   }
 
   void _startTimer() {
     _timer?.cancel();
-    _timer = Timer.periodic(
-      const Duration(seconds: 1),
-      (_) => _onTick(),
-    );
+    _timer = Timer.periodic(const Duration(seconds: 1), (_) => _onTick());
   }
 
   void _onTick() {
@@ -191,10 +190,12 @@ class PlanRefinementCubit extends Cubit<PlanRefinementState> {
     try {
       await _recording.pauseRecording();
     } catch (e) {
-      emit(state.copyWith(
-        status: PlanRefinementStatus.failure,
-        error: e.toString(),
-      ));
+      emit(
+        state.copyWith(
+          status: PlanRefinementStatus.failure,
+          error: e.toString(),
+        ),
+      );
       return;
     }
     emit(state.copyWith(isPaused: true));
@@ -207,10 +208,12 @@ class PlanRefinementCubit extends Cubit<PlanRefinementState> {
     try {
       await _recording.resumeRecording();
     } catch (e) {
-      emit(state.copyWith(
-        status: PlanRefinementStatus.failure,
-        error: e.toString(),
-      ));
+      emit(
+        state.copyWith(
+          status: PlanRefinementStatus.failure,
+          error: e.toString(),
+        ),
+      );
       return;
     }
     emit(state.copyWith(isPaused: false));
@@ -223,18 +226,21 @@ class PlanRefinementCubit extends Cubit<PlanRefinementState> {
     try {
       await _recording.stopRecording();
     } catch (e) {
-      emit(state.copyWith(
-        status: PlanRefinementStatus.failure,
-        error: e.toString(),
-      ));
+      emit(
+        state.copyWith(
+          status: PlanRefinementStatus.failure,
+          error: e.toString(),
+        ),
+      );
       return;
     }
-    emit(state.copyWith(
-      status: PlanRefinementStatus.readyToSave,
-      isPaused: false,
-      elapsedSeconds:
-          state.elapsedSeconds == 0 ? 1 : state.elapsedSeconds,
-    ));
+    emit(
+      state.copyWith(
+        status: PlanRefinementStatus.readyToSave,
+        isPaused: false,
+        elapsedSeconds: state.elapsedSeconds == 0 ? 1 : state.elapsedSeconds,
+      ),
+    );
   }
 
   Future<void> cancelRecording() async {
@@ -262,15 +268,16 @@ class PlanRefinementCubit extends Cubit<PlanRefinementState> {
     // rows (and indexed by `plan_versions_audio_note_idx`). Using the
     // `analysis.id` key here would require fetching the analysis first;
     // the audio_note_id index gives us the exact same count in one hop.
-    final countResult =
-        await _repository.countRefinementRoundsForNote(noteId);
+    final countResult = await _repository.countRefinementRoundsForNote(noteId);
     final currentRounds = countResult.fold((_) => 0, (count) => count);
     if (currentRounds >= kMaxRefinementRounds) {
-      emit(state.copyWith(
-        status: PlanRefinementStatus.failure,
-        error:
-            'Maximum of $kMaxRefinementRounds refinement rounds reached for this plan.',
-      ));
+      emit(
+        state.copyWith(
+          status: PlanRefinementStatus.failure,
+          error:
+              'Maximum of $kMaxRefinementRounds refinement rounds reached for this plan.',
+        ),
+      );
       return;
     }
 
@@ -284,14 +291,12 @@ class PlanRefinementCubit extends Cubit<PlanRefinementState> {
     );
 
     result.fold(
-      (f) => emit(state.copyWith(
-        status: PlanRefinementStatus.failure,
-        error: f.message,
-      )),
-      (data) => emit(state.copyWith(
-        status: PlanRefinementStatus.success,
-        result: data,
-      )),
+      (f) => emit(
+        state.copyWith(status: PlanRefinementStatus.failure, error: f.message),
+      ),
+      (data) => emit(
+        state.copyWith(status: PlanRefinementStatus.success, result: data),
+      ),
     );
   }
 

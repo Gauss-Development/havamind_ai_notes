@@ -37,9 +37,7 @@ class FavoritesPage extends StatelessWidget {
                   context.read<FavoritesBloc>().add(
                     const FavoritesEvent.refreshed(),
                   );
-                  await Future<void>.delayed(
-                    const Duration(milliseconds: 350),
-                  );
+                  await Future<void>.delayed(const Duration(milliseconds: 350));
                 },
                 child: ListView.separated(
                   padding: EdgeInsets.fromLTRB(
@@ -70,9 +68,9 @@ class FavoritesPage extends StatelessWidget {
                             builder: (_) => MultiBlocProvider(
                               providers: [
                                 BlocProvider<FavoritesBloc>.value(
-                                    value: favBloc),
-                                BlocProvider<TagsCubit>.value(
-                                    value: tagsCubit),
+                                  value: favBloc,
+                                ),
+                                BlocProvider<TagsCubit>.value(value: tagsCubit),
                               ],
                               child: NoteDetailPage(noteId: n.id),
                             ),
