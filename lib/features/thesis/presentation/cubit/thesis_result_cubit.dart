@@ -175,10 +175,7 @@ class ThesisResultCubit extends Cubit<ThesisResultState> {
 
     final result = await _getAudioNote(GetAudioNoteParams(_noteId));
     if (isClosed) return;
-    result.fold(
-      (failure) => emit(ThesisResultError(failure)),
-      _onNote,
-    );
+    result.fold((failure) => emit(ThesisResultError(failure)), _onNote);
   }
 
   Future<void> retryProcessing() async {
@@ -186,10 +183,7 @@ class ThesisResultCubit extends Cubit<ThesisResultState> {
     emit(const ThesisResultInitial());
     final result = await _requestProcessing(_noteId);
     if (isClosed) return;
-    result.fold(
-      (failure) => emit(ThesisResultError(failure)),
-      (_) {},
-    );
+    result.fold((failure) => emit(ThesisResultError(failure)), (_) {});
   }
 
   void _onNote(AudioNote? note) {
@@ -256,7 +250,9 @@ class ThesisResultCubit extends Cubit<ThesisResultState> {
       return false;
     }
 
-    final versionsResult = await _listVersions(const ListThesisVersionsParams());
+    final versionsResult = await _listVersions(
+      const ListThesisVersionsParams(),
+    );
     if (isClosed || generation != _applyGeneration) return true;
 
     final versionsFailure = versionsResult.fold<Failure?>(

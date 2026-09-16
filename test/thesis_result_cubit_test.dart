@@ -119,9 +119,7 @@ void main() {
   });
 
   test('start emits processing while the note is in the pipeline', () async {
-    when(
-      () => getNote(any()),
-    ).thenAnswer((_) async => Right(_note()));
+    when(() => getNote(any())).thenAnswer((_) async => Right(_note()));
 
     await cubit.start();
 
@@ -156,25 +154,26 @@ void main() {
     expect(loaded.applyTimedOut, isFalse);
   });
 
-  test('failed note emits note-failed without opening thesis as home', () async {
-    when(() => getNote(any())).thenAnswer(
-      (_) async => Right(_note(status: AudioNoteStatus.failed)),
-    );
+  test(
+    'failed note emits note-failed without opening thesis as home',
+    () async {
+      when(
+        () => getNote(any()),
+      ).thenAnswer((_) async => Right(_note(status: AudioNoteStatus.failed)));
 
-    await cubit.start();
+      await cubit.start();
 
-    expect(cubit.state, isA<ThesisResultNoteFailed>());
-    verifyNever(() => getThesis(any()));
-  });
+      expect(cubit.state, isA<ThesisResultNoteFailed>());
+      verifyNever(() => getThesis(any()));
+    },
+  );
 
   test('apply timeout still shows the current thesis', () async {
     final completed = _note(status: AudioNoteStatus.completed);
     final stale = _thesis(updatedAt: DateTime.utc(2026, 2, 1));
     when(() => getNote(any())).thenAnswer((_) async => Right(completed));
     when(() => getThesis(any())).thenAnswer((_) async => Right(stale));
-    when(
-      () => listVersions(any()),
-    ).thenAnswer((_) async => const Right([]));
+    when(() => listVersions(any())).thenAnswer((_) async => const Right([]));
 
     await cubit.start();
     await _waitUntil(() => cubit.state is ThesisResultLoaded);

@@ -13,11 +13,7 @@ const _whoLabels = <String>{
   'говорить',
 };
 
-const _hypothesisLabels = <String>{
-  'hypothesis',
-  'гипотеза',
-  'проверить',
-};
+const _hypothesisLabels = <String>{'hypothesis', 'гипотеза', 'проверить'};
 
 const _doNotAskLabels = <String>{
   'what not to ask',
@@ -146,10 +142,7 @@ String? _join(String? existing, String next) {
 }
 
 bool _containsLabel(String head, Set<String> labels) {
-  for (final label in labels) {
-    if (head == label || head.startsWith('$label ')) return true;
-  }
-  return false;
+  return labels.contains(head);
 }
 
 enum _ScriptSection { none, who, hypothesis, doNotAsk }

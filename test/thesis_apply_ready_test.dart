@@ -104,7 +104,9 @@ void main() {
     final completedAt = DateTime.utc(2026, 3, 1, 12);
     expect(
       isThesisApplyReadyForNote(
-        thesis: _thesis(updatedAt: completedAt.subtract(const Duration(days: 1))),
+        thesis: _thesis(
+          updatedAt: completedAt.subtract(const Duration(days: 1)),
+        ),
         recentVersions: const [],
         note: _note(updatedAt: completedAt),
       ),

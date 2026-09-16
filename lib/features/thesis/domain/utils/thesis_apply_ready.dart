@@ -5,7 +5,9 @@ import 'package:sample/features/thesis/domain/entities/thesis_version.dart';
 
 /// Apply-debrief stamps `field_evidence.note_id` after the note is completed.
 bool thesisHasEvidenceForNote(Thesis thesis, String noteId) {
-  return thesis.fieldEvidence.values.any((evidence) => evidence.noteId == noteId);
+  return thesis.fieldEvidence.values.any(
+    (evidence) => evidence.noteId == noteId,
+  );
 }
 
 /// True when apply-debrief has landed for [note] (completed only).
