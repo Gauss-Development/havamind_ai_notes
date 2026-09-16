@@ -61,6 +61,7 @@ import 'package:sample/features/tags/data/datasources/tags_remote_data_source.da
 import 'package:sample/features/tags/data/repositories/tags_repository_impl.dart';
 import 'package:sample/features/tags/domain/repositories/tags_repository.dart';
 import 'package:sample/features/tags/presentation/bloc/tags_cubit.dart';
+import 'package:sample/features/thesis/di/thesis_injection.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 final getIt = GetIt.instance;
@@ -203,6 +204,10 @@ Future<void> configureDependencies() async {
     () => TagsRepositoryImpl(remote: getIt()),
   );
   getIt.registerFactory(() => TagsCubit(repository: getIt()));
+
+  // ── Thesis ───────────────────────────────────────────────────────────────
+
+  registerThesisDependencies(getIt);
 
   // ── Subscription ─────────────────────────────────────────────────────────
 
