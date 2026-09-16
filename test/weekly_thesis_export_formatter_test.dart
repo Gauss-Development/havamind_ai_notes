@@ -6,7 +6,7 @@ import 'package:sample/features/thesis/domain/entities/thesis.dart';
 import 'package:sample/features/thesis/domain/entities/weekly_thesis_export.dart';
 import 'package:sample/features/thesis/presentation/utils/weekly_thesis_export_formatter.dart';
 
-const _labels = WeeklyExportLabels(
+final _labels = WeeklyExportLabels(
   highlightsTitle: 'Highlights',
   metricsTitle: 'Metrics',
   askTitle: 'The ask',
