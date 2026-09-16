@@ -12,6 +12,8 @@ class ThesisVersion extends Equatable {
     required this.transcription,
     this.diffSummary,
     this.followUpQuestions,
+    this.sourceNoteId,
+    this.sourceTemplateId,
     required this.createdAt,
   });
 
@@ -23,6 +25,10 @@ class ThesisVersion extends Equatable {
   final String transcription;
   final String? diffSummary;
   final List<String>? followUpQuestions;
+
+  /// Note that produced this version; used to count debrief returns.
+  final String? sourceNoteId;
+  final String? sourceTemplateId;
   final DateTime createdAt;
 
   @override
@@ -35,6 +41,8 @@ class ThesisVersion extends Equatable {
     transcription,
     diffSummary,
     followUpQuestions,
+    sourceNoteId,
+    sourceTemplateId,
     createdAt,
   ];
 }

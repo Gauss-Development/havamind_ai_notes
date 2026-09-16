@@ -112,4 +112,28 @@ class ThesisRemoteDataSource {
         ThesisMapper.versionFromRow(Map<String, dynamic>.from(raw as Map)),
     ];
   }
+
+  Future<Thesis> recordWeekArtifactShare() async {
+    if (_client.auth.currentUser == null) {
+      throw Exception('Not signed in');
+    }
+    final response = await _client.rpc('record_week_artifact_share');
+    final row = _singleRpcRow(response);
+    if (row == null) {
+      throw StateError('No thesis');
+    }
+    return ThesisMapper.fromRow(row);
+  }
+
+  Map<String, dynamic>? _singleRpcRow(dynamic response) {
+    if (response == null) return null;
+    if (response is List) {
+      if (response.isEmpty) return null;
+      return Map<String, dynamic>.from(response.first as Map);
+    }
+    if (response is Map) {
+      return Map<String, dynamic>.from(response);
+    }
+    return null;
+  }
 }

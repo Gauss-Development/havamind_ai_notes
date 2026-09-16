@@ -21,6 +21,9 @@ class ThesisMapper {
       followUpQuestions: parseStringList(row['follow_up_questions']),
       nextConversationScript: row['next_conversation_script'] as String?,
       fieldEvidence: evidenceFromJson(row['field_evidence']),
+      debriefCount: parseNonNegInt(row['debrief_count']),
+      weekArtifactShareCount: parseNonNegInt(row['week_artifact_share_count']),
+      weekArtifactSharedAt: parseTimestamp(row['week_artifact_shared_at']),
       createdAt: DateTime.parse(row['created_at'] as String),
       updatedAt: DateTime.parse(row['updated_at'] as String),
     );
@@ -36,8 +39,24 @@ class ThesisMapper {
       transcription: row['transcription'] as String,
       diffSummary: row['diff_summary'] as String?,
       followUpQuestions: parseStringList(row['follow_up_questions']),
+      sourceNoteId: row['source_note_id'] as String?,
+      sourceTemplateId: row['source_template_id'] as String?,
       createdAt: DateTime.parse(row['created_at'] as String),
     );
+  }
+
+  static int parseNonNegInt(dynamic value) {
+    if (value is int) return value < 0 ? 0 : value;
+    if (value is num) {
+      final parsed = value.toInt();
+      return parsed < 0 ? 0 : parsed;
+    }
+    return 0;
+  }
+
+  static DateTime? parseTimestamp(dynamic value) {
+    if (value is! String || value.isEmpty) return null;
+    return DateTime.tryParse(value);
   }
 
   static Map<String, dynamic> draftToInsert(ThesisDraft draft) {

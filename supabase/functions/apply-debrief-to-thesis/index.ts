@@ -13,6 +13,7 @@ import {
   isApplyBlockedForTier,
   isNoteReadyToApply,
   mergeAppliedThesis,
+  nextDebriefCount,
   nextRoundNumber,
   parseNoteId,
   readBearerToken,
@@ -256,8 +257,15 @@ Deno.serve(async (req: Request) => {
       transcription: transcriptText,
       follow_up_questions: merged.follow_up_questions,
       diff_summary: merged.diff_summary,
+      source_note_id: noteId,
+      source_template_id: (note.template_id as string | null) ?? null,
     });
     if (pvInsertErr) throw new Error(pvInsertErr.message);
+
+    const nextDebriefs = nextDebriefCount(
+      Number((thesisRow as { debrief_count?: number }).debrief_count ?? 0),
+      (note.template_id as string | null) ?? null,
+    );
 
     const { error: updateErr } = await supabase
       .from("theses")
@@ -274,6 +282,7 @@ Deno.serve(async (req: Request) => {
         follow_up_questions: merged.follow_up_questions,
         next_conversation_script: merged.next_conversation_script,
         field_evidence: merged.field_evidence,
+        debrief_count: nextDebriefs,
       })
       .eq("id", thesisId);
     if (updateErr) throw new Error(updateErr.message);
@@ -284,6 +293,7 @@ Deno.serve(async (req: Request) => {
         thesis_id: thesisId,
         note_id: noteId,
         round: currentRound,
+        debrief_count: nextDebriefs,
         updatedThesis: merged.snapshot,
         fieldEvidence: merged.field_evidence,
         nextConversationScript: merged.next_conversation_script,

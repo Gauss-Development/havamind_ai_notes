@@ -5,6 +5,7 @@ import 'package:sample/core/error/failure.dart';
 import 'package:sample/core/usecases/usecase.dart';
 import 'package:sample/features/thesis/domain/entities/weekly_thesis_export.dart';
 import 'package:sample/features/thesis/domain/usecases/collect_week_usecase.dart';
+import 'package:sample/features/thesis/domain/usecases/record_week_artifact_share_usecase.dart';
 
 sealed class ThesisWeekExportState extends Equatable {
   const ThesisWeekExportState();
@@ -46,11 +47,15 @@ class ThesisWeekExportError extends ThesisWeekExportState {
 
 /// Loads the 7-day corpus for the Home “collect the week” sheet.
 class ThesisWeekExportCubit extends Cubit<ThesisWeekExportState> {
-  ThesisWeekExportCubit({required CollectWeekUseCase collectWeek})
-    : _collectWeek = collectWeek,
-      super(const ThesisWeekExportInitial());
+  ThesisWeekExportCubit({
+    required CollectWeekUseCase collectWeek,
+    required RecordWeekArtifactShareUseCase recordWeekArtifactShare,
+  }) : _collectWeek = collectWeek,
+       _recordWeekArtifactShare = recordWeekArtifactShare,
+       super(const ThesisWeekExportInitial());
 
   final CollectWeekUseCase _collectWeek;
+  final RecordWeekArtifactShareUseCase _recordWeekArtifactShare;
 
   Future<void> load() async {
     emit(const ThesisWeekExportLoading());
@@ -63,5 +68,13 @@ class ThesisWeekExportCubit extends Cubit<ThesisWeekExportState> {
       }
       emit(ThesisWeekExportReady(export));
     });
+  }
+
+  /// Persist that the letter left via the OS share sheet. Copy must not
+  /// call this. Failures stay off the sheet so a sent letter is not
+  /// replaced by an error.
+  Future<void> recordShare() async {
+    if (state is! ThesisWeekExportReady) return;
+    await _recordWeekArtifactShare(const NoParams());
   }
 }
