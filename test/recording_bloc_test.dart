@@ -2,6 +2,7 @@ import 'package:dartz/dartz.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
+import 'package:sample/core/constants/audio_notes_constants.dart';
 import 'package:sample/core/usecases/usecase.dart';
 import 'package:sample/features/audio_notes/data/services/audio_recording_service.dart';
 import 'package:sample/features/audio_notes/domain/usecases/process_local_audio_note_usecase.dart';
@@ -26,7 +27,7 @@ void main() {
 
   final usage = UsageInfo(
     usedSeconds: 0,
-    limitSeconds: 300,
+    limitSeconds: kFreeMonthlyLimitSeconds,
     tier: SubscriptionTier.free,
     periodStart: DateTime.utc(2026),
     periodEnd: DateTime.utc(2026, 2),

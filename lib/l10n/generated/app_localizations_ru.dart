@@ -201,6 +201,11 @@ class AppLocalizationsRu extends AppLocalizations {
   }
 
   @override
+  String debriefAboutMinutes(int count) {
+    return 'Хватит примерно $count минут';
+  }
+
+  @override
   String get note => 'Заметка';
 
   @override
@@ -419,18 +424,18 @@ class AppLocalizationsRu extends AppLocalizations {
   String get addTag => 'Добавить тег';
 
   @override
-  String get paywallTitle => 'Откройте голос основателя';
+  String get paywallTitle => 'Живой тезис. Не ещё одна заметка';
 
   @override
   String get paywallSubtitle =>
-      'Фиксируйте каждую идею. ИИ-анализ для каждой заметки.';
+      'Дебриф только что закончившегося разговора. Что изменилось, какая ставка ещё без улик и с кем говорить дальше.';
 
   @override
   String get paywallLimitReachedTitle => 'Минуты на этот месяц закончились';
 
   @override
   String get paywallLimitReachedSubtitle =>
-      'Оформите подписку, чтобы продолжить без ограничений.';
+      'Оформите подписку, чтобы продолжить дебрифы в этом месяце — не чтобы оценить ещё одну заметку.';
 
   @override
   String get paywallEverythingYouGet => 'Что вы получаете';
@@ -445,15 +450,14 @@ class AppLocalizationsRu extends AppLocalizations {
   String get paywallTierPro => 'Pro';
 
   @override
-  String get paywallTagFree => 'Базовый набор для пробы.';
+  String get paywallTagFree => 'Один короткий цикл на первой неделе.';
 
   @override
-  String get paywallTagBasic =>
-      'Для основателей, которые фиксируют идеи каждый день.';
+  String get paywallTagBasic => 'Тезис плюс дебрифы недели.';
 
   @override
   String get paywallTagPro =>
-      'Для серьёзной работы со стратегией и аналитикой.';
+      'Полный недельный цикл: версии, артефакт, следующий разговор.';
 
   @override
   String get paywallBillingMonthly => 'Месяц';
@@ -500,6 +504,64 @@ class AppLocalizationsRu extends AppLocalizations {
   @override
   String get paywallNoActivePurchases =>
       'Нет активных покупок для восстановления.';
+
+  @override
+  String paywallMinutesPerMonth(int count) {
+    return '$count минут записи в месяц';
+  }
+
+  @override
+  String get paywallValueThesisTitle => 'Живой тезис';
+
+  @override
+  String get paywallValueThesisBody =>
+      'Один тезис, который становится острее после каждого разговора — не новый разбор каждой заметки.';
+
+  @override
+  String get paywallValueDebriefTitle => 'Дебриф после звонка';
+
+  @override
+  String get paywallValueDebriefBody =>
+      'Двухминутная запись после реального разговора. Что умерло, что подтвердилось, что всё ещё без улик.';
+
+  @override
+  String get paywallValueNextTitle => 'Следующий разговор';
+
+  @override
+  String get paywallValueNextBody =>
+      'С кем говорить дальше и о чём не спрашивать.';
+
+  @override
+  String get paywallValueArtifactTitle => 'Недельный артефакт';
+
+  @override
+  String get paywallValueArtifactBody =>
+      'Highlights, метрики и ask из корпуса недели — можно сразу отправить.';
+
+  @override
+  String get paywallFeatureThesisDebriefs => 'Живой тезис и дебрифы';
+
+  @override
+  String get paywallFeatureWeeklyArtifact =>
+      'Недельный артефакт, который можно отправить';
+
+  @override
+  String get paywallFeatureThesisFromDebriefs =>
+      'Тезис, который обновляется из дебрифов';
+
+  @override
+  String get paywallFeatureSearchTags => 'Поиск, теги и избранное';
+
+  @override
+  String get paywallFeatureEverythingBasic => 'Всё из Базового';
+
+  @override
+  String get paywallFeatureThesisVersions =>
+      'Версии тезиса без потолка в 5 раундов';
+
+  @override
+  String get paywallFeatureArtifactAndScript =>
+      'Недельный артефакт и скрипт следующего разговора';
 
   @override
   String get planGapsTitle => 'ЗАПОЛНИТЕ ПРОБЕЛЫ';
@@ -673,7 +735,7 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get customerDiscoveryGuideSubtitle =>
-      'Зафиксируйте, что узнали от пользователей — мы структурируем инсайты и следующие интервью.';
+      'Дебриф только что закончившегося разговора — хватит примерно двух минут. Обновим, что изменилось и с кем говорить дальше.';
 
   @override
   String get customerDiscoveryPromptWorkflowTitle => 'Ход интервью';

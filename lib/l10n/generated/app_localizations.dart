@@ -464,6 +464,12 @@ abstract class AppLocalizations {
   /// **'Max {count} minutes'**
   String maxMinutes(int count);
 
+  /// No description provided for @debriefAboutMinutes.
+  ///
+  /// In en, this message translates to:
+  /// **'About {count} minutes is enough'**
+  String debriefAboutMinutes(int count);
+
   /// No description provided for @note.
   ///
   /// In en, this message translates to:
@@ -893,13 +899,13 @@ abstract class AppLocalizations {
   /// No description provided for @paywallTitle.
   ///
   /// In en, this message translates to:
-  /// **'Unlock your founder voice'**
+  /// **'A living thesis, not another note'**
   String get paywallTitle;
 
   /// No description provided for @paywallSubtitle.
   ///
   /// In en, this message translates to:
-  /// **'Capture every idea. Get AI-powered analysis on every note.'**
+  /// **'Debrief the call you just finished. See what changed, what is still a bet, and who to talk to next.'**
   String get paywallSubtitle;
 
   /// No description provided for @paywallLimitReachedTitle.
@@ -911,7 +917,7 @@ abstract class AppLocalizations {
   /// No description provided for @paywallLimitReachedSubtitle.
   ///
   /// In en, this message translates to:
-  /// **'Upgrade to keep capturing ideas without interruption.'**
+  /// **'Upgrade to keep debriefing conversations this month — not to score another note.'**
   String get paywallLimitReachedSubtitle;
 
   /// No description provided for @paywallEverythingYouGet.
@@ -941,19 +947,19 @@ abstract class AppLocalizations {
   /// No description provided for @paywallTagFree.
   ///
   /// In en, this message translates to:
-  /// **'Try the essentials.'**
+  /// **'One short week-one loop.'**
   String get paywallTagFree;
 
   /// No description provided for @paywallTagBasic.
   ///
   /// In en, this message translates to:
-  /// **'For founders capturing daily ideas.'**
+  /// **'Thesis plus the week\'s debriefs.'**
   String get paywallTagBasic;
 
   /// No description provided for @paywallTagPro.
   ///
   /// In en, this message translates to:
-  /// **'For serious idea-mappers and operators.'**
+  /// **'Full week loop — versions, artifact, next conversation.'**
   String get paywallTagPro;
 
   /// No description provided for @paywallBillingMonthly.
@@ -1033,6 +1039,102 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'No active purchases to restore.'**
   String get paywallNoActivePurchases;
+
+  /// No description provided for @paywallMinutesPerMonth.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} minutes of recordings / month'**
+  String paywallMinutesPerMonth(int count);
+
+  /// No description provided for @paywallValueThesisTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Living thesis'**
+  String get paywallValueThesisTitle;
+
+  /// No description provided for @paywallValueThesisBody.
+  ///
+  /// In en, this message translates to:
+  /// **'One thesis that gets sharper after every conversation — not a new analysis of every note.'**
+  String get paywallValueThesisBody;
+
+  /// No description provided for @paywallValueDebriefTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Debrief after the call'**
+  String get paywallValueDebriefTitle;
+
+  /// No description provided for @paywallValueDebriefBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Two-minute voice notes after a real conversation. What died, what held, what is still unbacked.'**
+  String get paywallValueDebriefBody;
+
+  /// No description provided for @paywallValueNextTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Next conversation'**
+  String get paywallValueNextTitle;
+
+  /// No description provided for @paywallValueNextBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Who to talk to next, and what not to ask.'**
+  String get paywallValueNextBody;
+
+  /// No description provided for @paywallValueArtifactTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Weekly artifact'**
+  String get paywallValueArtifactTitle;
+
+  /// No description provided for @paywallValueArtifactBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Highlights, metrics, and an ask from the week\'s corpus — ready to send.'**
+  String get paywallValueArtifactBody;
+
+  /// No description provided for @paywallFeatureThesisDebriefs.
+  ///
+  /// In en, this message translates to:
+  /// **'Living thesis + debriefs'**
+  String get paywallFeatureThesisDebriefs;
+
+  /// No description provided for @paywallFeatureWeeklyArtifact.
+  ///
+  /// In en, this message translates to:
+  /// **'Weekly artifact you can send'**
+  String get paywallFeatureWeeklyArtifact;
+
+  /// No description provided for @paywallFeatureThesisFromDebriefs.
+  ///
+  /// In en, this message translates to:
+  /// **'Living thesis that updates from debriefs'**
+  String get paywallFeatureThesisFromDebriefs;
+
+  /// No description provided for @paywallFeatureSearchTags.
+  ///
+  /// In en, this message translates to:
+  /// **'Search, tags & favorites'**
+  String get paywallFeatureSearchTags;
+
+  /// No description provided for @paywallFeatureEverythingBasic.
+  ///
+  /// In en, this message translates to:
+  /// **'Everything in Basic'**
+  String get paywallFeatureEverythingBasic;
+
+  /// No description provided for @paywallFeatureThesisVersions.
+  ///
+  /// In en, this message translates to:
+  /// **'Thesis versions without a 5-round cap'**
+  String get paywallFeatureThesisVersions;
+
+  /// No description provided for @paywallFeatureArtifactAndScript.
+  ///
+  /// In en, this message translates to:
+  /// **'Weekly artifact + next-conversation script'**
+  String get paywallFeatureArtifactAndScript;
 
   /// No description provided for @planGapsTitle.
   ///
@@ -1313,7 +1415,7 @@ abstract class AppLocalizations {
   /// No description provided for @customerDiscoveryGuideSubtitle.
   ///
   /// In en, this message translates to:
-  /// **'Capture what you learned from users — we will structure it into insights and next interviews.'**
+  /// **'Debrief the call you just finished — about two minutes is enough. We will update what changed and who to talk to next.'**
   String get customerDiscoveryGuideSubtitle;
 
   /// No description provided for @customerDiscoveryPromptWorkflowTitle.

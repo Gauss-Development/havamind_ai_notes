@@ -4,6 +4,7 @@ import 'package:sample/core/theme/app_spacing.dart';
 import 'package:sample/core/theme/obsidian_ui_tokens.dart';
 import 'package:sample/features/subscription/presentation/cubit/subscription_cubit.dart';
 import 'package:sample/features/subscription/presentation/widgets/paywall_content.dart';
+import 'package:sample/l10n/generated/app_localizations.dart';
 
 /// Shows the paywall as a draggable bottom sheet. Use this when a user
 /// hits a usage limit mid-flow — feels less interruptive than a full
@@ -38,6 +39,7 @@ class _PaywallSheetBody extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final t = context.appTokens;
+    final l10n = AppLocalizations.of(context)!;
 
     return DraggableScrollableSheet(
       initialChildSize: 0.85,
@@ -90,11 +92,9 @@ class _PaywallSheetBody extends StatelessWidget {
                 child: PaywallContent(
                   compact: true,
                   scrollController: scrollController,
-                  headline: limitReached
-                      ? 'You\'ve used all your minutes'
-                      : null,
+                  headline: limitReached ? l10n.paywallLimitReachedTitle : null,
                   subhead: limitReached
-                      ? 'Upgrade to keep capturing ideas without interruption.'
+                      ? l10n.paywallLimitReachedSubtitle
                       : null,
                 ),
               ),
