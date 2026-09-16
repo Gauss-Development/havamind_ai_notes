@@ -1597,6 +1597,144 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'SUMMARY'**
   String get planFieldSummary;
+
+  /// No description provided for @homeGreetingMorning.
+  ///
+  /// In en, this message translates to:
+  /// **'Good morning'**
+  String get homeGreetingMorning;
+
+  /// No description provided for @homeGreetingAfternoon.
+  ///
+  /// In en, this message translates to:
+  /// **'Good afternoon'**
+  String get homeGreetingAfternoon;
+
+  /// No description provided for @homeGreetingEvening.
+  ///
+  /// In en, this message translates to:
+  /// **'Good evening'**
+  String get homeGreetingEvening;
+
+  /// No description provided for @homeGreetingFallback.
+  ///
+  /// In en, this message translates to:
+  /// **'there'**
+  String get homeGreetingFallback;
+
+  /// No description provided for @thesisLivingEyebrow.
+  ///
+  /// In en, this message translates to:
+  /// **'LIVING THESIS'**
+  String get thesisLivingEyebrow;
+
+  /// No description provided for @thesisLivingSlogan.
+  ///
+  /// In en, this message translates to:
+  /// **'Living thesis. Not a note.'**
+  String get thesisLivingSlogan;
+
+  /// No description provided for @thesisUntitled.
+  ///
+  /// In en, this message translates to:
+  /// **'Your thesis'**
+  String get thesisUntitled;
+
+  /// No description provided for @thesisReadinessTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'THESIS READINESS'**
+  String get thesisReadinessTitle;
+
+  /// No description provided for @thesisReadinessComplete.
+  ///
+  /// In en, this message translates to:
+  /// **'Every core stake is filled in.'**
+  String get thesisReadinessComplete;
+
+  /// No description provided for @thesisUnbackedGapsLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'STILL UNBACKED'**
+  String get thesisUnbackedGapsLabel;
+
+  /// No description provided for @thesisDebriefCta.
+  ///
+  /// In en, this message translates to:
+  /// **'Debrief the conversation that just ended'**
+  String get thesisDebriefCta;
+
+  /// No description provided for @thesisDebriefBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Ninety seconds while it’s still fresh. We update the thesis, not a new card.'**
+  String get thesisDebriefBody;
+
+  /// No description provided for @thesisDebriefAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Debrief'**
+  String get thesisDebriefAction;
+
+  /// No description provided for @thesisDebriefFab.
+  ///
+  /// In en, this message translates to:
+  /// **'Debrief'**
+  String get thesisDebriefFab;
+
+  /// No description provided for @thesisColdPitchCta.
+  ///
+  /// In en, this message translates to:
+  /// **'Tell the idea for two minutes'**
+  String get thesisColdPitchCta;
+
+  /// No description provided for @thesisColdPitchBody.
+  ///
+  /// In en, this message translates to:
+  /// **'The only honest first step when there is no interview yet.'**
+  String get thesisColdPitchBody;
+
+  /// No description provided for @thesisColdPitchAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Cold pitch'**
+  String get thesisColdPitchAction;
+
+  /// No description provided for @thesisCollectWeekAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Collect the week'**
+  String get thesisCollectWeekAction;
+
+  /// No description provided for @thesisCollectWeekSoon.
+  ///
+  /// In en, this message translates to:
+  /// **'Weekly export is next — not ready yet.'**
+  String get thesisCollectWeekSoon;
+
+  /// No description provided for @thesisLastDebriefEyebrow.
+  ///
+  /// In en, this message translates to:
+  /// **'LATEST'**
+  String get thesisLastDebriefEyebrow;
+
+  /// No description provided for @thesisLastDebriefTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Last debrief'**
+  String get thesisLastDebriefTitle;
+
+  /// No description provided for @thesisLoadError.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn’t load your thesis'**
+  String get thesisLoadError;
+
+  /// No description provided for @thesisRetry.
+  ///
+  /// In en, this message translates to:
+  /// **'Try again'**
+  String get thesisRetry;
 }
 
 class _AppLocalizationsDelegate

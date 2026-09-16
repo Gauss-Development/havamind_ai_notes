@@ -12,10 +12,18 @@ class PlanReadinessIndicator extends StatelessWidget {
     super.key,
     required this.readiness,
     this.compact = false,
+    this.title,
+    this.completeLabel,
   });
 
   final PlanReadiness readiness;
   final bool compact;
+
+  /// Overrides the default "PLAN READINESS" eyebrow (Home thesis card).
+  final String? title;
+
+  /// Overrides the all-sections-complete line.
+  final String? completeLabel;
 
   static const double _ringSize = 64;
   static const double _compactRingSize = 48;
@@ -67,7 +75,7 @@ class PlanReadinessIndicator extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                l10n.planReadinessTitle,
+                title ?? l10n.planReadinessTitle,
                 style: theme.textTheme.labelSmall?.copyWith(
                   letterSpacing: 0.6,
                   color: t.primary,
@@ -77,7 +85,7 @@ class PlanReadinessIndicator extends StatelessWidget {
               const SizedBox(height: 4),
               Text(
                 readiness.isComplete
-                    ? l10n.planReadinessComplete
+                    ? (completeLabel ?? l10n.planReadinessComplete)
                     : l10n.planReadinessSections(
                         readiness.completedCount,
                         readiness.totalCount,

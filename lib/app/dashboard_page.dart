@@ -4,8 +4,8 @@ import 'package:sample/core/di/injection.dart';
 import 'package:sample/core/widgets/obsidian_floating_nav_bar.dart';
 import 'package:sample/features/audio_notes/presentation/bloc/audio_notes_list_bloc.dart';
 import 'package:sample/features/audio_notes/presentation/cubit/notes_count_cubit.dart';
-import 'package:sample/features/audio_notes/presentation/cubit/plan_readiness_home_cubit.dart';
 import 'package:sample/features/audio_notes/presentation/pages/notes_list_page.dart';
+import 'package:sample/features/thesis/presentation/cubit/thesis_home_cubit.dart';
 import 'package:sample/features/auth/domain/entities/user_profile.dart';
 import 'package:sample/features/favorites/presentation/bloc/favorites_bloc.dart';
 import 'package:sample/features/subscription/presentation/cubit/subscription_cubit.dart';
@@ -30,7 +30,7 @@ class _DashboardPageState extends State<DashboardPage> {
   late final FavoritesBloc _favoritesBloc;
   late final TagsCubit _tagsCubit;
   late final NotesCountCubit _notesCountCubit;
-  late final PlanReadinessHomeCubit _planReadinessHomeCubit;
+  late final ThesisHomeCubit _thesisHomeCubit;
   late final SubscriptionCubit _subscriptionCubit;
 
   @override
@@ -43,7 +43,7 @@ class _DashboardPageState extends State<DashboardPage> {
     _tagsCubit = getIt<TagsCubit>()..load();
     // Refreshes on construction so the count is ready by first paint.
     _notesCountCubit = getIt<NotesCountCubit>();
-    _planReadinessHomeCubit = getIt<PlanReadinessHomeCubit>();
+    _thesisHomeCubit = getIt<ThesisHomeCubit>()..load();
     // Load early so paywall/usage UI is ready by first paint. Server-side
     // gates read subscription state that is written by trusted backend paths.
     _subscriptionCubit = getIt<SubscriptionCubit>()..loadStatus();
@@ -55,7 +55,7 @@ class _DashboardPageState extends State<DashboardPage> {
     _favoritesBloc.close();
     _tagsCubit.close();
     _notesCountCubit.close();
-    _planReadinessHomeCubit.close();
+    _thesisHomeCubit.close();
     // SubscriptionCubit is a lazySingleton; do not close it here.
     super.dispose();
   }
@@ -93,9 +93,7 @@ class _DashboardPageState extends State<DashboardPage> {
         BlocProvider<FavoritesBloc>.value(value: _favoritesBloc),
         BlocProvider<TagsCubit>.value(value: _tagsCubit),
         BlocProvider<NotesCountCubit>.value(value: _notesCountCubit),
-        BlocProvider<PlanReadinessHomeCubit>.value(
-          value: _planReadinessHomeCubit,
-        ),
+        BlocProvider<ThesisHomeCubit>.value(value: _thesisHomeCubit),
         BlocProvider<SubscriptionCubit>.value(value: _subscriptionCubit),
       ],
       child: BlocListener<AudioNotesListBloc, AudioNotesListState>(
@@ -107,9 +105,9 @@ class _DashboardPageState extends State<DashboardPage> {
             curr.maybeWhen(loaded: (_, _, _) => true, orElse: () => false),
         listener: (context, state) {
           state.maybeWhen(
-            loaded: (notes, _, _) {
+            loaded: (_, _, _) {
               context.read<NotesCountCubit>().refresh();
-              context.read<PlanReadinessHomeCubit>().refreshFromNotes(notes);
+              context.read<ThesisHomeCubit>().refresh();
             },
             orElse: () {},
           );

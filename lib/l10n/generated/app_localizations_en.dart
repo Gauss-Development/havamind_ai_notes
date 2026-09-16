@@ -830,4 +830,75 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get planFieldSummary => 'SUMMARY';
+
+  @override
+  String get homeGreetingMorning => 'Good morning';
+
+  @override
+  String get homeGreetingAfternoon => 'Good afternoon';
+
+  @override
+  String get homeGreetingEvening => 'Good evening';
+
+  @override
+  String get homeGreetingFallback => 'there';
+
+  @override
+  String get thesisLivingEyebrow => 'LIVING THESIS';
+
+  @override
+  String get thesisLivingSlogan => 'Living thesis. Not a note.';
+
+  @override
+  String get thesisUntitled => 'Your thesis';
+
+  @override
+  String get thesisReadinessTitle => 'THESIS READINESS';
+
+  @override
+  String get thesisReadinessComplete => 'Every core stake is filled in.';
+
+  @override
+  String get thesisUnbackedGapsLabel => 'STILL UNBACKED';
+
+  @override
+  String get thesisDebriefCta => 'Debrief the conversation that just ended';
+
+  @override
+  String get thesisDebriefBody =>
+      'Ninety seconds while it’s still fresh. We update the thesis, not a new card.';
+
+  @override
+  String get thesisDebriefAction => 'Debrief';
+
+  @override
+  String get thesisDebriefFab => 'Debrief';
+
+  @override
+  String get thesisColdPitchCta => 'Tell the idea for two minutes';
+
+  @override
+  String get thesisColdPitchBody =>
+      'The only honest first step when there is no interview yet.';
+
+  @override
+  String get thesisColdPitchAction => 'Cold pitch';
+
+  @override
+  String get thesisCollectWeekAction => 'Collect the week';
+
+  @override
+  String get thesisCollectWeekSoon => 'Weekly export is next — not ready yet.';
+
+  @override
+  String get thesisLastDebriefEyebrow => 'LATEST';
+
+  @override
+  String get thesisLastDebriefTitle => 'Last debrief';
+
+  @override
+  String get thesisLoadError => 'Couldn’t load your thesis';
+
+  @override
+  String get thesisRetry => 'Try again';
 }
