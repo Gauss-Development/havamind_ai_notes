@@ -1712,6 +1712,54 @@ abstract class AppLocalizations {
   /// **'Weekly export is next — not ready yet.'**
   String get thesisCollectWeekSoon;
 
+  /// No description provided for @thesisCollectWeekTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Collect the week'**
+  String get thesisCollectWeekTitle;
+
+  /// No description provided for @thesisCollectWeekSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Highlights, metrics, and the ask from this week’s debriefs — plus the living thesis. Copy or send.'**
+  String get thesisCollectWeekSubtitle;
+
+  /// No description provided for @thesisCollectWeekEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No debriefs this week'**
+  String get thesisCollectWeekEmpty;
+
+  /// No description provided for @thesisCollectWeekEmptyHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing honest to send yet. Debrief a conversation first — this letter is the week’s corpus, not last month’s card.'**
+  String get thesisCollectWeekEmptyHint;
+
+  /// No description provided for @thesisCollectWeekNoMetrics.
+  ///
+  /// In en, this message translates to:
+  /// **'No metrics captured this week.'**
+  String get thesisCollectWeekNoMetrics;
+
+  /// No description provided for @thesisCollectWeekNoAsk.
+  ///
+  /// In en, this message translates to:
+  /// **'No ask yet — the next conversation is still open.'**
+  String get thesisCollectWeekNoAsk;
+
+  /// No description provided for @thesisCollectWeekDebriefCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, one{{count} debrief this week} other{{count} debriefs this week}}'**
+  String thesisCollectWeekDebriefCount(int count);
+
+  /// No description provided for @thesisCollectWeekRange.
+  ///
+  /// In en, this message translates to:
+  /// **'Week of {range}'**
+  String thesisCollectWeekRange(String range);
+
   /// No description provided for @thesisLastDebriefEyebrow.
   ///
   /// In en, this message translates to:

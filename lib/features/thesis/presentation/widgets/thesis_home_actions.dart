@@ -13,11 +13,13 @@ class ThesisHomeActions extends StatelessWidget {
     required this.isBlankThesis,
     required this.onDebrief,
     required this.onColdPitch,
+    required this.onCollectWeek,
   });
 
   final bool isBlankThesis;
   final VoidCallback onDebrief;
   final VoidCallback onColdPitch;
+  final VoidCallback onCollectWeek;
 
   @override
   Widget build(BuildContext context) {
@@ -107,15 +109,12 @@ class ThesisHomeActions extends StatelessWidget {
               ),
             const SizedBox(width: AppSpacing.sm),
             Expanded(
-              child: Tooltip(
-                message: l10n.thesisCollectWeekSoon,
-                child: AppGradientButton(
-                  onPressed: null,
-                  label: l10n.thesisCollectWeekAction,
-                  icon: Icons.calendar_view_week_outlined,
-                  variant: AppButtonVariant.outlined,
-                  expand: true,
-                ),
+              child: AppGradientButton(
+                onPressed: onCollectWeek,
+                label: l10n.thesisCollectWeekAction,
+                icon: Icons.calendar_view_week_outlined,
+                variant: AppButtonVariant.outlined,
+                expand: true,
               ),
             ),
           ],

@@ -896,6 +896,45 @@ class AppLocalizationsRu extends AppLocalizations {
       'Недельный экспорт будет следующим шагом.';
 
   @override
+  String get thesisCollectWeekTitle => 'Собрать неделю';
+
+  @override
+  String get thesisCollectWeekSubtitle =>
+      'Главное, метрики и запрос из дебрифов этой недели — плюс живой тезис. Скопируйте или отправьте.';
+
+  @override
+  String get thesisCollectWeekEmpty => 'На этой неделе дебрифов нет';
+
+  @override
+  String get thesisCollectWeekEmptyHint =>
+      'Отправлять пока нечего. Сначала запишите дебриф разговора — письмо собирается из корпуса недели, не из старой карточки.';
+
+  @override
+  String get thesisCollectWeekNoMetrics => 'Метрик за неделю нет.';
+
+  @override
+  String get thesisCollectWeekNoAsk =>
+      'Запроса пока нет — следующий разговор ещё открыт.';
+
+  @override
+  String thesisCollectWeekDebriefCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count дебрифа за неделю',
+      many: '$count дебрифов за неделю',
+      few: '$count дебрифа за неделю',
+      one: '$count дебриф за неделю',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String thesisCollectWeekRange(String range) {
+    return 'Неделя $range';
+  }
+
+  @override
   String get thesisLastDebriefEyebrow => 'ПОСЛЕДНЕЕ';
 
   @override
@@ -931,8 +970,7 @@ class AppLocalizationsRu extends AppLocalizations {
   String get thesisResultFailed => 'Дебриф не обработался';
 
   @override
-  String get thesisResultFailedHint =>
-      'Повторите обработку. Заметка на месте.';
+  String get thesisResultFailedHint => 'Повторите обработку. Заметка на месте.';
 
   @override
   String get thesisDiffTitle => 'Что изменилось';
