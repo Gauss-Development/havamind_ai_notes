@@ -10,14 +10,12 @@ import 'package:sample/core/widgets/obsidian_note_list_tile.dart';
 import 'package:sample/features/audio_notes/domain/entities/audio_note.dart';
 import 'package:sample/features/audio_notes/domain/entities/recording_template.dart';
 import 'package:sample/features/audio_notes/presentation/bloc/audio_notes_list_bloc.dart';
-import 'package:sample/features/audio_notes/presentation/pages/note_detail_page.dart';
 import 'package:sample/features/audio_notes/presentation/utils/recording_flow.dart';
 import 'package:sample/features/audio_notes/presentation/widgets/audio_note_duration_formatter.dart';
 import 'package:sample/features/auth/domain/entities/user_profile.dart';
-import 'package:sample/features/favorites/presentation/bloc/favorites_bloc.dart';
 import 'package:sample/features/home/presentation/utils/select_last_debrief_note.dart';
-import 'package:sample/features/tags/presentation/bloc/tags_cubit.dart';
 import 'package:sample/features/thesis/presentation/cubit/thesis_home_cubit.dart';
+import 'package:sample/features/thesis/presentation/utils/open_thesis_result_page.dart';
 import 'package:sample/features/thesis/presentation/widgets/thesis_home_actions.dart';
 import 'package:sample/features/thesis/presentation/widgets/thesis_home_card.dart';
 import 'package:sample/l10n/generated/app_localizations.dart';
@@ -68,7 +66,7 @@ class HomePage extends StatelessWidget {
                       onColdPitch: () => _openColdPitch(context),
                       onOpenDebriefNote: lastDebrief == null
                           ? null
-                          : () => _openNoteDetail(context, lastDebrief.id),
+                          : () => _openDebriefResult(context, lastDebrief.id),
                     ),
                   ),
                   SliverToBoxAdapter(
@@ -103,29 +101,26 @@ class HomePage extends StatelessWidget {
   }
 
   Future<void> _openRecording(BuildContext context, String templateId) async {
-    final added = await openRecordingFlow(context, templateId: templateId);
-    if (!context.mounted || added != true) return;
+    final result = await openRecordingFlow(context, templateId: templateId);
+    if (!context.mounted || result == null || result == false) return;
     context.read<AudioNotesListBloc>().add(
       const AudioNotesListEvent.refreshed(),
     );
     await context.read<ThesisHomeCubit>().refresh();
+    if (!context.mounted) return;
+    if (result is AudioNote) {
+      await openThesisResultPage(context, result.id);
+      if (!context.mounted) return;
+      context.read<AudioNotesListBloc>().add(
+        const AudioNotesListEvent.refreshed(),
+      );
+      await context.read<ThesisHomeCubit>().refresh();
+    }
   }
 }
 
-Future<void> _openNoteDetail(BuildContext context, String noteId) async {
-  final favBloc = context.read<FavoritesBloc>();
-  final tagsCubit = context.read<TagsCubit>();
-  await Navigator.of(context).push<bool>(
-    MaterialPageRoute(
-      builder: (_) => MultiBlocProvider(
-        providers: [
-          BlocProvider<FavoritesBloc>.value(value: favBloc),
-          BlocProvider<TagsCubit>.value(value: tagsCubit),
-        ],
-        child: NoteDetailPage(noteId: noteId),
-      ),
-    ),
-  );
+Future<void> _openDebriefResult(BuildContext context, String noteId) async {
+  await openThesisResultPage(context, noteId);
   if (!context.mounted) return;
   context.read<AudioNotesListBloc>().add(const AudioNotesListEvent.refreshed());
   await context.read<ThesisHomeCubit>().refresh();

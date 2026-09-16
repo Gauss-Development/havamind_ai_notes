@@ -296,7 +296,7 @@ class _NotesListViewState extends State<_NotesListView> {
 
   Future<void> _openRecording(BuildContext context) async {
     final added = await openRecordingFlow(context);
-    if (context.mounted && added == true) {
+    if (context.mounted && added != null && added != false) {
       context.read<AudioNotesListBloc>().add(
         const AudioNotesListEvent.refreshed(),
       );

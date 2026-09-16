@@ -3,6 +3,7 @@ import 'package:dartz/dartz.dart';
 import 'package:sample/core/error/failure.dart';
 import 'package:sample/features/thesis/domain/entities/thesis.dart';
 import 'package:sample/features/thesis/domain/entities/thesis_seed_candidate.dart';
+import 'package:sample/features/thesis/domain/entities/thesis_version.dart';
 
 abstract class ThesisRepository {
   /// The current user's thesis, or `null` if none has been created yet.
@@ -15,4 +16,9 @@ abstract class ThesisRepository {
 
   /// Sets `audio_notes.thesis_id` on every note owned by the current user.
   Future<Either<Failure, Unit>> attachThesisToAllNotes(String thesisId);
+
+  /// Newest thesis versions first (snapshot + `diff_summary`).
+  Future<Either<Failure, List<ThesisVersion>>> listRecentVersions({
+    int limit = 2,
+  });
 }

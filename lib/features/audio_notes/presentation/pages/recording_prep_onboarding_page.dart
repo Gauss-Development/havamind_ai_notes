@@ -26,7 +26,7 @@ class _RecordingPrepOnboardingPageState
     if (!context.mounted) return;
 
     await Navigator.of(context).pushReplacement(
-      MaterialPageRoute<bool>(
+      MaterialPageRoute<Object>(
         fullscreenDialog: true,
         builder: (_) => RecordingPage(initialTemplateId: _selectedTemplateId),
       ),

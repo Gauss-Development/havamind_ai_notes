@@ -14,9 +14,10 @@ import 'package:sample/features/subscription/presentation/widgets/paywall_sheet.
 import 'package:sample/l10n/generated/app_localizations.dart';
 
 class RecordingPage extends StatelessWidget {
-  const RecordingPage({super.key, this.initialTemplateId});
+  const RecordingPage({super.key, this.initialTemplateId, this.voicePrompt});
 
   final String? initialTemplateId;
+  final String? voicePrompt;
 
   @override
   Widget build(BuildContext context) {
@@ -27,13 +28,15 @@ class RecordingPage extends StatelessWidget {
         getCurrentUsage: getIt(),
         initialTemplateId: initialTemplateId,
       ),
-      child: const _RecordingView(),
+      child: _RecordingView(voicePrompt: voicePrompt),
     );
   }
 }
 
 class _RecordingView extends StatelessWidget {
-  const _RecordingView();
+  const _RecordingView({this.voicePrompt});
+
+  final String? voicePrompt;
 
   RecordingMicScale _micScaleForHeight(double height) {
     if (height < 560) return RecordingMicScale.small;
@@ -56,7 +59,7 @@ class _RecordingView extends StatelessWidget {
           limitReached: () {
             showPaywallSheet(context, limitReached: true);
           },
-          success: (_) => Navigator.of(context).pop(true),
+          success: (note) => Navigator.of(context).pop(note),
           orElse: () {},
         );
       },
@@ -116,6 +119,15 @@ class _RecordingView extends StatelessWidget {
                               SizedBox(
                                 height: compact ? AppSpacing.sm : AppSpacing.lg,
                               ),
+                              if (voicePrompt != null &&
+                                  voicePrompt!.trim().isNotEmpty) ...[
+                                _VoicePromptCard(prompt: voicePrompt!.trim()),
+                                SizedBox(
+                                  height: compact
+                                      ? AppSpacing.md
+                                      : AppSpacing.lg,
+                                ),
+                              ],
                               Text(
                                 AudioNoteDurationFormatter.mmSs(elapsed),
                                 textAlign: TextAlign.center,
@@ -153,21 +165,23 @@ class _RecordingView extends StatelessWidget {
                               SizedBox(
                                 height: compact ? AppSpacing.lg : AppSpacing.xl,
                               ),
-                              if (!isRecording)
-                                RecordingFounderPromptsCard(
-                                  templateId: templateId,
-                                  isRecording: false,
-                                  elapsedSeconds: 0,
-                                  compactLayout: compact,
-                                )
-                              else
-                                RecordingFounderPromptsCard(
-                                  templateId: templateId,
-                                  isRecording: true,
-                                  elapsedSeconds: elapsed,
-                                  compactLayout: compact,
-                                  overlayLayout: false,
-                                ),
+                              if (voicePrompt == null ||
+                                  voicePrompt!.trim().isEmpty)
+                                if (!isRecording)
+                                  RecordingFounderPromptsCard(
+                                    templateId: templateId,
+                                    isRecording: false,
+                                    elapsedSeconds: 0,
+                                    compactLayout: compact,
+                                  )
+                                else
+                                  RecordingFounderPromptsCard(
+                                    templateId: templateId,
+                                    isRecording: true,
+                                    elapsedSeconds: elapsed,
+                                    compactLayout: compact,
+                                    overlayLayout: false,
+                                  ),
                             ],
                           ),
                         ),
@@ -233,6 +247,47 @@ class _RecordingView extends StatelessWidget {
           ),
         );
       },
+    );
+  }
+}
+
+class _VoicePromptCard extends StatelessWidget {
+  const _VoicePromptCard({required this.prompt});
+
+  final String prompt;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    final t = context.appTokens;
+    final theme = Theme.of(context);
+
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        color: t.primaryContainer,
+        borderRadius: BorderRadius.circular(ObsidianUiTokens.radiusXl),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(AppSpacing.lg),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              l10n.thesisVoicePromptEyebrow,
+              style: theme.textTheme.labelLarge?.copyWith(
+                color: t.primary,
+                letterSpacing: 1.2,
+                fontWeight: FontWeight.w800,
+              ),
+            ),
+            const SizedBox(height: AppSpacing.xs),
+            Text(
+              prompt,
+              style: theme.textTheme.bodyMedium?.copyWith(height: 1.4),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }
