@@ -76,7 +76,11 @@ class ThesisRemoteDataSource {
     };
 
     try {
-      final row = await _client.from('theses').insert(payload).select().single();
+      final row = await _client
+          .from('theses')
+          .insert(payload)
+          .select()
+          .single();
       return ThesisMapper.fromRow(Map<String, dynamic>.from(row));
     } on PostgrestException catch (e) {
       // Concurrent seed: unique(user_id) lost the race — return the winner.

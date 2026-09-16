@@ -20,7 +20,8 @@ void main() {
   const completeAudience = 'Solo founders and small startup teams.';
   const completeModel = 'Subscription with free tier and paid Pro plan.';
   const completeMetrics = 'Weekly active recorders and plan completion rate.';
-  const completeAdvantages = 'Founder-specific prompts and venture intelligence.';
+  const completeAdvantages =
+      'Founder-specific prompts and venture intelligence.';
   const completeRisks = 'Competition from generic note apps.';
 
   StartupAnalysis analysis({
@@ -120,41 +121,48 @@ void main() {
   });
 
   group('thesisDraftFromAnalysis', () {
-    test('copies seven fields plus title/summary and founder_claim evidence', () {
-      final source = analysis(id: 'a1', noteId: 'note-9');
-      final draft = thesisDraftFromAnalysis(source);
+    test(
+      'copies seven fields plus title/summary and founder_claim evidence',
+      () {
+        final source = analysis(id: 'a1', noteId: 'note-9');
+        final draft = thesisDraftFromAnalysis(source);
 
-      expect(draft.title, 'Havamind');
-      expect(draft.shortSummary, 'A living thesis for founders.');
-      expect(draft.problem, completeProblem);
-      expect(draft.solution, completeSolution);
-      expect(draft.targetAudience, completeAudience);
-      expect(draft.businessModel, completeModel);
-      expect(draft.keyMetrics, completeMetrics);
-      expect(draft.advantages, completeAdvantages);
-      expect(draft.risksGaps, completeRisks);
-      expect(draft.followUpQuestions, ['Who pays first?']);
-      expect(draft.nextConversationScript, isNull);
+        expect(draft.title, 'Havamind');
+        expect(draft.shortSummary, 'A living thesis for founders.');
+        expect(draft.problem, completeProblem);
+        expect(draft.solution, completeSolution);
+        expect(draft.targetAudience, completeAudience);
+        expect(draft.businessModel, completeModel);
+        expect(draft.keyMetrics, completeMetrics);
+        expect(draft.advantages, completeAdvantages);
+        expect(draft.risksGaps, completeRisks);
+        expect(draft.followUpQuestions, ['Who pays first?']);
+        expect(draft.nextConversationScript, isNull);
 
-      expect(draft.fieldEvidence.keys, containsAll([
-        ThesisEvidenceFields.title,
-        ThesisEvidenceFields.shortSummary,
-        ThesisEvidenceFields.problem,
-        ThesisEvidenceFields.solution,
-        ThesisEvidenceFields.targetAudience,
-        ThesisEvidenceFields.businessModel,
-        ThesisEvidenceFields.keyMetrics,
-        ThesisEvidenceFields.advantages,
-        ThesisEvidenceFields.risksGaps,
-      ]));
-      expect(
-        draft.fieldEvidence.values.every(
-          (e) =>
-              e.kind == ThesisEvidenceKind.founderClaim && e.noteId == 'note-9',
-        ),
-        isTrue,
-      );
-    });
+        expect(
+          draft.fieldEvidence.keys,
+          containsAll([
+            ThesisEvidenceFields.title,
+            ThesisEvidenceFields.shortSummary,
+            ThesisEvidenceFields.problem,
+            ThesisEvidenceFields.solution,
+            ThesisEvidenceFields.targetAudience,
+            ThesisEvidenceFields.businessModel,
+            ThesisEvidenceFields.keyMetrics,
+            ThesisEvidenceFields.advantages,
+            ThesisEvidenceFields.risksGaps,
+          ]),
+        );
+        expect(
+          draft.fieldEvidence.values.every(
+            (e) =>
+                e.kind == ThesisEvidenceKind.founderClaim &&
+                e.noteId == 'note-9',
+          ),
+          isTrue,
+        );
+      },
+    );
 
     test('omits empty fields from evidence', () {
       final draft = thesisDraftFromAnalysis(
@@ -167,7 +175,10 @@ void main() {
         ),
       );
 
-      expect(draft.fieldEvidence.containsKey(ThesisEvidenceFields.title), isFalse);
+      expect(
+        draft.fieldEvidence.containsKey(ThesisEvidenceFields.title),
+        isFalse,
+      );
       expect(
         draft.fieldEvidence.containsKey(ThesisEvidenceFields.shortSummary),
         isFalse,
@@ -176,7 +187,10 @@ void main() {
         draft.fieldEvidence.containsKey(ThesisEvidenceFields.businessModel),
         isFalse,
       );
-      expect(draft.fieldEvidence.containsKey(ThesisEvidenceFields.problem), isTrue);
+      expect(
+        draft.fieldEvidence.containsKey(ThesisEvidenceFields.problem),
+        isTrue,
+      );
     });
   });
 
@@ -263,7 +277,9 @@ void main() {
 
       expect(result, Right(created));
       verify(() => repository.createThesis(any())).called(1);
-      verify(() => repository.attachThesisToAllNotes('thesis-seeded')).called(1);
+      verify(
+        () => repository.attachThesisToAllNotes('thesis-seeded'),
+      ).called(1);
     });
 
     test('propagates getCurrentThesis failure', () async {

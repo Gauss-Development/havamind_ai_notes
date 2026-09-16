@@ -46,11 +46,7 @@ class ThesisEvidenceFields {
 }
 
 class ThesisFieldEvidence extends Equatable {
-  const ThesisFieldEvidence({
-    required this.kind,
-    this.quote,
-    this.noteId,
-  });
+  const ThesisFieldEvidence({required this.kind, this.quote, this.noteId});
 
   final ThesisEvidenceKind kind;
   final String? quote;

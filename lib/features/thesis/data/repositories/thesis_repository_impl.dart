@@ -22,7 +22,8 @@ class ThesisRepositoryImpl implements ThesisRepository {
   }
 
   @override
-  Future<Either<Failure, List<ThesisSeedCandidate>>> listSeedCandidates() async {
+  Future<Either<Failure, List<ThesisSeedCandidate>>>
+  listSeedCandidates() async {
     try {
       return Right(await _remote.listSeedCandidates());
     } catch (e) {
