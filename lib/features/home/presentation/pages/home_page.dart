@@ -237,7 +237,7 @@ class _HomeHero extends StatelessWidget {
                     ? l10n.planReadinessUntitledNote
                     : lastDebrief!.title,
                 subtitle: _noteSubtitle(lastDebrief!),
-                onTap: onOpenDebriefNote,
+                onTap: onOpenDebriefNote!,
                 status: lastDebrief!.status,
                 index: 0,
               ),
