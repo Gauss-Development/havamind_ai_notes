@@ -1,5 +1,9 @@
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.49.8";
+import {
+  invokeApplyDebriefToThesis,
+  linkNoteToUserThesis,
+} from "../_shared/thesis_link.ts";
 import { readMp4DurationSeconds } from "./mp4_duration.ts";
 
 const corsHeaders: Record<string, string> = {
@@ -453,6 +457,31 @@ Deno.serve(async (req: Request) => {
     // leaves a recoverable reference for retry/cleanup instead of orphaning
     // the object forever.
     await cleanupAudioBlob(supabase, audioNoteId, note.audio_path);
+
+    // Living thesis: attach this event to the account thesis, then apply the
+    // debrief. Prompts above stay note-level; apply is a second step so it
+    // can be rolled back without mixing analysis instructions.
+    try {
+      await linkNoteToUserThesis(supabase, note.user_id, audioNoteId);
+    } catch (e) {
+      console.error(
+        "[process-audio-note] thesis_id attach failed:",
+        e instanceof Error ? e.message : String(e),
+      );
+    }
+    try {
+      await invokeApplyDebriefToThesis({
+        supabaseUrl,
+        authorization: authHeader,
+        apikey: serviceKey,
+        noteId: audioNoteId,
+      });
+    } catch (e) {
+      console.error(
+        "[process-audio-note] apply-debrief-to-thesis invoke error:",
+        e instanceof Error ? e.message : String(e),
+      );
+    }
 
     return jsonResponse({ ok: true, status: "completed" }, 200);
   } catch (e) {
