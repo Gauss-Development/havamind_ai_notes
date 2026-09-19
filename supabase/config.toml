@@ -15,6 +15,11 @@
 [functions.process-audio-note]
 verify_jwt = false
 
+# Living thesis: apply a processed debrief onto the account thesis.
+# Custom JWT validation inside the function (same ES256 gateway caveat).
+[functions.apply-debrief-to-thesis]
+verify_jwt = false
+
 # GAU-94: Iterative plan refinement. Custom JWT validation inside the function.
 [functions.refine-plan]
 verify_jwt = false
