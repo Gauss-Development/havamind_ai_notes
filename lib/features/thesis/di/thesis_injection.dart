@@ -3,7 +3,9 @@ import 'package:get_it/get_it.dart';
 import 'package:sample/features/thesis/data/datasources/thesis_remote_data_source.dart';
 import 'package:sample/features/thesis/data/repositories/thesis_repository_impl.dart';
 import 'package:sample/features/thesis/domain/repositories/thesis_repository.dart';
+import 'package:sample/features/thesis/domain/usecases/get_thesis_usecase.dart';
 import 'package:sample/features/thesis/domain/usecases/seed_thesis_usecase.dart';
+import 'package:sample/features/thesis/presentation/cubit/thesis_home_cubit.dart';
 
 void registerThesisDependencies(GetIt getIt) {
   getIt.registerLazySingleton<ThesisRemoteDataSource>(
@@ -13,4 +15,8 @@ void registerThesisDependencies(GetIt getIt) {
     () => ThesisRepositoryImpl(remote: getIt()),
   );
   getIt.registerFactory(() => SeedThesisUseCase(getIt()));
+  getIt.registerFactory(() => GetThesisUseCase(getIt()));
+  getIt.registerFactory(
+    () => ThesisHomeCubit(seedThesis: getIt(), getThesis: getIt()),
+  );
 }

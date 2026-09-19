@@ -896,4 +896,76 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get planFieldSummary => 'РЕЗЮМЕ';
+
+  @override
+  String get homeGreetingMorning => 'Доброе утро';
+
+  @override
+  String get homeGreetingAfternoon => 'Добрый день';
+
+  @override
+  String get homeGreetingEvening => 'Добрый вечер';
+
+  @override
+  String get homeGreetingFallback => 'основатель';
+
+  @override
+  String get thesisLivingEyebrow => 'ЖИВОЙ ТЕЗИС';
+
+  @override
+  String get thesisLivingSlogan => 'Живой тезис. Не заметка.';
+
+  @override
+  String get thesisUntitled => 'Ваш тезис';
+
+  @override
+  String get thesisReadinessTitle => 'ГОТОВНОСТЬ ТЕЗИСА';
+
+  @override
+  String get thesisReadinessComplete => 'Все ключевые ставки заполнены.';
+
+  @override
+  String get thesisUnbackedGapsLabel => 'ЕЩЁ БЕЗ УЛИК';
+
+  @override
+  String get thesisDebriefCta => 'Дебриф только что закончившегося разговора';
+
+  @override
+  String get thesisDebriefBody =>
+      'Девяносто секунд, пока свежо. Обновим тезис, а не новую карточку.';
+
+  @override
+  String get thesisDebriefAction => 'Дебриф';
+
+  @override
+  String get thesisDebriefFab => 'Дебриф';
+
+  @override
+  String get thesisColdPitchCta => 'Расскажи идею две минуты';
+
+  @override
+  String get thesisColdPitchBody =>
+      'Единственный честный вход, пока ещё не было разговора.';
+
+  @override
+  String get thesisColdPitchAction => 'Холодный питч';
+
+  @override
+  String get thesisCollectWeekAction => 'Собрать неделю';
+
+  @override
+  String get thesisCollectWeekSoon =>
+      'Недельный экспорт будет следующим шагом.';
+
+  @override
+  String get thesisLastDebriefEyebrow => 'ПОСЛЕДНЕЕ';
+
+  @override
+  String get thesisLastDebriefTitle => 'Последний дебриф';
+
+  @override
+  String get thesisLoadError => 'Не удалось загрузить тезис';
+
+  @override
+  String get thesisRetry => 'Попробовать снова';
 }
