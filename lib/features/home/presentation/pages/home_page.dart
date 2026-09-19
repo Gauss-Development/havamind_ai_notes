@@ -18,6 +18,7 @@ import 'package:sample/features/thesis/presentation/cubit/thesis_home_cubit.dart
 import 'package:sample/features/thesis/presentation/utils/open_thesis_result_page.dart';
 import 'package:sample/features/thesis/presentation/widgets/thesis_home_actions.dart';
 import 'package:sample/features/thesis/presentation/widgets/thesis_home_card.dart';
+import 'package:sample/features/thesis/presentation/widgets/thesis_week_export_sheet.dart';
 import 'package:sample/l10n/generated/app_localizations.dart';
 
 /// Home tab — living thesis card and debrief CTA. Notes stay an archive.
@@ -64,6 +65,7 @@ class HomePage extends StatelessWidget {
                       lastDebrief: lastDebrief,
                       onDebrief: () => _openDebrief(context),
                       onColdPitch: () => _openColdPitch(context),
+                      onCollectWeek: () => _openCollectWeek(context),
                       onOpenDebriefNote: lastDebrief == null
                           ? null
                           : () => _openDebriefResult(context, lastDebrief.id),
@@ -100,6 +102,10 @@ class HomePage extends StatelessWidget {
     return _openRecording(context, RecordingTemplateIds.founderPitch);
   }
 
+  Future<void> _openCollectWeek(BuildContext context) {
+    return showThesisWeekExportSheet(context: context);
+  }
+
   Future<void> _openRecording(BuildContext context, String templateId) async {
     final result = await openRecordingFlow(context, templateId: templateId);
     if (!context.mounted || result == null || result == false) return;
@@ -134,6 +140,7 @@ class _HomeHero extends StatelessWidget {
     required this.lastDebrief,
     required this.onDebrief,
     required this.onColdPitch,
+    required this.onCollectWeek,
     this.onOpenDebriefNote,
   });
 
@@ -141,6 +148,7 @@ class _HomeHero extends StatelessWidget {
   final AudioNote? lastDebrief;
   final VoidCallback onDebrief;
   final VoidCallback onColdPitch;
+  final VoidCallback onCollectWeek;
   final VoidCallback? onOpenDebriefNote;
 
   @override
@@ -210,6 +218,7 @@ class _HomeHero extends StatelessWidget {
                         isBlankThesis: loaded.isBlank,
                         onDebrief: onDebrief,
                         onColdPitch: onColdPitch,
+                        onCollectWeek: onCollectWeek,
                       ),
                     ],
                   ),

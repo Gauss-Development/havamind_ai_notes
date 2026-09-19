@@ -342,6 +342,24 @@
   "thesisColdPitchAction": "Холодный питч",
   "thesisCollectWeekAction": "Собрать неделю",
   "thesisCollectWeekSoon": "Недельный экспорт будет следующим шагом.",
+  "thesisCollectWeekTitle": "Собрать неделю",
+  "thesisCollectWeekSubtitle": "Главное, метрики и запрос из дебрифов этой недели — плюс живой тезис. Скопируйте или отправьте.",
+  "thesisCollectWeekEmpty": "На этой неделе дебрифов нет",
+  "thesisCollectWeekEmptyHint": "Отправлять пока нечего. Сначала запишите дебриф разговора — письмо собирается из корпуса недели, не из старой карточки.",
+  "thesisCollectWeekNoMetrics": "Метрик за неделю нет.",
+  "thesisCollectWeekNoAsk": "Запроса пока нет — следующий разговор ещё открыт.",
+  "thesisCollectWeekDebriefCount": "{count, plural, one{{count} дебриф за неделю} few{{count} дебрифа за неделю} many{{count} дебрифов за неделю} other{{count} дебрифа за неделю}}",
+  "@thesisCollectWeekDebriefCount": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "thesisCollectWeekRange": "Неделя {range}",
+  "@thesisCollectWeekRange": {
+    "placeholders": {
+      "range": { "type": "String" }
+    }
+  },
   "thesisLastDebriefEyebrow": "ПОСЛЕДНЕЕ",
   "thesisLastDebriefTitle": "Последний дебриф",
   "thesisLoadError": "Не удалось загрузить тезис",

@@ -372,6 +372,24 @@
   "thesisColdPitchAction": "Cold pitch",
   "thesisCollectWeekAction": "Collect the week",
   "thesisCollectWeekSoon": "Weekly export is next — not ready yet.",
+  "thesisCollectWeekTitle": "Collect the week",
+  "thesisCollectWeekSubtitle": "Highlights, metrics, and the ask from this week’s debriefs — plus the living thesis. Copy or send.",
+  "thesisCollectWeekEmpty": "No debriefs this week",
+  "thesisCollectWeekEmptyHint": "Nothing honest to send yet. Debrief a conversation first — this letter is the week’s corpus, not last month’s card.",
+  "thesisCollectWeekNoMetrics": "No metrics captured this week.",
+  "thesisCollectWeekNoAsk": "No ask yet — the next conversation is still open.",
+  "thesisCollectWeekDebriefCount": "{count, plural, one{{count} debrief this week} other{{count} debriefs this week}}",
+  "@thesisCollectWeekDebriefCount": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "thesisCollectWeekRange": "Week of {range}",
+  "@thesisCollectWeekRange": {
+    "placeholders": {
+      "range": { "type": "String" }
+    }
+  },
   "thesisLastDebriefEyebrow": "LATEST",
   "thesisLastDebriefTitle": "Last debrief",
   "thesisLoadError": "Couldn’t load your thesis",

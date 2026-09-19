@@ -954,6 +954,43 @@ class AppLocalizationsEn extends AppLocalizations {
   String get thesisCollectWeekSoon => 'Weekly export is next — not ready yet.';
 
   @override
+  String get thesisCollectWeekTitle => 'Collect the week';
+
+  @override
+  String get thesisCollectWeekSubtitle =>
+      'Highlights, metrics, and the ask from this week’s debriefs — plus the living thesis. Copy or send.';
+
+  @override
+  String get thesisCollectWeekEmpty => 'No debriefs this week';
+
+  @override
+  String get thesisCollectWeekEmptyHint =>
+      'Nothing honest to send yet. Debrief a conversation first — this letter is the week’s corpus, not last month’s card.';
+
+  @override
+  String get thesisCollectWeekNoMetrics => 'No metrics captured this week.';
+
+  @override
+  String get thesisCollectWeekNoAsk =>
+      'No ask yet — the next conversation is still open.';
+
+  @override
+  String thesisCollectWeekDebriefCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count debriefs this week',
+      one: '$count debrief this week',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String thesisCollectWeekRange(String range) {
+    return 'Week of $range';
+  }
+
+  @override
   String get thesisLastDebriefEyebrow => 'LATEST';
 
   @override
@@ -996,8 +1033,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get thesisDiffTitle => 'What changed';
 
   @override
-  String get thesisDiffEmpty =>
-      'No field changed this time — the stakes held.';
+  String get thesisDiffEmpty => 'No field changed this time — the stakes held.';
 
   @override
   String get thesisDiffNew => 'New';
