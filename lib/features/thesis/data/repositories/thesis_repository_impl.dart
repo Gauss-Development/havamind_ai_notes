@@ -4,6 +4,7 @@ import 'package:sample/core/error/failure.dart';
 import 'package:sample/features/thesis/data/datasources/thesis_remote_data_source.dart';
 import 'package:sample/features/thesis/domain/entities/thesis.dart';
 import 'package:sample/features/thesis/domain/entities/thesis_seed_candidate.dart';
+import 'package:sample/features/thesis/domain/entities/thesis_version.dart';
 import 'package:sample/features/thesis/domain/repositories/thesis_repository.dart';
 
 class ThesisRepositoryImpl implements ThesisRepository {
@@ -47,6 +48,17 @@ class ThesisRepositoryImpl implements ThesisRepository {
       return const Right(unit);
     } catch (e) {
       return Left(_mapWriteError(e));
+    }
+  }
+
+  @override
+  Future<Either<Failure, List<ThesisVersion>>> listRecentVersions({
+    int limit = 2,
+  }) async {
+    try {
+      return Right(await _remote.fetchRecentVersions(limit: limit));
+    } catch (e) {
+      return Left(_mapReadError(e));
     }
   }
 

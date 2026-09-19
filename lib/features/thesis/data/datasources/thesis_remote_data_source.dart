@@ -6,6 +6,7 @@ import 'package:sample/features/audio_notes/domain/entities/audio_note_status.da
 import 'package:sample/features/thesis/data/models/thesis_mapper.dart';
 import 'package:sample/features/thesis/domain/entities/thesis.dart';
 import 'package:sample/features/thesis/domain/entities/thesis_seed_candidate.dart';
+import 'package:sample/features/thesis/domain/entities/thesis_version.dart';
 
 const _uuid = Uuid();
 
@@ -97,5 +98,18 @@ class ThesisRemoteDataSource {
         .from('audio_notes')
         .update({'thesis_id': thesisId})
         .eq('user_id', _userId);
+  }
+
+  Future<List<ThesisVersion>> fetchRecentVersions({int limit = 2}) async {
+    final rows = await _client
+        .from('thesis_versions')
+        .select()
+        .eq('user_id', _userId)
+        .order('round_number', ascending: false)
+        .limit(limit);
+    return [
+      for (final raw in rows as List<dynamic>)
+        ThesisMapper.versionFromRow(Map<String, dynamic>.from(raw as Map)),
+    ];
   }
 }

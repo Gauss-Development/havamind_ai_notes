@@ -968,4 +968,82 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get thesisRetry => 'Попробовать снова';
+
+  @override
+  String get thesisResultTitle => 'Что изменилось';
+
+  @override
+  String get thesisResultEyebrow => 'ПОСЛЕ ДЕБРИФА';
+
+  @override
+  String get thesisResultProcessing => 'Дебриф ещё обрабатывается…';
+
+  @override
+  String get thesisResultProcessingHint =>
+      'Покажем diff тезиса, как только заметка станет готовой.';
+
+  @override
+  String get thesisResultApplying => 'Обновляем живой тезис…';
+
+  @override
+  String get thesisResultApplyingHint =>
+      'Дополняем тезис этим разговором, не переписываем карточку.';
+
+  @override
+  String get thesisResultFailed => 'Дебриф не обработался';
+
+  @override
+  String get thesisResultFailedHint =>
+      'Повторите обработку. Заметка на месте.';
+
+  @override
+  String get thesisDiffTitle => 'Что изменилось';
+
+  @override
+  String get thesisDiffEmpty => 'Поля не изменились — ставки устояли.';
+
+  @override
+  String get thesisDiffNew => 'Новое';
+
+  @override
+  String get thesisDiffWas => 'Было';
+
+  @override
+  String get thesisUnbackedTitle => 'Ставки всё ещё без улик';
+
+  @override
+  String get thesisUnbackedHint =>
+      'Кто это сказал и чем подтвердил — не «допишите секцию».';
+
+  @override
+  String thesisUnbackedVoiceQuestion(String field) {
+    return 'Кто сказал это про $field и чем подтвердил? Цитата или конкретный сигнал — не только ваши слова.';
+  }
+
+  @override
+  String get thesisNextConversationTitle => 'Следующий разговор';
+
+  @override
+  String get thesisNextWho => 'С кем';
+
+  @override
+  String get thesisNextHypothesis => 'Гипотеза';
+
+  @override
+  String get thesisNextDoNotAsk => 'Чего не спрашивать';
+
+  @override
+  String get thesisNextEmpty => 'Следующего разговора пока нет.';
+
+  @override
+  String get thesisSeeTranscript => 'Открыть транскрипт заметки';
+
+  @override
+  String get thesisResultDone => 'На главную';
+
+  @override
+  String get thesisApplyPending => 'Тезис ещё догоняет этот дебриф.';
+
+  @override
+  String get thesisVoicePromptEyebrow => 'ОТВЕТЬТЕ';
 }

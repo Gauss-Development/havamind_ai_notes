@@ -4,8 +4,10 @@ import 'package:sample/features/thesis/data/datasources/thesis_remote_data_sourc
 import 'package:sample/features/thesis/data/repositories/thesis_repository_impl.dart';
 import 'package:sample/features/thesis/domain/repositories/thesis_repository.dart';
 import 'package:sample/features/thesis/domain/usecases/get_thesis_usecase.dart';
+import 'package:sample/features/thesis/domain/usecases/list_thesis_versions_usecase.dart';
 import 'package:sample/features/thesis/domain/usecases/seed_thesis_usecase.dart';
 import 'package:sample/features/thesis/presentation/cubit/thesis_home_cubit.dart';
+import 'package:sample/features/thesis/presentation/cubit/thesis_result_cubit.dart';
 
 void registerThesisDependencies(GetIt getIt) {
   getIt.registerLazySingleton<ThesisRemoteDataSource>(
@@ -16,7 +18,18 @@ void registerThesisDependencies(GetIt getIt) {
   );
   getIt.registerFactory(() => SeedThesisUseCase(getIt()));
   getIt.registerFactory(() => GetThesisUseCase(getIt()));
+  getIt.registerFactory(() => ListThesisVersionsUseCase(getIt()));
   getIt.registerFactory(
     () => ThesisHomeCubit(seedThesis: getIt(), getThesis: getIt()),
+  );
+  getIt.registerFactoryParam<ThesisResultCubit, String, void>(
+    (noteId, _) => ThesisResultCubit(
+      noteId: noteId,
+      watchNote: getIt(),
+      getAudioNote: getIt(),
+      getThesis: getIt(),
+      listVersions: getIt(),
+      requestProcessing: getIt(),
+    ),
   );
 }

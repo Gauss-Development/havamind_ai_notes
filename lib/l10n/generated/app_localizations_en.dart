@@ -964,4 +964,84 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get thesisRetry => 'Try again';
+
+  @override
+  String get thesisResultTitle => 'What changed';
+
+  @override
+  String get thesisResultEyebrow => 'AFTER DEBRIEF';
+
+  @override
+  String get thesisResultProcessing => 'Still processing this debrief…';
+
+  @override
+  String get thesisResultProcessingHint =>
+      'We’ll show the thesis diff as soon as the note completes.';
+
+  @override
+  String get thesisResultApplying => 'Updating the living thesis…';
+
+  @override
+  String get thesisResultApplyingHint =>
+      'Appending this conversation — not rewriting a card.';
+
+  @override
+  String get thesisResultFailed => 'This debrief didn’t process';
+
+  @override
+  String get thesisResultFailedHint =>
+      'Retry processing. The note is still here.';
+
+  @override
+  String get thesisDiffTitle => 'What changed';
+
+  @override
+  String get thesisDiffEmpty =>
+      'No field changed this time — the stakes held.';
+
+  @override
+  String get thesisDiffNew => 'New';
+
+  @override
+  String get thesisDiffWas => 'Was';
+
+  @override
+  String get thesisUnbackedTitle => 'Stakes still without evidence';
+
+  @override
+  String get thesisUnbackedHint =>
+      'Who said this, and what backs it — not “fill in the section”.';
+
+  @override
+  String thesisUnbackedVoiceQuestion(String field) {
+    return 'Who said this about $field, and what backs it? A quote or a concrete signal — not just your wording.';
+  }
+
+  @override
+  String get thesisNextConversationTitle => 'Next conversation';
+
+  @override
+  String get thesisNextWho => 'Who';
+
+  @override
+  String get thesisNextHypothesis => 'Hypothesis';
+
+  @override
+  String get thesisNextDoNotAsk => 'What not to ask';
+
+  @override
+  String get thesisNextEmpty => 'No next conversation yet.';
+
+  @override
+  String get thesisSeeTranscript => 'Open the note transcript';
+
+  @override
+  String get thesisResultDone => 'Back to Home';
+
+  @override
+  String get thesisApplyPending =>
+      'The thesis is still catching up with this debrief.';
+
+  @override
+  String get thesisVoicePromptEyebrow => 'ANSWER THIS';
 }

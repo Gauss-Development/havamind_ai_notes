@@ -345,5 +345,34 @@
   "thesisLastDebriefEyebrow": "ПОСЛЕДНЕЕ",
   "thesisLastDebriefTitle": "Последний дебриф",
   "thesisLoadError": "Не удалось загрузить тезис",
-  "thesisRetry": "Попробовать снова"
+  "thesisRetry": "Попробовать снова",
+  "thesisResultTitle": "Что изменилось",
+  "thesisResultEyebrow": "ПОСЛЕ ДЕБРИФА",
+  "thesisResultProcessing": "Дебриф ещё обрабатывается…",
+  "thesisResultProcessingHint": "Покажем diff тезиса, как только заметка станет готовой.",
+  "thesisResultApplying": "Обновляем живой тезис…",
+  "thesisResultApplyingHint": "Дополняем тезис этим разговором, не переписываем карточку.",
+  "thesisResultFailed": "Дебриф не обработался",
+  "thesisResultFailedHint": "Повторите обработку. Заметка на месте.",
+  "thesisDiffTitle": "Что изменилось",
+  "thesisDiffEmpty": "Поля не изменились — ставки устояли.",
+  "thesisDiffNew": "Новое",
+  "thesisDiffWas": "Было",
+  "thesisUnbackedTitle": "Ставки всё ещё без улик",
+  "thesisUnbackedHint": "Кто это сказал и чем подтвердил — не «допишите секцию».",
+  "thesisUnbackedVoiceQuestion": "Кто сказал это про {field} и чем подтвердил? Цитата или конкретный сигнал — не только ваши слова.",
+  "@thesisUnbackedVoiceQuestion": {
+    "placeholders": {
+      "field": { "type": "String" }
+    }
+  },
+  "thesisNextConversationTitle": "Следующий разговор",
+  "thesisNextWho": "С кем",
+  "thesisNextHypothesis": "Гипотеза",
+  "thesisNextDoNotAsk": "Чего не спрашивать",
+  "thesisNextEmpty": "Следующего разговора пока нет.",
+  "thesisSeeTranscript": "Открыть транскрипт заметки",
+  "thesisResultDone": "На главную",
+  "thesisApplyPending": "Тезис ещё догоняет этот дебриф.",
+  "thesisVoicePromptEyebrow": "ОТВЕТЬТЕ"
 }

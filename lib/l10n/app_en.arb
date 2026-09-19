@@ -375,5 +375,34 @@
   "thesisLastDebriefEyebrow": "LATEST",
   "thesisLastDebriefTitle": "Last debrief",
   "thesisLoadError": "Couldn’t load your thesis",
-  "thesisRetry": "Try again"
+  "thesisRetry": "Try again",
+  "thesisResultTitle": "What changed",
+  "thesisResultEyebrow": "AFTER DEBRIEF",
+  "thesisResultProcessing": "Still processing this debrief…",
+  "thesisResultProcessingHint": "We’ll show the thesis diff as soon as the note completes.",
+  "thesisResultApplying": "Updating the living thesis…",
+  "thesisResultApplyingHint": "Appending this conversation — not rewriting a card.",
+  "thesisResultFailed": "This debrief didn’t process",
+  "thesisResultFailedHint": "Retry processing. The note is still here.",
+  "thesisDiffTitle": "What changed",
+  "thesisDiffEmpty": "No field changed this time — the stakes held.",
+  "thesisDiffNew": "New",
+  "thesisDiffWas": "Was",
+  "thesisUnbackedTitle": "Stakes still without evidence",
+  "thesisUnbackedHint": "Who said this, and what backs it — not “fill in the section”.",
+  "thesisUnbackedVoiceQuestion": "Who said this about {field}, and what backs it? A quote or a concrete signal — not just your wording.",
+  "@thesisUnbackedVoiceQuestion": {
+    "placeholders": {
+      "field": { "type": "String" }
+    }
+  },
+  "thesisNextConversationTitle": "Next conversation",
+  "thesisNextWho": "Who",
+  "thesisNextHypothesis": "Hypothesis",
+  "thesisNextDoNotAsk": "What not to ask",
+  "thesisNextEmpty": "No next conversation yet.",
+  "thesisSeeTranscript": "Open the note transcript",
+  "thesisResultDone": "Back to Home",
+  "thesisApplyPending": "The thesis is still catching up with this debrief.",
+  "thesisVoicePromptEyebrow": "ANSWER THIS"
 }

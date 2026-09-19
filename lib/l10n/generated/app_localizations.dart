@@ -1837,6 +1837,150 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Try again'**
   String get thesisRetry;
+
+  /// No description provided for @thesisResultTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'What changed'**
+  String get thesisResultTitle;
+
+  /// No description provided for @thesisResultEyebrow.
+  ///
+  /// In en, this message translates to:
+  /// **'AFTER DEBRIEF'**
+  String get thesisResultEyebrow;
+
+  /// No description provided for @thesisResultProcessing.
+  ///
+  /// In en, this message translates to:
+  /// **'Still processing this debrief…'**
+  String get thesisResultProcessing;
+
+  /// No description provided for @thesisResultProcessingHint.
+  ///
+  /// In en, this message translates to:
+  /// **'We’ll show the thesis diff as soon as the note completes.'**
+  String get thesisResultProcessingHint;
+
+  /// No description provided for @thesisResultApplying.
+  ///
+  /// In en, this message translates to:
+  /// **'Updating the living thesis…'**
+  String get thesisResultApplying;
+
+  /// No description provided for @thesisResultApplyingHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Appending this conversation — not rewriting a card.'**
+  String get thesisResultApplyingHint;
+
+  /// No description provided for @thesisResultFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'This debrief didn’t process'**
+  String get thesisResultFailed;
+
+  /// No description provided for @thesisResultFailedHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Retry processing. The note is still here.'**
+  String get thesisResultFailedHint;
+
+  /// No description provided for @thesisDiffTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'What changed'**
+  String get thesisDiffTitle;
+
+  /// No description provided for @thesisDiffEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No field changed this time — the stakes held.'**
+  String get thesisDiffEmpty;
+
+  /// No description provided for @thesisDiffNew.
+  ///
+  /// In en, this message translates to:
+  /// **'New'**
+  String get thesisDiffNew;
+
+  /// No description provided for @thesisDiffWas.
+  ///
+  /// In en, this message translates to:
+  /// **'Was'**
+  String get thesisDiffWas;
+
+  /// No description provided for @thesisUnbackedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Stakes still without evidence'**
+  String get thesisUnbackedTitle;
+
+  /// No description provided for @thesisUnbackedHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Who said this, and what backs it — not “fill in the section”.'**
+  String get thesisUnbackedHint;
+
+  /// No description provided for @thesisUnbackedVoiceQuestion.
+  ///
+  /// In en, this message translates to:
+  /// **'Who said this about {field}, and what backs it? A quote or a concrete signal — not just your wording.'**
+  String thesisUnbackedVoiceQuestion(String field);
+
+  /// No description provided for @thesisNextConversationTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Next conversation'**
+  String get thesisNextConversationTitle;
+
+  /// No description provided for @thesisNextWho.
+  ///
+  /// In en, this message translates to:
+  /// **'Who'**
+  String get thesisNextWho;
+
+  /// No description provided for @thesisNextHypothesis.
+  ///
+  /// In en, this message translates to:
+  /// **'Hypothesis'**
+  String get thesisNextHypothesis;
+
+  /// No description provided for @thesisNextDoNotAsk.
+  ///
+  /// In en, this message translates to:
+  /// **'What not to ask'**
+  String get thesisNextDoNotAsk;
+
+  /// No description provided for @thesisNextEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No next conversation yet.'**
+  String get thesisNextEmpty;
+
+  /// No description provided for @thesisSeeTranscript.
+  ///
+  /// In en, this message translates to:
+  /// **'Open the note transcript'**
+  String get thesisSeeTranscript;
+
+  /// No description provided for @thesisResultDone.
+  ///
+  /// In en, this message translates to:
+  /// **'Back to Home'**
+  String get thesisResultDone;
+
+  /// No description provided for @thesisApplyPending.
+  ///
+  /// In en, this message translates to:
+  /// **'The thesis is still catching up with this debrief.'**
+  String get thesisApplyPending;
+
+  /// No description provided for @thesisVoicePromptEyebrow.
+  ///
+  /// In en, this message translates to:
+  /// **'ANSWER THIS'**
+  String get thesisVoicePromptEyebrow;
 }
 
 class _AppLocalizationsDelegate
