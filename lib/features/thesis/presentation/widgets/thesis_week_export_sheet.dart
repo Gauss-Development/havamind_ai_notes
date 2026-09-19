@@ -54,8 +54,14 @@ class ThesisWeekExportSheet extends StatelessWidget {
     }
   }
 
-  Future<void> _share(String text) {
-    return SharePlus.instance.share(ShareParams(text: text));
+  Future<void> _share(BuildContext context, String text) async {
+    final result = await SharePlus.instance.share(ShareParams(text: text));
+    if (!context.mounted) return;
+    // dismissed = closed the sheet. unavailable = OS cannot say whether
+    // a target was picked; the founder still left via Share, not Copy.
+    if (result.status != ShareResultStatus.dismissed) {
+      await context.read<ThesisWeekExportCubit>().recordShare();
+    }
   }
 
   @override
@@ -123,7 +129,7 @@ class ThesisWeekExportSheet extends StatelessWidget {
                     _labels(l10n, Localizations.localeOf(context)),
                   ),
                   onCopy: (text) => _copy(context, text),
-                  onShare: _share,
+                  onShare: (text) => _share(context, text),
                 ),
               };
             },

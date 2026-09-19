@@ -9,9 +9,12 @@ import 'package:sample/features/audio_notes/domain/entities/recording_template.d
 import 'package:sample/features/thesis/domain/entities/thesis.dart';
 import 'package:sample/features/thesis/domain/entities/weekly_thesis_export.dart';
 import 'package:sample/features/thesis/domain/usecases/collect_week_usecase.dart';
+import 'package:sample/features/thesis/domain/usecases/record_week_artifact_share_usecase.dart';
 import 'package:sample/features/thesis/presentation/cubit/thesis_week_export_cubit.dart';
 
 class _MockCollectWeek extends Mock implements CollectWeekUseCase {}
+
+class _MockRecordShare extends Mock implements RecordWeekArtifactShareUseCase {}
 
 WeeklyThesisExport _export({required bool withDebrief}) {
   final thesis = Thesis(
@@ -43,6 +46,7 @@ WeeklyThesisExport _export({required bool withDebrief}) {
 
 void main() {
   late _MockCollectWeek collectWeek;
+  late _MockRecordShare recordShare;
   late ThesisWeekExportCubit cubit;
 
   setUpAll(() {
@@ -51,7 +55,11 @@ void main() {
 
   setUp(() {
     collectWeek = _MockCollectWeek();
-    cubit = ThesisWeekExportCubit(collectWeek: collectWeek);
+    recordShare = _MockRecordShare();
+    cubit = ThesisWeekExportCubit(
+      collectWeek: collectWeek,
+      recordWeekArtifactShare: recordShare,
+    );
   });
 
   tearDown(() async {
@@ -59,8 +67,9 @@ void main() {
   });
 
   test('load emits ready when the week has debriefs', () async {
-    when(() => collectWeek(any()))
-        .thenAnswer((_) async => Right(_export(withDebrief: true)));
+    when(
+      () => collectWeek(any()),
+    ).thenAnswer((_) async => Right(_export(withDebrief: true)));
 
     await cubit.load();
 
@@ -70,8 +79,9 @@ void main() {
   });
 
   test('load emits empty when there are no debriefs this week', () async {
-    when(() => collectWeek(any()))
-        .thenAnswer((_) async => Right(_export(withDebrief: false)));
+    when(
+      () => collectWeek(any()),
+    ).thenAnswer((_) async => Right(_export(withDebrief: false)));
 
     await cubit.load();
 
@@ -85,5 +95,37 @@ void main() {
     await cubit.load();
 
     expect(cubit.state, const ThesisWeekExportError(failure));
+  });
+
+  test('recordShare writes the share counter only when ready', () async {
+    when(
+      () => collectWeek(any()),
+    ).thenAnswer((_) async => Right(_export(withDebrief: true)));
+    when(
+      () => recordShare(any()),
+    ).thenAnswer((_) async => Right(_export(withDebrief: true).thesis));
+
+    await cubit.recordShare();
+    verifyNever(() => recordShare(any()));
+
+    await cubit.load();
+    await cubit.recordShare();
+
+    verify(() => recordShare(const NoParams())).called(1);
+    expect(cubit.state, isA<ThesisWeekExportReady>());
+  });
+
+  test('recordShare stays ready when the write fails', () async {
+    when(
+      () => collectWeek(any()),
+    ).thenAnswer((_) async => Right(_export(withDebrief: true)));
+    when(
+      () => recordShare(any()),
+    ).thenAnswer((_) async => const Left(ServerFailure('down')));
+
+    await cubit.load();
+    await cubit.recordShare();
+
+    expect(cubit.state, isA<ThesisWeekExportReady>());
   });
 }

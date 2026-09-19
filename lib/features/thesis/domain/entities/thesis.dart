@@ -20,6 +20,9 @@ class Thesis extends Equatable {
     this.followUpQuestions,
     this.nextConversationScript,
     this.fieldEvidence = const {},
+    this.debriefCount = 0,
+    this.weekArtifactShareCount = 0,
+    this.weekArtifactSharedAt,
     required this.createdAt,
     required this.updatedAt,
   });
@@ -38,6 +41,13 @@ class Thesis extends Equatable {
   final List<String>? followUpQuestions;
   final String? nextConversationScript;
   final Map<String, ThesisFieldEvidence> fieldEvidence;
+
+  /// customer_discovery applies. Cold pitch / seed stay at 0.
+  final int debriefCount;
+
+  /// Weekly letter handed to the OS share sheet (not copy / generate).
+  final int weekArtifactShareCount;
+  final DateTime? weekArtifactSharedAt;
   final DateTime createdAt;
   final DateTime updatedAt;
 
@@ -57,6 +67,9 @@ class Thesis extends Equatable {
     followUpQuestions,
     nextConversationScript,
     fieldEvidence,
+    debriefCount,
+    weekArtifactShareCount,
+    weekArtifactSharedAt,
     createdAt,
     updatedAt,
   ];

@@ -30,8 +30,10 @@ import {
   markContradiction,
   mergeAppliedThesis,
   mergeTextField,
+  nextDebriefCount,
   nextRoundNumber,
   normalizeFieldEvidence,
+  countsAsDebriefReturn,
   parseNoteId,
   readBearerToken,
   snapshotFromAnalysis,
@@ -241,9 +243,25 @@ Deno.test("apply-debrief: contradiction merge writes a version diff that keeps t
     round_number: nextRoundNumber(0),
     thesis_snapshot: merged.snapshot,
     diff_summary: merged.diff_summary,
+    source_note_id: MOCK_NOTE_ID,
+    source_template_id: "customer_discovery",
   };
   assertEquals(versionRow.round_number, 1);
+  assertEquals(versionRow.source_template_id, "customer_discovery");
   assertStringIncludes(versionRow.diff_summary, "Doctors pay out of pocket");
+});
+
+Deno.test("apply-debrief: only customer_discovery increments debrief_count", () => {
+  assertEquals(countsAsDebriefReturn("customer_discovery"), true);
+  assertEquals(countsAsDebriefReturn("founder_pitch"), false);
+  assertEquals(countsAsDebriefReturn("investor_update"), false);
+  assertEquals(countsAsDebriefReturn(null), false);
+
+  assertEquals(nextDebriefCount(0, "customer_discovery"), 1);
+  assertEquals(nextDebriefCount(1, "customer_discovery"), 2);
+  assertEquals(nextDebriefCount(2, "customer_discovery"), 3);
+  assertEquals(nextDebriefCount(1, "founder_pitch"), 1);
+  assertEquals(nextDebriefCount(Number.NaN, "customer_discovery"), 1);
 });
 
 Deno.test("apply-debrief: ensureDiffKeepsContradiction backfills missing previous text", () => {

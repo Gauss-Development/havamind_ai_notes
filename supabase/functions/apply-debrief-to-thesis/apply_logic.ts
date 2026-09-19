@@ -403,6 +403,26 @@ export function nextRoundNumber(priorCount: number): number {
   return priorCount + 1;
 }
 
+/** Same id as Flutter `RecordingTemplateIds.customerDiscovery`. */
+export const DEBRIEF_TEMPLATE_ID = "customer_discovery";
+
+export function countsAsDebriefReturn(
+  templateId: string | null | undefined,
+): boolean {
+  return templateId === DEBRIEF_TEMPLATE_ID;
+}
+
+/** Cold pitch / investor update keep [currentCount]; a debrief adds one. */
+export function nextDebriefCount(
+  currentCount: number,
+  templateId: string | null | undefined,
+): number {
+  const n = Number.isFinite(currentCount)
+    ? Math.max(0, Math.floor(currentCount))
+    : 0;
+  return countsAsDebriefReturn(templateId) ? n + 1 : n;
+}
+
 export function weekWindowStart(now = new Date()): string {
   const start = new Date(now.getTime() - WEEK_WINDOW_DAYS * 24 * 60 * 60 * 1000);
   return start.toISOString();

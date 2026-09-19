@@ -62,6 +62,18 @@ class ThesisRepositoryImpl implements ThesisRepository {
     }
   }
 
+  @override
+  Future<Either<Failure, Thesis>> recordWeekArtifactShare() async {
+    try {
+      return Right(await _remote.recordWeekArtifactShare());
+    } catch (e) {
+      if (e.toString().contains('No thesis')) {
+        return const Left(NotFoundFailure('No thesis'));
+      }
+      return Left(_mapWriteError(e));
+    }
+  }
+
   Failure _mapReadError(Object error) {
     if (_isNotSignedIn(error)) {
       return const AuthFailure('Not signed in');

@@ -21,4 +21,8 @@ abstract class ThesisRepository {
   Future<Either<Failure, List<ThesisVersion>>> listRecentVersions({
     int limit = 2,
   });
+
+  /// Records that the weekly letter left the app via the OS share sheet.
+  /// Copy / generate must not call this.
+  Future<Either<Failure, Thesis>> recordWeekArtifactShare();
 }
