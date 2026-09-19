@@ -218,7 +218,10 @@ class _RecordingView extends StatelessWidget {
                         ),
                       ),
                       Text(
-                        l10n.maxMinutes(kMaxRecordingDurationSeconds ~/ 60),
+                        _recordingHint(
+                          l10n,
+                          context.read<RecordingBloc>().selectedTemplateId,
+                        ),
                         textAlign: TextAlign.center,
                         style: theme.textTheme.bodySmall?.copyWith(
                           color: t.onSurfaceVariant.withValues(alpha: 0.6),
@@ -235,6 +238,14 @@ class _RecordingView extends StatelessWidget {
       },
     );
   }
+}
+
+String _recordingHint(AppLocalizations l10n, String templateId) {
+  if (RecordingTemplateIds.normalize(templateId) ==
+      RecordingTemplateIds.customerDiscovery) {
+    return l10n.debriefAboutMinutes(kDebriefSuggestedDurationSeconds ~/ 60);
+  }
+  return l10n.maxMinutes(kMaxRecordingDurationSeconds ~/ 60);
 }
 
 class _RecordingFooterControls extends StatelessWidget {

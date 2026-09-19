@@ -81,6 +81,12 @@
       "count": { "type": "int" }
     }
   },
+  "debriefAboutMinutes": "About {count} minutes is enough",
+  "@debriefAboutMinutes": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
   "note": "Note",
   "deleteNote": "Delete note?",
   "deleteNoteBody": "The file and record will be permanently deleted.",
@@ -152,17 +158,17 @@
   "statusReady": "Ready",
   "statusFailed": "Failed",
   "addTag": "Add tag",
-  "paywallTitle": "Unlock your founder voice",
-  "paywallSubtitle": "Capture every idea. Get AI-powered analysis on every note.",
+  "paywallTitle": "A living thesis, not another note",
+  "paywallSubtitle": "Debrief the call you just finished. See what changed, what is still a bet, and who to talk to next.",
   "paywallLimitReachedTitle": "You've used all your minutes",
-  "paywallLimitReachedSubtitle": "Upgrade to keep capturing ideas without interruption.",
+  "paywallLimitReachedSubtitle": "Upgrade to keep debriefing conversations this month — not to score another note.",
   "paywallEverythingYouGet": "Everything you get",
   "paywallTierFree": "Free",
   "paywallTierBasic": "Basic",
   "paywallTierPro": "Pro",
-  "paywallTagFree": "Try the essentials.",
-  "paywallTagBasic": "For founders capturing daily ideas.",
-  "paywallTagPro": "For serious idea-mappers and operators.",
+  "paywallTagFree": "One short week-one loop.",
+  "paywallTagBasic": "Thesis plus the week's debriefs.",
+  "paywallTagPro": "Full week loop — versions, artifact, next conversation.",
   "paywallBillingMonthly": "Monthly",
   "paywallBillingAnnual": "Annual",
   "paywallSavePercent": "Save {percent}%",
@@ -182,6 +188,27 @@
   "paywallCouldNotLoad": "Could not load plans. Please try again.",
   "paywallTryAgain": "Try again",
   "paywallNoActivePurchases": "No active purchases to restore.",
+  "paywallMinutesPerMonth": "{count} minutes of recordings / month",
+  "@paywallMinutesPerMonth": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "paywallValueThesisTitle": "Living thesis",
+  "paywallValueThesisBody": "One thesis that gets sharper after every conversation — not a new analysis of every note.",
+  "paywallValueDebriefTitle": "Debrief after the call",
+  "paywallValueDebriefBody": "Two-minute voice notes after a real conversation. What died, what held, what is still unbacked.",
+  "paywallValueNextTitle": "Next conversation",
+  "paywallValueNextBody": "Who to talk to next, and what not to ask.",
+  "paywallValueArtifactTitle": "Weekly artifact",
+  "paywallValueArtifactBody": "Highlights, metrics, and an ask from the week's corpus — ready to send.",
+  "paywallFeatureThesisDebriefs": "Living thesis + debriefs",
+  "paywallFeatureWeeklyArtifact": "Weekly artifact you can send",
+  "paywallFeatureThesisFromDebriefs": "Living thesis that updates from debriefs",
+  "paywallFeatureSearchTags": "Search, tags & favorites",
+  "paywallFeatureEverythingBasic": "Everything in Basic",
+  "paywallFeatureThesisVersions": "Thesis versions without a 5-round cap",
+  "paywallFeatureArtifactAndScript": "Weekly artifact + next-conversation script",
   "planGapsTitle": "FILL IN THE GAPS",
   "planGapsHint": "These sections need more detail. Tap the mic to answer with a short voice note.",
   "planReadinessTitle": "PLAN READINESS",
@@ -263,7 +290,7 @@
   "recordingOnboardingContinue": "Continue to recording",
   "recordingOnboardingSkip": "Skip",
   "customerDiscoveryGuideTitle": "Customer discovery guide",
-  "customerDiscoveryGuideSubtitle": "Capture what you learned from users — we will structure it into insights and next interviews.",
+  "customerDiscoveryGuideSubtitle": "Debrief the call you just finished — about two minutes is enough. We will update what changed and who to talk to next.",
   "customerDiscoveryPromptWorkflowTitle": "Interview flow",
   "customerDiscoveryPromptWorkflowHint": "Who did you talk to and what did you ask?",
   "customerDiscoveryPromptPainTitle": "Pain & urgency",

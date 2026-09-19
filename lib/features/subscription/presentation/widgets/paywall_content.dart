@@ -8,6 +8,7 @@ import 'package:sample/core/theme/obsidian_ui_tokens.dart';
 import 'package:sample/features/subscription/domain/entities/subscription_status.dart';
 import 'package:sample/features/subscription/presentation/cubit/subscription_cubit.dart';
 import 'package:sample/features/subscription/presentation/cubit/subscription_state.dart';
+import 'package:sample/l10n/generated/app_localizations.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 /// Shared paywall body. Hosted inside [PaywallPage] (full-screen) or
@@ -112,6 +113,7 @@ class _PaywallContentState extends State<PaywallContent> {
     final currentTier = state is SubscriptionLoaded
         ? state.status.tier
         : SubscriptionTier.free;
+    final l10n = AppLocalizations.of(context)!;
 
     return SingleChildScrollView(
       controller: widget.scrollController,
@@ -125,10 +127,8 @@ class _PaywallContentState extends State<PaywallContent> {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           _Header(
-            title: widget.headline ?? 'Unlock your founder voice',
-            subtitle:
-                widget.subhead ??
-                'Capture every idea. Get AI-powered analysis on every note.',
+            title: widget.headline ?? l10n.paywallTitle,
+            subtitle: widget.subhead ?? l10n.paywallSubtitle,
             compact: widget.compact,
           ),
           SizedBox(height: widget.compact ? AppSpacing.lg : AppSpacing.xl),
@@ -379,36 +379,26 @@ class _Header extends StatelessWidget {
 class _ValuePropList extends StatelessWidget {
   const _ValuePropList();
 
-  static const _items = <(IconData, String, String)>[
+  List<(IconData, String, String)> _items(AppLocalizations l10n) => [
     (
-      Icons.graphic_eq_rounded,
-      'AI transcription on every recording',
-      'Every word captured automatically — no typing.',
+      Icons.auto_awesome_rounded,
+      l10n.paywallValueThesisTitle,
+      l10n.paywallValueThesisBody,
     ),
     (
-      Icons.psychology_alt_rounded,
-      'Structured business analysis',
-      'Problem, solution, business model & risks extracted from your voice.',
+      Icons.phone_callback_rounded,
+      l10n.paywallValueDebriefTitle,
+      l10n.paywallValueDebriefBody,
     ),
     (
-      Icons.insights_rounded,
-      'Venture intelligence scoring',
-      'Market potential & technical complexity — scored 1 to 10.',
+      Icons.forum_outlined,
+      l10n.paywallValueNextTitle,
+      l10n.paywallValueNextBody,
     ),
     (
-      Icons.help_outline_rounded,
-      'AI follow-up questions',
-      'Sharpen your thinking with prompts the model generates for you.',
-    ),
-    (
-      Icons.history_rounded,
-      'Plan versions & refinement',
-      'Track how your strategy evolves with full version history.',
-    ),
-    (
-      Icons.search_rounded,
-      'Search across all your notes',
-      'Find any thought, any time. Tags & favorites included.',
+      Icons.mail_outline_rounded,
+      l10n.paywallValueArtifactTitle,
+      l10n.paywallValueArtifactBody,
     ),
   ];
 
@@ -416,12 +406,14 @@ class _ValuePropList extends StatelessWidget {
   Widget build(BuildContext context) {
     final t = context.appTokens;
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context)!;
+    final items = _items(l10n);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         Text(
-          'Everything you get',
+          l10n.paywallEverythingYouGet,
           style: theme.textTheme.titleSmall?.copyWith(
             color: t.onSurfaceVariant,
             fontWeight: FontWeight.w700,
@@ -429,7 +421,7 @@ class _ValuePropList extends StatelessWidget {
           ),
         ),
         const SizedBox(height: AppSpacing.md),
-        for (final (icon, headline, body) in _items) ...[
+        for (final (icon, headline, body) in items) ...[
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -585,7 +577,7 @@ class _TierCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final t = context.appTokens;
     final theme = Theme.of(context);
-    final spec = _tierSpec(tier);
+    final spec = _tierSpec(tier, AppLocalizations.of(context)!);
 
     final disabled = onTap == null;
     final bgColor = isSelected
@@ -964,38 +956,37 @@ class _TierSpec {
   final List<String> features;
 }
 
-_TierSpec _tierSpec(_PaywallTier tier) {
+_TierSpec _tierSpec(_PaywallTier tier, AppLocalizations l10n) {
   switch (tier) {
     case _PaywallTier.free:
       return _TierSpec(
-        name: 'Free',
-        tagline: 'Try the essentials.',
+        name: l10n.paywallTierFree,
+        tagline: l10n.paywallTagFree,
         features: [
-          '${kFreeMonthlyLimitSeconds ~/ 60} minutes of recordings / month',
-          'AI transcription',
-          'Basic note storage',
+          l10n.paywallMinutesPerMonth(kFreeMonthlyLimitSeconds ~/ 60),
+          l10n.paywallFeatureThesisDebriefs,
+          l10n.paywallFeatureWeeklyArtifact,
         ],
       );
     case _PaywallTier.basic:
       return _TierSpec(
-        name: 'Basic',
-        tagline: 'For founders capturing daily ideas.',
+        name: l10n.paywallTierBasic,
+        tagline: l10n.paywallTagBasic,
         features: [
-          '${kBasicMonthlyLimitSeconds ~/ 60} minutes of recordings / month',
-          'AI transcription & structured analysis',
-          'Search, tags & favorites',
+          l10n.paywallMinutesPerMonth(kBasicMonthlyLimitSeconds ~/ 60),
+          l10n.paywallFeatureThesisFromDebriefs,
+          l10n.paywallFeatureSearchTags,
         ],
       );
     case _PaywallTier.pro:
       return _TierSpec(
-        name: 'Pro',
-        tagline: 'For serious idea-mappers and operators.',
+        name: l10n.paywallTierPro,
+        tagline: l10n.paywallTagPro,
         features: [
-          '${kProMonthlyLimitSeconds ~/ 60} minutes of recordings / month',
-          'Everything in Basic',
-          'Venture intelligence scoring',
-          'AI follow-up questions',
-          'Plan versions & refinement loop',
+          l10n.paywallMinutesPerMonth(kProMonthlyLimitSeconds ~/ 60),
+          l10n.paywallFeatureEverythingBasic,
+          l10n.paywallFeatureThesisVersions,
+          l10n.paywallFeatureArtifactAndScript,
         ],
       );
   }
