@@ -201,6 +201,11 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String debriefAboutMinutes(int count) {
+    return 'About $count minutes is enough';
+  }
+
+  @override
   String get note => 'Note';
 
   @override
@@ -418,18 +423,18 @@ class AppLocalizationsEn extends AppLocalizations {
   String get addTag => 'Add tag';
 
   @override
-  String get paywallTitle => 'Unlock your founder voice';
+  String get paywallTitle => 'A living thesis, not another note';
 
   @override
   String get paywallSubtitle =>
-      'Capture every idea. Get AI-powered analysis on every note.';
+      'Debrief the call you just finished. See what changed, what is still a bet, and who to talk to next.';
 
   @override
   String get paywallLimitReachedTitle => 'You\'ve used all your minutes';
 
   @override
   String get paywallLimitReachedSubtitle =>
-      'Upgrade to keep capturing ideas without interruption.';
+      'Upgrade to keep debriefing conversations this month — not to score another note.';
 
   @override
   String get paywallEverythingYouGet => 'Everything you get';
@@ -444,13 +449,14 @@ class AppLocalizationsEn extends AppLocalizations {
   String get paywallTierPro => 'Pro';
 
   @override
-  String get paywallTagFree => 'Try the essentials.';
+  String get paywallTagFree => 'One short week-one loop.';
 
   @override
-  String get paywallTagBasic => 'For founders capturing daily ideas.';
+  String get paywallTagBasic => 'Thesis plus the week\'s debriefs.';
 
   @override
-  String get paywallTagPro => 'For serious idea-mappers and operators.';
+  String get paywallTagPro =>
+      'Full week loop — versions, artifact, next conversation.';
 
   @override
   String get paywallBillingMonthly => 'Monthly';
@@ -495,6 +501,63 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get paywallNoActivePurchases => 'No active purchases to restore.';
+
+  @override
+  String paywallMinutesPerMonth(int count) {
+    return '$count minutes of recordings / month';
+  }
+
+  @override
+  String get paywallValueThesisTitle => 'Living thesis';
+
+  @override
+  String get paywallValueThesisBody =>
+      'One thesis that gets sharper after every conversation — not a new analysis of every note.';
+
+  @override
+  String get paywallValueDebriefTitle => 'Debrief after the call';
+
+  @override
+  String get paywallValueDebriefBody =>
+      'Two-minute voice notes after a real conversation. What died, what held, what is still unbacked.';
+
+  @override
+  String get paywallValueNextTitle => 'Next conversation';
+
+  @override
+  String get paywallValueNextBody =>
+      'Who to talk to next, and what not to ask.';
+
+  @override
+  String get paywallValueArtifactTitle => 'Weekly artifact';
+
+  @override
+  String get paywallValueArtifactBody =>
+      'Highlights, metrics, and an ask from the week\'s corpus — ready to send.';
+
+  @override
+  String get paywallFeatureThesisDebriefs => 'Living thesis + debriefs';
+
+  @override
+  String get paywallFeatureWeeklyArtifact => 'Weekly artifact you can send';
+
+  @override
+  String get paywallFeatureThesisFromDebriefs =>
+      'Living thesis that updates from debriefs';
+
+  @override
+  String get paywallFeatureSearchTags => 'Search, tags & favorites';
+
+  @override
+  String get paywallFeatureEverythingBasic => 'Everything in Basic';
+
+  @override
+  String get paywallFeatureThesisVersions =>
+      'Thesis versions without a 5-round cap';
+
+  @override
+  String get paywallFeatureArtifactAndScript =>
+      'Weekly artifact + next-conversation script';
 
   @override
   String get planGapsTitle => 'FILL IN THE GAPS';
@@ -668,7 +731,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get customerDiscoveryGuideSubtitle =>
-      'Capture what you learned from users — we will structure it into insights and next interviews.';
+      'Debrief the call you just finished — about two minutes is enough. We will update what changed and who to talk to next.';
 
   @override
   String get customerDiscoveryPromptWorkflowTitle => 'Interview flow';

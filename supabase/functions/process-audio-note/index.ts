@@ -18,8 +18,11 @@ const CHAT_MODEL = "gpt-4o-mini";
 // Tier → monthly recording-time budget, in seconds.
 // MUST stay in sync with kFreeMonthlyLimitSeconds / kBasicMonthlyLimitSeconds /
 // kProMonthlyLimitSeconds in lib/core/constants/audio_notes_constants.dart.
+// Free is 15 minutes (not 5) so one short week-one loop survives testers.
+// Chosen over a 4×2-minute count cap — same integer in both sources, no new
+// limiter. gpt-4o-mini cost for a 10-founder sprint is negligible.
 const TIER_MONTHLY_LIMIT_SECONDS: Record<string, number> = {
-  free: 300,
+  free: 900,
   basic: 1200,
   pro: 3600,
 };
