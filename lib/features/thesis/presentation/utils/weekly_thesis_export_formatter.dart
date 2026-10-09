@@ -1,36 +1,32 @@
-import 'package:sample/features/audio_notes/domain/entities/audio_note.dart';
-import 'package:sample/features/audio_notes/presentation/utils/plan_export_formatter.dart';
 import 'package:sample/features/thesis/domain/entities/thesis.dart';
 import 'package:sample/features/thesis/domain/entities/weekly_thesis_export.dart';
-import 'package:sample/features/thesis/domain/utils/thesis_as_startup_analysis.dart';
 
-/// Localized headings and honest empty lines for the weekly letter.
+/// Localized headings for the weekly letter.
 class WeeklyExportLabels {
   const WeeklyExportLabels({
-    required this.highlightsTitle,
-    required this.metricsTitle,
-    required this.askTitle,
+    required this.currentSpeechTitle,
+    required this.heardTitle,
+    required this.noHeard,
     required this.untitledNote,
-    required this.noMetrics,
-    required this.noAsk,
-    required this.debriefsThisWeek,
     required this.weekOf,
     required this.formatDate,
+    required this.heardLine,
   });
 
-  final String highlightsTitle;
-  final String metricsTitle;
-  final String askTitle;
+  final String currentSpeechTitle;
+  final String heardTitle;
+  final String noHeard;
   final String untitledNote;
-  final String noMetrics;
-  final String noAsk;
-  final String Function(int count) debriefsThisWeek;
   final String Function(String range) weekOf;
   final String Function(DateTime date) formatDate;
+
+  /// Label plus the date it was marked heard. Not a user id.
+  final String Function(String label, String date) heardLine;
 }
 
-/// Highlights / Metrics / Ask from the 7-day corpus, then
-/// [PlanExportFormatter.onePager] of the living thesis — not one card.
+/// Current concept, then who heard a version in the last 7 days.
+///
+/// Old field paragraphs are not glued into a one-pager.
 class WeeklyThesisExportFormatter {
   const WeeklyThesisExportFormatter._();
 
@@ -42,61 +38,50 @@ class WeeklyThesisExportFormatter {
       ..writeln('# $title')
       ..writeln(labels.weekOf(range))
       ..writeln()
-      ..writeln('## ${labels.highlightsTitle}')
-      ..writeln(labels.debriefsThisWeek(export.weekDebriefs.length));
+      ..writeln('## ${labels.currentSpeechTitle}');
 
-    for (final note in export.weekDebriefs) {
-      buf.writeln('• ${_debriefLine(note, labels)}');
-    }
-
-    final summary = _nonEmpty(export.thesis.shortSummary);
-    if (summary != null) {
-      buf
-        ..writeln()
-        ..writeln(summary);
+    final speech = _speechLines(export.thesis);
+    if (speech.isEmpty) {
+      buf.writeln(labels.untitledNote);
+    } else {
+      for (var i = 0; i < speech.length; i++) {
+        if (i > 0) buf.writeln();
+        buf.writeln(speech[i]);
+      }
     }
 
     buf
       ..writeln()
-      ..writeln('## ${labels.metricsTitle}')
-      ..writeln(_metricsBody(export.thesis, labels))
-      ..writeln()
-      ..writeln('## ${labels.askTitle}')
-      ..writeln(_askBody(export.thesis, labels));
-
-    final analysis = thesisAsStartupAnalysis(export.thesis);
-    if (PlanExportFormatter.hasExportableContent(analysis)) {
-      buf
-        ..writeln()
-        ..writeln('---')
-        ..writeln()
-        ..write(PlanExportFormatter.onePager(analysis));
+      ..writeln('## ${labels.heardTitle}');
+    final heard = export.heardVersions.where((version) => version.wasHeard);
+    if (heard.isEmpty) {
+      buf.writeln(labels.noHeard);
+    } else {
+      for (final version in heard) {
+        final at = version.heardAt ?? version.createdAt;
+        buf.writeln(
+          '• ${labels.heardLine(version.heardByLabel!.trim(), labels.formatDate(at))}',
+        );
+      }
     }
 
     return buf.toString().trim();
   }
 
-  static String _debriefLine(AudioNote note, WeeklyExportLabels labels) {
-    final title = _nonEmpty(note.title) ?? labels.untitledNote;
-    return '$title (${labels.formatDate(note.createdAt)})';
-  }
-
-  static String _metricsBody(Thesis thesis, WeeklyExportLabels labels) {
-    return _nonEmpty(thesis.keyMetrics) ?? labels.noMetrics;
-  }
-
-  static String _askBody(Thesis thesis, WeeklyExportLabels labels) {
-    final script = _nonEmpty(thesis.nextConversationScript);
-    if (script != null) return script;
-
-    final questions = thesis.followUpQuestions
-        ?.map((q) => q.trim())
-        .where((q) => q.isNotEmpty)
-        .toList();
-    if (questions != null && questions.isNotEmpty) {
-      return questions.map((q) => '• $q').join('\n');
-    }
-    return labels.noAsk;
+  static List<String> _speechLines(Thesis thesis) {
+    return [
+      for (final value in [
+        thesis.shortSummary,
+        thesis.problem,
+        thesis.solution,
+        thesis.targetAudience,
+        thesis.businessModel,
+        thesis.keyMetrics,
+        thesis.advantages,
+        thesis.risksGaps,
+      ])
+        if (_nonEmpty(value) != null) _nonEmpty(value)!,
+    ];
   }
 
   static String? _nonEmpty(String? value) {

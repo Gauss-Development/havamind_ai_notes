@@ -23,34 +23,45 @@ class CollectWeekUseCase implements UseCase<WeeklyThesisExport, NoParams> {
 
   /// Enough for a discovery week; Home’s first page is only 20.
   static const _noteLimit = 100;
+  static const _versionLimit = 50;
 
   @override
   Future<Either<Failure, WeeklyThesisExport>> call(NoParams params) async {
     final thesisResult = await _thesisRepository.getCurrentThesis();
-    return thesisResult.fold<Future<Either<Failure, WeeklyThesisExport>>>(
-      (failure) async => Left(failure),
-      (thesis) async {
-        if (thesis == null) {
-          return const Left(NotFoundFailure('No thesis'));
-        }
-        final notesResult = await _audioNotesRepository.listNotes(
-          limit: _noteLimit,
-        );
-        return notesResult.fold(Left.new, (notes) {
-          final now = _clock();
-          final since = weekExportSince(now);
-          final weekNotes = selectNotesCreatedSince(notes, since);
-          return Right(
-            WeeklyThesisExport(
-              thesis: thesis,
-              weekNotes: weekNotes,
-              weekDebriefs: selectWeekDebriefs(weekNotes),
-              windowStart: since,
-              windowEnd: now,
-            ),
-          );
-        });
-      },
+    final thesisFailure = thesisResult.fold<Failure?>((l) => l, (_) => null);
+    if (thesisFailure != null) return Left(thesisFailure);
+    final thesis = thesisResult.fold((_) => null, (r) => r);
+    if (thesis == null) return const Left(NotFoundFailure('No thesis'));
+
+    final notesResult = await _audioNotesRepository.listNotes(
+      limit: _noteLimit,
+    );
+    final notesFailure = notesResult.fold<Failure?>((l) => l, (_) => null);
+    if (notesFailure != null) return Left(notesFailure);
+    final notes = notesResult.fold((_) => null, (r) => r)!;
+
+    final versionsResult = await _thesisRepository.listRecentVersions(
+      limit: _versionLimit,
+    );
+    final versionsFailure = versionsResult.fold<Failure?>(
+      (l) => l,
+      (_) => null,
+    );
+    if (versionsFailure != null) return Left(versionsFailure);
+    final versions = versionsResult.fold((_) => null, (r) => r)!;
+
+    final now = _clock();
+    final since = weekExportSince(now);
+    final weekNotes = selectNotesCreatedSince(notes, since);
+    return Right(
+      WeeklyThesisExport(
+        thesis: thesis,
+        weekNotes: weekNotes,
+        weekDebriefs: selectWeekDebriefs(weekNotes),
+        windowStart: since,
+        windowEnd: now,
+        heardVersions: selectHeardInWindow(versions, since, now),
+      ),
     );
   }
 }
