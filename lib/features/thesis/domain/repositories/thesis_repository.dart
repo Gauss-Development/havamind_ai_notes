@@ -1,6 +1,7 @@
 import 'package:dartz/dartz.dart';
 
 import 'package:sample/core/error/failure.dart';
+import 'package:sample/features/thesis/domain/entities/concept_rewrite.dart';
 import 'package:sample/features/thesis/domain/entities/thesis.dart';
 import 'package:sample/features/thesis/domain/entities/thesis_seed_candidate.dart';
 import 'package:sample/features/thesis/domain/entities/thesis_version.dart';
@@ -25,4 +26,9 @@ abstract class ThesisRepository {
   /// Records that the weekly letter left the app via the OS share sheet.
   /// Copy / generate must not call this.
   Future<Either<Failure, Thesis>> recordWeekArtifactShare();
+
+  /// Rewrites the current concept, or returns a hearer suggestion and writes nothing.
+  Future<Either<Failure, ConceptRewriteResult>> rewriteConcept(
+    RewriteConceptRequest request,
+  );
 }

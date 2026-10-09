@@ -1763,26 +1763,80 @@ abstract class AppLocalizations {
   /// No description provided for @thesisDebriefCta.
   ///
   /// In en, this message translates to:
-  /// **'Debrief the conversation that just ended'**
+  /// **'Debrief the pitch you just gave'**
   String get thesisDebriefCta;
 
   /// No description provided for @thesisDebriefBody.
   ///
   /// In en, this message translates to:
-  /// **'Ninety seconds while it’s still fresh. We update the thesis, not a new card.'**
+  /// **'Who heard it? We rewrite the speech, and keep the one they already heard.'**
   String get thesisDebriefBody;
 
   /// No description provided for @thesisDebriefAction.
   ///
   /// In en, this message translates to:
-  /// **'Debrief'**
+  /// **'Pitch debrief'**
   String get thesisDebriefAction;
 
   /// No description provided for @thesisDebriefFab.
   ///
   /// In en, this message translates to:
-  /// **'Debrief'**
+  /// **'Pitch debrief'**
   String get thesisDebriefFab;
+
+  /// No description provided for @thesisCurrentSpeechEyebrow.
+  ///
+  /// In en, this message translates to:
+  /// **'SPEECH'**
+  String get thesisCurrentSpeechEyebrow;
+
+  /// No description provided for @thesisCurrentSpeechTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'What you\'ll say next'**
+  String get thesisCurrentSpeechTitle;
+
+  /// No description provided for @thesisHeardVersionsEyebrow.
+  ///
+  /// In en, this message translates to:
+  /// **'ALREADY HEARD'**
+  String get thesisHeardVersionsEyebrow;
+
+  /// No description provided for @thesisHeardVersionsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Who heard it'**
+  String get thesisHeardVersionsTitle;
+
+  /// No description provided for @thesisHeardBy.
+  ///
+  /// In en, this message translates to:
+  /// **'This version was heard by: {label}'**
+  String thesisHeardBy(String label);
+
+  /// No description provided for @thesisHearerPrompt.
+  ///
+  /// In en, this message translates to:
+  /// **'Who heard this pitch?'**
+  String get thesisHearerPrompt;
+
+  /// No description provided for @thesisHearerHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Name, as you would say it'**
+  String get thesisHearerHint;
+
+  /// No description provided for @thesisConfirmHearer.
+  ///
+  /// In en, this message translates to:
+  /// **'This is who heard it'**
+  String get thesisConfirmHearer;
+
+  /// No description provided for @thesisRewriteSpeech.
+  ///
+  /// In en, this message translates to:
+  /// **'Rewrite the speech'**
+  String get thesisRewriteSpeech;
 
   /// No description provided for @thesisColdPitchCta.
   ///
@@ -1793,7 +1847,7 @@ abstract class AppLocalizations {
   /// No description provided for @thesisColdPitchBody.
   ///
   /// In en, this message translates to:
-  /// **'The only honest first step when there is no interview yet.'**
+  /// **'A speech nobody has heard yet. It replaces the concept without a hearer.'**
   String get thesisColdPitchBody;
 
   /// No description provided for @thesisColdPitchAction.
@@ -1871,7 +1925,7 @@ abstract class AppLocalizations {
   /// No description provided for @thesisLastDebriefTitle.
   ///
   /// In en, this message translates to:
-  /// **'Last debrief'**
+  /// **'Last pitch'**
   String get thesisLastDebriefTitle;
 
   /// No description provided for @thesisLoadError.
@@ -1889,7 +1943,7 @@ abstract class AppLocalizations {
   /// No description provided for @thesisResultTitle.
   ///
   /// In en, this message translates to:
-  /// **'What changed'**
+  /// **'The speech'**
   String get thesisResultTitle;
 
   /// No description provided for @thesisResultEyebrow.
@@ -1907,19 +1961,19 @@ abstract class AppLocalizations {
   /// No description provided for @thesisResultProcessingHint.
   ///
   /// In en, this message translates to:
-  /// **'We’ll show the thesis diff as soon as the note completes.'**
+  /// **'We’ll show the speech as soon as the note completes.'**
   String get thesisResultProcessingHint;
 
   /// No description provided for @thesisResultApplying.
   ///
   /// In en, this message translates to:
-  /// **'Updating the living thesis…'**
+  /// **'Rewriting the speech…'**
   String get thesisResultApplying;
 
   /// No description provided for @thesisResultApplyingHint.
   ///
   /// In en, this message translates to:
-  /// **'Appending this conversation — not rewriting a card.'**
+  /// **'The speech they heard stays marked with their name.'**
   String get thesisResultApplyingHint;
 
   /// No description provided for @thesisResultFailed.

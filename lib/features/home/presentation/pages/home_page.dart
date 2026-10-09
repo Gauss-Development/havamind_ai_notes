@@ -14,6 +14,7 @@ import 'package:sample/features/audio_notes/presentation/utils/recording_flow.da
 import 'package:sample/features/audio_notes/presentation/widgets/audio_note_duration_formatter.dart';
 import 'package:sample/features/auth/domain/entities/user_profile.dart';
 import 'package:sample/features/home/presentation/utils/select_last_debrief_note.dart';
+import 'package:sample/features/thesis/presentation/concept_result_entry.dart';
 import 'package:sample/features/thesis/presentation/cubit/thesis_home_cubit.dart';
 import 'package:sample/features/thesis/presentation/utils/open_thesis_result_page.dart';
 import 'package:sample/features/thesis/presentation/widgets/thesis_home_actions.dart';
@@ -95,18 +96,30 @@ class HomePage extends StatelessWidget {
   }
 
   Future<void> _openDebrief(BuildContext context) {
-    return _openRecording(context, RecordingTemplateIds.customerDiscovery);
+    return _openRecording(
+      context,
+      RecordingTemplateIds.founderPitch,
+      ConceptResultEntry.pitchDebrief,
+    );
   }
 
   Future<void> _openColdPitch(BuildContext context) {
-    return _openRecording(context, RecordingTemplateIds.founderPitch);
+    return _openRecording(
+      context,
+      RecordingTemplateIds.founderPitch,
+      ConceptResultEntry.coldPitch,
+    );
   }
 
   Future<void> _openCollectWeek(BuildContext context) {
     return showThesisWeekExportSheet(context: context);
   }
 
-  Future<void> _openRecording(BuildContext context, String templateId) async {
+  Future<void> _openRecording(
+    BuildContext context,
+    String templateId,
+    ConceptResultEntry entry,
+  ) async {
     final result = await openRecordingFlow(context, templateId: templateId);
     if (!context.mounted || result == null || result == false) return;
     context.read<AudioNotesListBloc>().add(
@@ -115,7 +128,7 @@ class HomePage extends StatelessWidget {
     await context.read<ThesisHomeCubit>().refresh();
     if (!context.mounted) return;
     if (result is AudioNote) {
-      await openThesisResultPage(context, result.id);
+      await openThesisResultPage(context, result.id, entry: entry);
       if (!context.mounted) return;
       context.read<AudioNotesListBloc>().add(
         const AudioNotesListEvent.refreshed(),
@@ -215,7 +228,6 @@ class _HomeHero extends StatelessWidget {
                       ThesisHomeCard(loaded: loaded),
                       const SizedBox(height: AppSpacing.lg),
                       ThesisHomeActions(
-                        isBlankThesis: loaded.isBlank,
                         onDebrief: onDebrief,
                         onColdPitch: onColdPitch,
                         onCollectWeek: onCollectWeek,

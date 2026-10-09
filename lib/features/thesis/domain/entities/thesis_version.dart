@@ -1,7 +1,17 @@
 import 'package:equatable/equatable.dart';
 
-/// A historical snapshot of a thesis, matching the `plan_versions` contract
-/// (snapshot, transcription, diff_summary, round_number) on the thesis axis.
+/// Whether a frozen speech has already been heard.
+enum HearingStatus {
+  unheard,
+  heard;
+
+  static HearingStatus fromDb(String? raw) {
+    return raw == 'heard' ? HearingStatus.heard : HearingStatus.unheard;
+  }
+}
+
+/// A past speech of the concept. After [HearingStatus.heard] the snapshot
+/// is read-only and carries the label of who heard it.
 class ThesisVersion extends Equatable {
   const ThesisVersion({
     required this.id,
@@ -14,6 +24,9 @@ class ThesisVersion extends Equatable {
     this.followUpQuestions,
     this.sourceNoteId,
     this.sourceTemplateId,
+    this.hearingStatus = HearingStatus.unheard,
+    this.heardByLabel,
+    this.heardAt,
     required this.createdAt,
   });
 
@@ -29,7 +42,17 @@ class ThesisVersion extends Equatable {
   /// Note that produced this version; used to count debrief returns.
   final String? sourceNoteId;
   final String? sourceTemplateId;
+
+  final HearingStatus hearingStatus;
+
+  /// Founder-confirmed label. Not a Havamind user id.
+  final String? heardByLabel;
+  final DateTime? heardAt;
   final DateTime createdAt;
+
+  bool get wasHeard =>
+      hearingStatus == HearingStatus.heard &&
+      (heardByLabel?.trim().isNotEmpty ?? false);
 
   @override
   List<Object?> get props => [
@@ -43,6 +66,9 @@ class ThesisVersion extends Equatable {
     followUpQuestions,
     sourceNoteId,
     sourceTemplateId,
+    hearingStatus,
+    heardByLabel,
+    heardAt,
     createdAt,
   ];
 }

@@ -5,31 +5,33 @@ import 'package:sample/core/di/injection.dart';
 import 'package:sample/core/theme/app_spacing.dart';
 import 'package:sample/core/theme/obsidian_ui_tokens.dart';
 import 'package:sample/core/widgets/obsidian_gradient_button.dart';
-import 'package:sample/features/audio_notes/domain/entities/audio_note.dart';
-import 'package:sample/features/audio_notes/domain/entities/recording_template.dart';
 import 'package:sample/features/audio_notes/presentation/pages/note_detail_page.dart';
-import 'package:sample/features/audio_notes/presentation/utils/recording_flow.dart';
 import 'package:sample/features/favorites/presentation/bloc/favorites_bloc.dart';
 import 'package:sample/features/tags/presentation/bloc/tags_cubit.dart';
+import 'package:sample/features/thesis/domain/entities/thesis.dart';
+import 'package:sample/features/thesis/domain/entities/thesis_version.dart';
+import 'package:sample/features/thesis/presentation/concept_result_entry.dart';
 import 'package:sample/features/thesis/presentation/cubit/thesis_result_cubit.dart';
-import 'package:sample/features/thesis/presentation/utils/open_thesis_result_page.dart';
-import 'package:sample/features/thesis/presentation/widgets/thesis_field_diff_section.dart';
-import 'package:sample/features/thesis/presentation/widgets/thesis_next_conversation_card.dart';
-import 'package:sample/features/thesis/presentation/widgets/thesis_unbacked_stakes_card.dart';
+import 'package:sample/features/thesis/presentation/widgets/thesis_speech_section.dart';
 import 'package:sample/l10n/generated/app_localizations.dart';
 
-/// Post-debrief result: field diff, unbacked stakes, next conversation.
-///
-/// Not [NoteDetailPage]. That stays the archive for transcript and tags.
+/// Current concept speech, who already heard older versions, and the
+/// confirmation required before a rewrite.
 class ThesisPage extends StatelessWidget {
-  const ThesisPage({super.key, required this.noteId});
+  const ThesisPage({
+    super.key,
+    required this.noteId,
+    this.entry = ConceptResultEntry.view,
+  });
 
   final String noteId;
+  final ConceptResultEntry entry;
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) => getIt<ThesisResultCubit>(param1: noteId)..start(),
+      create: (_) =>
+          getIt<ThesisResultCubit>(param1: noteId, param2: entry)..start(),
       child: const _ThesisResultView(),
     );
   }
@@ -62,7 +64,7 @@ class _ThesisResultView extends StatelessWidget {
                 title: l10n.thesisResultProcessing,
                 body: l10n.thesisResultProcessingHint,
               ),
-              ThesisResultApplying() => _StatusCard(
+              ThesisResultRewriting() => _StatusCard(
                 busy: true,
                 title: l10n.thesisResultApplying,
                 body: l10n.thesisResultApplyingHint,
@@ -82,13 +84,17 @@ class _ThesisResultView extends StatelessWidget {
                 actionLabel: l10n.thesisRetry,
                 onAction: () => context.read<ThesisResultCubit>().start(),
               ),
-              ThesisResultLoaded loaded => _LoadedResult(
-                loaded: loaded,
-                onAnswerByVoice: (question) =>
-                    _replyUnbacked(context, question),
-                onOpenTranscript: () =>
-                    _openTranscript(context, loaded.note.id),
-                onDone: () => Navigator.of(context).maybePop(),
+              ThesisResultAwaitingHearer waiting => _ConceptBody(
+                thesis: waiting.thesis,
+                versions: waiting.versions,
+                noteId: waiting.note.id,
+                footer: _HearerForm(waiting: waiting),
+              ),
+              ThesisResultLoaded loaded => _ConceptBody(
+                thesis: loaded.thesis,
+                versions: loaded.versions,
+                rewriteNote: loaded.rewriteNote,
+                noteId: loaded.note.id,
               ),
             };
           },
@@ -96,16 +102,64 @@ class _ThesisResultView extends StatelessWidget {
       ),
     );
   }
+}
 
-  Future<void> _replyUnbacked(BuildContext context, String question) async {
-    final result = await openRecordingFlow(
-      context,
-      templateId: RecordingTemplateIds.customerDiscovery,
-      voicePrompt: question,
+class _ConceptBody extends StatelessWidget {
+  const _ConceptBody({
+    required this.thesis,
+    required this.versions,
+    required this.noteId,
+    this.rewriteNote,
+    this.footer,
+  });
+
+  final Thesis thesis;
+  final List<ThesisVersion> versions;
+  final String noteId;
+  final String? rewriteNote;
+  final Widget? footer;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    final title = thesis.title?.trim();
+    final displayTitle = (title == null || title.isEmpty)
+        ? l10n.thesisUntitled
+        : title;
+
+    return ListView(
+      padding: const EdgeInsets.fromLTRB(
+        AppSpacing.lg,
+        AppSpacing.md,
+        AppSpacing.lg,
+        AppSpacing.xxxl,
+      ),
+      children: [
+        Text(
+          displayTitle,
+          style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+            fontWeight: FontWeight.w800,
+            height: 1.15,
+          ),
+        ),
+        const SizedBox(height: AppSpacing.xl),
+        ThesisSpeechSection(thesis: thesis, rewriteNote: rewriteNote),
+        const SizedBox(height: AppSpacing.lg),
+        ThesisHeardVersionsSection(versions: versions),
+        if (footer != null) ...[const SizedBox(height: AppSpacing.lg), footer!],
+        const SizedBox(height: AppSpacing.xl),
+        TextButton(
+          onPressed: () => _openTranscript(context, noteId),
+          child: Text(l10n.thesisSeeTranscript),
+        ),
+        const SizedBox(height: AppSpacing.sm),
+        AppGradientButton(
+          onPressed: () => Navigator.of(context).maybePop(),
+          label: l10n.thesisResultDone,
+          expand: true,
+        ),
+      ],
     );
-    if (!context.mounted) return;
-    if (result is! AudioNote) return;
-    await openThesisResultPage(context, result.id);
   }
 
   Future<void> _openTranscript(BuildContext context, String noteId) async {
@@ -125,87 +179,87 @@ class _ThesisResultView extends StatelessWidget {
   }
 }
 
-class _LoadedResult extends StatelessWidget {
-  const _LoadedResult({
-    required this.loaded,
-    required this.onAnswerByVoice,
-    required this.onOpenTranscript,
-    required this.onDone,
-  });
+class _HearerForm extends StatefulWidget {
+  const _HearerForm({required this.waiting});
 
-  final ThesisResultLoaded loaded;
-  final void Function(String question) onAnswerByVoice;
-  final VoidCallback onOpenTranscript;
-  final VoidCallback onDone;
+  final ThesisResultAwaitingHearer waiting;
+
+  @override
+  State<_HearerForm> createState() => _HearerFormState();
+}
+
+class _HearerFormState extends State<_HearerForm> {
+  late final TextEditingController _label;
+
+  @override
+  void initState() {
+    super.initState();
+    _label = TextEditingController(text: widget.waiting.suggestedHearer ?? '');
+  }
+
+  @override
+  void dispose() {
+    _label.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     final t = context.appTokens;
     final theme = Theme.of(context);
-    final title = loaded.thesis.title?.trim();
-    final displayTitle = (title == null || title.isEmpty)
-        ? l10n.thesisUntitled
-        : title;
+    final cubit = context.read<ThesisResultCubit>();
+    final confirmed = widget.waiting.canRewrite;
 
-    return ListView(
-      padding: const EdgeInsets.fromLTRB(
-        AppSpacing.lg,
-        AppSpacing.md,
-        AppSpacing.lg,
-        AppSpacing.xxxl,
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        color: t.surfaceContainerLow,
+        borderRadius: BorderRadius.circular(ObsidianUiTokens.radiusXl),
       ),
-      children: [
-        Text(
-          displayTitle,
-          style: theme.textTheme.headlineSmall?.copyWith(
-            fontWeight: FontWeight.w800,
-            height: 1.15,
-          ),
-        ),
-        if (loaded.applyTimedOut) ...[
-          const SizedBox(height: AppSpacing.md),
-          DecoratedBox(
-            decoration: BoxDecoration(
-              color: t.surfaceContainer,
-              borderRadius: BorderRadius.circular(ObsidianUiTokens.radiusXl),
-            ),
-            child: Padding(
-              padding: const EdgeInsets.all(AppSpacing.lg),
-              child: Text(
-                l10n.thesisApplyPending,
-                style: theme.textTheme.bodyMedium?.copyWith(
-                  color: t.onSurfaceVariant,
-                  height: 1.4,
-                ),
+      child: Padding(
+        padding: const EdgeInsets.all(AppSpacing.lg),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Text(
+              l10n.thesisHearerPrompt,
+              style: theme.textTheme.titleSmall?.copyWith(
+                fontWeight: FontWeight.w800,
               ),
             ),
-          ),
-        ],
-        const SizedBox(height: AppSpacing.xl),
-        ThesisFieldDiffSection(
-          diff: loaded.fieldDiff,
-          diffSummary: loaded.diffSummary,
+            const SizedBox(height: AppSpacing.md),
+            TextField(
+              controller: _label,
+              textInputAction: TextInputAction.done,
+              maxLength: 120,
+              decoration: InputDecoration(
+                hintText: l10n.thesisHearerHint,
+                counterText: '',
+              ),
+              onChanged: (_) {
+                if (widget.waiting.confirmedLabel != null) {
+                  cubit.clearHearerConfirmation();
+                }
+              },
+            ),
+            const SizedBox(height: AppSpacing.md),
+            AppGradientButton(
+              onPressed: () => cubit.confirmHearer(_label.text),
+              label: l10n.thesisConfirmHearer,
+              variant: AppButtonVariant.outlined,
+              expand: true,
+            ),
+            if (confirmed) ...[
+              const SizedBox(height: AppSpacing.sm),
+              AppGradientButton(
+                onPressed: () => cubit.rewrite(),
+                label: l10n.thesisRewriteSpeech,
+                expand: true,
+              ),
+            ],
+          ],
         ),
-        const SizedBox(height: AppSpacing.xl),
-        ThesisUnbackedStakesCard(
-          stakes: loaded.unbackedStakes,
-          onAnswerByVoice: (_, question) => onAnswerByVoice(question),
-        ),
-        const SizedBox(height: AppSpacing.xl),
-        ThesisNextConversationCard(script: loaded.nextConversation),
-        const SizedBox(height: AppSpacing.xl),
-        TextButton(
-          onPressed: onOpenTranscript,
-          child: Text(l10n.thesisSeeTranscript),
-        ),
-        const SizedBox(height: AppSpacing.sm),
-        AppGradientButton(
-          onPressed: onDone,
-          label: l10n.thesisResultDone,
-          expand: true,
-        ),
-      ],
+      ),
     );
   }
 }

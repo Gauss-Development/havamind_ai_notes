@@ -925,24 +925,53 @@ class AppLocalizationsEn extends AppLocalizations {
   String get thesisUnbackedGapsLabel => 'STILL UNBACKED';
 
   @override
-  String get thesisDebriefCta => 'Debrief the conversation that just ended';
+  String get thesisDebriefCta => 'Debrief the pitch you just gave';
 
   @override
   String get thesisDebriefBody =>
-      'Ninety seconds while it’s still fresh. We update the thesis, not a new card.';
+      'Who heard it? We rewrite the speech, and keep the one they already heard.';
 
   @override
-  String get thesisDebriefAction => 'Debrief';
+  String get thesisDebriefAction => 'Pitch debrief';
 
   @override
-  String get thesisDebriefFab => 'Debrief';
+  String get thesisDebriefFab => 'Pitch debrief';
+
+  @override
+  String get thesisCurrentSpeechEyebrow => 'SPEECH';
+
+  @override
+  String get thesisCurrentSpeechTitle => 'What you\'ll say next';
+
+  @override
+  String get thesisHeardVersionsEyebrow => 'ALREADY HEARD';
+
+  @override
+  String get thesisHeardVersionsTitle => 'Who heard it';
+
+  @override
+  String thesisHeardBy(String label) {
+    return 'This version was heard by: $label';
+  }
+
+  @override
+  String get thesisHearerPrompt => 'Who heard this pitch?';
+
+  @override
+  String get thesisHearerHint => 'Name, as you would say it';
+
+  @override
+  String get thesisConfirmHearer => 'This is who heard it';
+
+  @override
+  String get thesisRewriteSpeech => 'Rewrite the speech';
 
   @override
   String get thesisColdPitchCta => 'Tell the idea for two minutes';
 
   @override
   String get thesisColdPitchBody =>
-      'The only honest first step when there is no interview yet.';
+      'A speech nobody has heard yet. It replaces the concept without a hearer.';
 
   @override
   String get thesisColdPitchAction => 'Cold pitch';
@@ -994,7 +1023,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get thesisLastDebriefEyebrow => 'LATEST';
 
   @override
-  String get thesisLastDebriefTitle => 'Last debrief';
+  String get thesisLastDebriefTitle => 'Last pitch';
 
   @override
   String get thesisLoadError => 'Couldn’t load your thesis';
@@ -1003,7 +1032,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get thesisRetry => 'Try again';
 
   @override
-  String get thesisResultTitle => 'What changed';
+  String get thesisResultTitle => 'The speech';
 
   @override
   String get thesisResultEyebrow => 'AFTER DEBRIEF';
@@ -1013,14 +1042,14 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get thesisResultProcessingHint =>
-      'We’ll show the thesis diff as soon as the note completes.';
+      'We’ll show the speech as soon as the note completes.';
 
   @override
-  String get thesisResultApplying => 'Updating the living thesis…';
+  String get thesisResultApplying => 'Rewriting the speech…';
 
   @override
   String get thesisResultApplyingHint =>
-      'Appending this conversation — not rewriting a card.';
+      'The speech they heard stays marked with their name.';
 
   @override
   String get thesisResultFailed => 'This debrief didn’t process';

@@ -10,11 +10,13 @@ import 'package:sample/features/audio_notes/domain/entities/audio_note_status.da
 import 'package:sample/features/audio_notes/domain/usecases/get_audio_note_usecase.dart';
 import 'package:sample/features/audio_notes/domain/usecases/request_processing_usecase.dart';
 import 'package:sample/features/audio_notes/domain/usecases/watch_audio_note_usecase.dart';
+import 'package:sample/features/thesis/domain/entities/concept_rewrite.dart';
 import 'package:sample/features/thesis/domain/entities/thesis.dart';
-import 'package:sample/features/thesis/domain/entities/thesis_field_evidence.dart';
 import 'package:sample/features/thesis/domain/entities/thesis_version.dart';
 import 'package:sample/features/thesis/domain/usecases/get_thesis_usecase.dart';
 import 'package:sample/features/thesis/domain/usecases/list_thesis_versions_usecase.dart';
+import 'package:sample/features/thesis/domain/usecases/rewrite_concept_usecase.dart';
+import 'package:sample/features/thesis/presentation/concept_result_entry.dart';
 import 'package:sample/features/thesis/presentation/cubit/thesis_result_cubit.dart';
 
 class _MockWatchNote extends Mock implements WatchAudioNoteUseCase {}
@@ -27,15 +29,14 @@ class _MockListVersions extends Mock implements ListThesisVersionsUseCase {}
 
 class _MockRequestProcessing extends Mock implements RequestProcessingUseCase {}
 
-AudioNote _note({
-  AudioNoteStatus status = AudioNoteStatus.processingAnalysis,
-  DateTime? updatedAt,
-}) {
-  final at = updatedAt ?? DateTime.utc(2026, 3, 1, 12);
+class _MockRewrite extends Mock implements RewriteConceptUseCase {}
+
+AudioNote _note({AudioNoteStatus status = AudioNoteStatus.processingAnalysis}) {
+  final at = DateTime.utc(2026, 3, 1, 12);
   return AudioNote(
     id: 'note-1',
     userId: 'user-1',
-    title: 'Debrief',
+    title: 'Pitch',
     audioPath: null,
     durationSeconds: 90,
     status: status,
@@ -44,37 +45,29 @@ AudioNote _note({
   );
 }
 
-Thesis _thesis({
-  DateTime? updatedAt,
-  String? nextConversationScript,
-  Map<String, ThesisFieldEvidence> fieldEvidence = const {},
-}) {
-  final at = updatedAt ?? DateTime.utc(2026, 3, 1, 12, 0, 10);
+Thesis _thesis() {
   return Thesis(
     id: 'thesis-1',
     userId: 'user-1',
     title: 'Havamind',
-    problem: 'Founders lose the thread after a real conversation.',
-    nextConversationScript: nextConversationScript,
-    fieldEvidence: fieldEvidence,
+    businessModel: 'Clinics pay monthly',
     createdAt: DateTime.utc(2026, 1, 1),
-    updatedAt: at,
+    updatedAt: DateTime.utc(2026, 3, 1, 12),
   );
 }
 
-ThesisVersion _version() {
+ThesisVersion _heard() {
   return ThesisVersion(
-    id: 'v2',
+    id: 'v-heard',
     thesisId: 'thesis-1',
     userId: 'user-1',
-    roundNumber: 2,
-    thesisSnapshot: const {
-      'title': 'Havamind',
-      'problem': 'Founders lose the thread after a real conversation.',
-    },
-    transcription: 'we spoke to a clinic',
-    diffSummary: 'Problem now cites the clinic call.',
-    createdAt: DateTime.utc(2026, 3, 1, 12, 0, 12),
+    roundNumber: 1,
+    thesisSnapshot: const {'business_model': 'Clinics pay monthly'},
+    transcription: 'the pitch',
+    hearingStatus: HearingStatus.heard,
+    heardByLabel: 'Маша',
+    heardAt: DateTime.utc(2026, 3, 1, 12),
+    createdAt: DateTime.utc(2026, 3, 1, 12),
   );
 }
 
@@ -84,13 +77,14 @@ void main() {
   late _MockGetThesis getThesis;
   late _MockListVersions listVersions;
   late _MockRequestProcessing requestProcessing;
+  late _MockRewrite rewrite;
   late StreamController<AudioNote?> notes;
-  late ThesisResultCubit cubit;
 
   setUpAll(() {
     registerFallbackValue(const GetAudioNoteParams('note-1'));
     registerFallbackValue(const NoParams());
     registerFallbackValue(const ListThesisVersionsParams());
+    registerFallbackValue(const RewriteConceptRequest(noteId: 'note-1'));
   });
 
   setUp(() {
@@ -99,97 +93,167 @@ void main() {
     getThesis = _MockGetThesis();
     listVersions = _MockListVersions();
     requestProcessing = _MockRequestProcessing();
+    rewrite = _MockRewrite();
     notes = StreamController<AudioNote?>.broadcast();
     when(() => watchNote(any())).thenAnswer((_) => notes.stream);
-    cubit = ThesisResultCubit(
+    when(() => getThesis(any())).thenAnswer((_) async => Right(_thesis()));
+    when(() => listVersions(any())).thenAnswer((_) async => Right([_heard()]));
+  });
+
+  tearDown(() async {
+    await notes.close();
+  });
+
+  ThesisResultCubit build(ConceptResultEntry entry) {
+    return ThesisResultCubit(
       noteId: 'note-1',
+      entry: entry,
       watchNote: watchNote,
       getAudioNote: getNote,
       getThesis: getThesis,
       listVersions: listVersions,
       requestProcessing: requestProcessing,
-      applyPollInterval: Duration.zero,
-      applyPollAttempts: 3,
+      rewriteConcept: rewrite,
     );
-  });
-
-  tearDown(() async {
-    await cubit.close();
-    await notes.close();
-  });
+  }
 
   test('start emits processing while the note is in the pipeline', () async {
     when(() => getNote(any())).thenAnswer((_) async => Right(_note()));
+    final cubit = build(ConceptResultEntry.pitchDebrief);
 
     await cubit.start();
 
     expect(cubit.state, isA<ThesisResultProcessing>());
-  });
-
-  test('completed note with apply ready emits loaded', () async {
-    final completed = _note(status: AudioNoteStatus.completed);
-    final thesis = _thesis(
-      fieldEvidence: {
-        ThesisEvidenceFields.problem: const ThesisFieldEvidence(
-          kind: ThesisEvidenceKind.customerSignal,
-          noteId: 'note-1',
-        ),
-      },
-      nextConversationScript:
-          'Who: clinic ops\nHypothesis: they already pay\nWhat not to ask: do not pitch',
-    );
-    when(() => getNote(any())).thenAnswer((_) async => Right(completed));
-    when(() => getThesis(any())).thenAnswer((_) async => Right(thesis));
-    when(
-      () => listVersions(any()),
-    ).thenAnswer((_) async => Right([_version()]));
-
-    await cubit.start();
-    await _waitUntil(() => cubit.state is ThesisResultLoaded);
-
-    expect(cubit.state, isA<ThesisResultLoaded>());
-    final loaded = cubit.state as ThesisResultLoaded;
-    expect(loaded.diffSummary, 'Problem now cites the clinic call.');
-    expect(loaded.nextConversation.who, 'clinic ops');
-    expect(loaded.applyTimedOut, isFalse);
+    await cubit.close();
   });
 
   test(
-    'failed note emits note-failed without opening thesis as home',
+    'pitch debrief does not rewrite until the hearer is confirmed',
     () async {
-      when(
-        () => getNote(any()),
-      ).thenAnswer((_) async => Right(_note(status: AudioNoteStatus.failed)));
+      when(() => getNote(any())).thenAnswer(
+        (_) async => Right(_note(status: AudioNoteStatus.completed)),
+      );
+      when(() => rewrite(any())).thenAnswer(
+        (_) async => const Right(
+          ConceptRewriteNeedsHearer(
+            suggestedHearer: 'Маша',
+            proposedRewrite: {'business_model': 'Doctors wait 3 weeks'},
+          ),
+        ),
+      );
+      final cubit = build(ConceptResultEntry.pitchDebrief);
 
       await cubit.start();
+      await _waitUntil(() => cubit.state is ThesisResultAwaitingHearer);
 
-      expect(cubit.state, isA<ThesisResultNoteFailed>());
-      verifyNever(() => getThesis(any()));
+      final waiting = cubit.state as ThesisResultAwaitingHearer;
+      expect(waiting.canRewrite, isFalse);
+      expect(waiting.suggestedHearer, 'Маша');
+      expect(waiting.thesis.businessModel, 'Clinics pay monthly');
+      expect(waiting.versions.single.wasHeard, isTrue);
+
+      await cubit.rewrite();
+      verify(() => rewrite(any())).called(1);
+
+      cubit.confirmHearer('   ');
+      expect(cubit.state, isA<ThesisResultAwaitingHearer>());
+      expect((cubit.state as ThesisResultAwaitingHearer).canRewrite, isFalse);
+
+      cubit.confirmHearer('Маша');
+      expect((cubit.state as ThesisResultAwaitingHearer).canRewrite, isTrue);
+
+      when(() => rewrite(any())).thenAnswer(
+        (_) async => const Right(ConceptRewriteApplied(rewriteNote: 'Buyer.')),
+      );
+      when(() => getThesis(any())).thenAnswer(
+        (_) async => Right(
+          Thesis(
+            id: 'thesis-1',
+            userId: 'user-1',
+            title: 'Havamind',
+            businessModel: 'Doctors wait 3 weeks',
+            createdAt: DateTime.utc(2026, 1, 1),
+            updatedAt: DateTime.utc(2026, 3, 2),
+          ),
+        ),
+      );
+
+      await cubit.rewrite();
+
+      final captured = verify(
+        () => rewrite(captureAny()),
+      ).captured.cast<RewriteConceptRequest>();
+      expect(captured.last.heardByLabel, 'Маша');
+      expect(
+        captured.last.proposedRewrite?['business_model'],
+        'Doctors wait 3 weeks',
+      );
+      expect(cubit.state, isA<ThesisResultLoaded>());
+      final loaded = cubit.state as ThesisResultLoaded;
+      expect(loaded.thesis.businessModel, 'Doctors wait 3 weeks');
+      expect(loaded.heardVersions.single.heardByLabel, 'Маша');
+      await cubit.close();
     },
   );
 
-  test('apply timeout still shows the current thesis', () async {
-    final completed = _note(status: AudioNoteStatus.completed);
-    final stale = _thesis(updatedAt: DateTime.utc(2026, 2, 1));
-    when(() => getNote(any())).thenAnswer((_) async => Right(completed));
-    when(() => getThesis(any())).thenAnswer((_) async => Right(stale));
-    when(() => listVersions(any())).thenAnswer((_) async => const Right([]));
+  test('view shows who heard the speech and does not rewrite', () async {
+    when(
+      () => getNote(any()),
+    ).thenAnswer((_) async => Right(_note(status: AudioNoteStatus.completed)));
+    final cubit = build(ConceptResultEntry.view);
 
     await cubit.start();
     await _waitUntil(() => cubit.state is ThesisResultLoaded);
 
-    expect(cubit.state, isA<ThesisResultLoaded>());
     final loaded = cubit.state as ThesisResultLoaded;
-    expect(loaded.applyTimedOut, isTrue);
+    expect(loaded.heardVersions.single.heardByLabel, 'Маша');
+    verifyNever(() => rewrite(any()));
+    await cubit.close();
+  });
+
+  test('cold pitch rewrites without a hearer', () async {
+    when(
+      () => getNote(any()),
+    ).thenAnswer((_) async => Right(_note(status: AudioNoteStatus.completed)));
+    when(
+      () => rewrite(any()),
+    ).thenAnswer((_) async => const Right(ConceptRewriteApplied()));
+    final cubit = build(ConceptResultEntry.coldPitch);
+
+    await cubit.start();
+    await _waitUntil(() => cubit.state is ThesisResultLoaded);
+
+    final captured = verify(
+      () => rewrite(captureAny()),
+    ).captured.cast<RewriteConceptRequest>();
+    expect(captured.single.rewriteUnheard, isTrue);
+    expect(captured.single.heardByLabel, isNull);
+    await cubit.close();
+  });
+
+  test('failed note emits note-failed without opening the concept', () async {
+    when(
+      () => getNote(any()),
+    ).thenAnswer((_) async => Right(_note(status: AudioNoteStatus.failed)));
+    final cubit = build(ConceptResultEntry.pitchDebrief);
+
+    await cubit.start();
+
+    expect(cubit.state, isA<ThesisResultNoteFailed>());
+    verifyNever(() => getThesis(any()));
+    verifyNever(() => rewrite(any()));
+    await cubit.close();
   });
 
   test('get-note failure emits error', () async {
     const failure = ServerFailure('down');
     when(() => getNote(any())).thenAnswer((_) async => const Left(failure));
+    final cubit = build(ConceptResultEntry.view);
 
     await cubit.start();
 
     expect(cubit.state, const ThesisResultError(failure));
+    await cubit.close();
   });
 }
 
