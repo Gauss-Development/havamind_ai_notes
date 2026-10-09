@@ -41,6 +41,9 @@ class ThesisMapper {
       followUpQuestions: parseStringList(row['follow_up_questions']),
       sourceNoteId: row['source_note_id'] as String?,
       sourceTemplateId: row['source_template_id'] as String?,
+      hearingStatus: HearingStatus.fromDb(row['hearing_status'] as String?),
+      heardByLabel: _blankToNull(row['heard_by_label'] as String?),
+      heardAt: parseTimestamp(row['heard_at']),
       createdAt: DateTime.parse(row['created_at'] as String),
     );
   }
@@ -57,6 +60,12 @@ class ThesisMapper {
   static DateTime? parseTimestamp(dynamic value) {
     if (value is! String || value.isEmpty) return null;
     return DateTime.tryParse(value);
+  }
+
+  static String? _blankToNull(String? value) {
+    final trimmed = value?.trim();
+    if (trimmed == null || trimmed.isEmpty) return null;
+    return trimmed;
   }
 
   static Map<String, dynamic> draftToInsert(ThesisDraft draft) {

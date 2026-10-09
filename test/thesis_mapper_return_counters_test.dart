@@ -1,6 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:sample/features/audio_notes/domain/entities/recording_template.dart';
 import 'package:sample/features/thesis/data/models/thesis_mapper.dart';
+import 'package:sample/features/thesis/domain/entities/thesis_version.dart';
 
 void main() {
   test('fromRow maps debrief and share counters', () {
@@ -62,6 +63,30 @@ void main() {
 
     expect(version.sourceNoteId, 'note-1');
     expect(version.sourceTemplateId, RecordingTemplateIds.customerDiscovery);
+    expect(version.hearingStatus, HearingStatus.unheard);
+    expect(version.heardByLabel, isNull);
+    expect(version.heardAt, isNull);
+  });
+
+  test('versionFromRow reads a confirmed hearer and trims the label', () {
+    final version = ThesisMapper.versionFromRow({
+      'id': 'v2',
+      'thesis_id': 'thesis-1',
+      'user_id': 'user-1',
+      'round_number': 2,
+      'thesis_snapshot': {'business_model': 'Clinics pay monthly'},
+      'transcription': 'pitch',
+      'hearing_status': 'heard',
+      'heard_by_label': ' Маша ',
+      'heard_at': '2026-10-09T07:00:00Z',
+      'created_at': '2026-10-09T07:00:00Z',
+    });
+
+    expect(version.hearingStatus, HearingStatus.heard);
+    expect(version.heardByLabel, 'Маша');
+    expect(version.heardAt, DateTime.parse('2026-10-09T07:00:00Z'));
+    expect(version.wasHeard, isTrue);
+    expect(version.userId, 'user-1');
   });
 
   test('parseNonNegInt rejects negatives and non-numbers', () {

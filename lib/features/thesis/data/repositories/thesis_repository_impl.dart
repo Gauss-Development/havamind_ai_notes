@@ -2,6 +2,7 @@ import 'package:dartz/dartz.dart';
 
 import 'package:sample/core/error/failure.dart';
 import 'package:sample/features/thesis/data/datasources/thesis_remote_data_source.dart';
+import 'package:sample/features/thesis/domain/entities/concept_rewrite.dart';
 import 'package:sample/features/thesis/domain/entities/thesis.dart';
 import 'package:sample/features/thesis/domain/entities/thesis_seed_candidate.dart';
 import 'package:sample/features/thesis/domain/entities/thesis_version.dart';
@@ -59,6 +60,17 @@ class ThesisRepositoryImpl implements ThesisRepository {
       return Right(await _remote.fetchRecentVersions(limit: limit));
     } catch (e) {
       return Left(_mapReadError(e));
+    }
+  }
+
+  @override
+  Future<Either<Failure, ConceptRewriteResult>> rewriteConcept(
+    RewriteConceptRequest request,
+  ) async {
+    try {
+      return Right(await _remote.rewriteConcept(request));
+    } catch (e) {
+      return Left(_mapWriteError(e));
     }
   }
 

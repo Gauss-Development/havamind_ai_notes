@@ -7,7 +7,9 @@ import 'package:sample/features/thesis/domain/usecases/collect_week_usecase.dart
 import 'package:sample/features/thesis/domain/usecases/get_thesis_usecase.dart';
 import 'package:sample/features/thesis/domain/usecases/list_thesis_versions_usecase.dart';
 import 'package:sample/features/thesis/domain/usecases/record_week_artifact_share_usecase.dart';
+import 'package:sample/features/thesis/domain/usecases/rewrite_concept_usecase.dart';
 import 'package:sample/features/thesis/domain/usecases/seed_thesis_usecase.dart';
+import 'package:sample/features/thesis/presentation/concept_result_entry.dart';
 import 'package:sample/features/thesis/presentation/cubit/thesis_home_cubit.dart';
 import 'package:sample/features/thesis/presentation/cubit/thesis_result_cubit.dart';
 import 'package:sample/features/thesis/presentation/cubit/thesis_week_export_cubit.dart';
@@ -22,6 +24,7 @@ void registerThesisDependencies(GetIt getIt) {
   getIt.registerFactory(() => SeedThesisUseCase(getIt()));
   getIt.registerFactory(() => GetThesisUseCase(getIt()));
   getIt.registerFactory(() => ListThesisVersionsUseCase(getIt()));
+  getIt.registerFactory(() => RewriteConceptUseCase(getIt()));
   getIt.registerFactory(() => RecordWeekArtifactShareUseCase(getIt()));
   getIt.registerFactory(
     () => CollectWeekUseCase(
@@ -38,14 +41,16 @@ void registerThesisDependencies(GetIt getIt) {
       recordWeekArtifactShare: getIt(),
     ),
   );
-  getIt.registerFactoryParam<ThesisResultCubit, String, void>(
-    (noteId, _) => ThesisResultCubit(
+  getIt.registerFactoryParam<ThesisResultCubit, String, ConceptResultEntry>(
+    (noteId, entry) => ThesisResultCubit(
       noteId: noteId,
+      entry: entry,
       watchNote: getIt(),
       getAudioNote: getIt(),
       getThesis: getIt(),
       listVersions: getIt(),
       requestProcessing: getIt(),
+      rewriteConcept: getIt(),
     ),
   );
 }

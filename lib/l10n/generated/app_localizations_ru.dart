@@ -928,24 +928,53 @@ class AppLocalizationsRu extends AppLocalizations {
   String get thesisUnbackedGapsLabel => 'ЕЩЁ БЕЗ УЛИК';
 
   @override
-  String get thesisDebriefCta => 'Дебриф только что закончившегося разговора';
+  String get thesisDebriefCta => 'Дебриф только что произнесённого питча';
 
   @override
   String get thesisDebriefBody =>
-      'Девяносто секунд, пока свежо. Обновим тезис, а не новую карточку.';
+      'Кто его слышал? Перепишем речь целиком и оставим ту, что уже прозвучала.';
 
   @override
-  String get thesisDebriefAction => 'Дебриф';
+  String get thesisDebriefAction => 'Дебриф питча';
 
   @override
-  String get thesisDebriefFab => 'Дебриф';
+  String get thesisDebriefFab => 'Дебриф питча';
+
+  @override
+  String get thesisCurrentSpeechEyebrow => 'РЕЧЬ';
+
+  @override
+  String get thesisCurrentSpeechTitle => 'Что скажете следующим';
+
+  @override
+  String get thesisHeardVersionsEyebrow => 'УЖЕ СЛЫШАЛИ';
+
+  @override
+  String get thesisHeardVersionsTitle => 'Кто слышал';
+
+  @override
+  String thesisHeardBy(String label) {
+    return 'Эту версию слышал: $label';
+  }
+
+  @override
+  String get thesisHearerPrompt => 'Кто слышал этот питч?';
+
+  @override
+  String get thesisHearerHint => 'Имя, как вы его скажете';
+
+  @override
+  String get thesisConfirmHearer => 'Это тот, кто слышал';
+
+  @override
+  String get thesisRewriteSpeech => 'Переписать речь';
 
   @override
   String get thesisColdPitchCta => 'Расскажи идею две минуты';
 
   @override
   String get thesisColdPitchBody =>
-      'Единственный честный вход, пока ещё не было разговора.';
+      'Речь, которую ещё никто не слышал. Заменит концепт без слушателя.';
 
   @override
   String get thesisColdPitchAction => 'Холодный питч';
@@ -1000,7 +1029,7 @@ class AppLocalizationsRu extends AppLocalizations {
   String get thesisLastDebriefEyebrow => 'ПОСЛЕДНЕЕ';
 
   @override
-  String get thesisLastDebriefTitle => 'Последний дебриф';
+  String get thesisLastDebriefTitle => 'Последний питч';
 
   @override
   String get thesisLoadError => 'Не удалось загрузить тезис';
@@ -1009,7 +1038,7 @@ class AppLocalizationsRu extends AppLocalizations {
   String get thesisRetry => 'Попробовать снова';
 
   @override
-  String get thesisResultTitle => 'Что изменилось';
+  String get thesisResultTitle => 'Речь';
 
   @override
   String get thesisResultEyebrow => 'ПОСЛЕ ДЕБРИФА';
@@ -1019,14 +1048,14 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get thesisResultProcessingHint =>
-      'Покажем diff тезиса, как только заметка станет готовой.';
+      'Покажем речь, как только заметка станет готовой.';
 
   @override
-  String get thesisResultApplying => 'Обновляем живой тезис…';
+  String get thesisResultApplying => 'Переписываем речь…';
 
   @override
   String get thesisResultApplyingHint =>
-      'Дополняем тезис этим разговором, не переписываем карточку.';
+      'Речь, которую уже слышали, останется с именем.';
 
   @override
   String get thesisResultFailed => 'Дебриф не обработался';

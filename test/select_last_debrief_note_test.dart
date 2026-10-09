@@ -23,26 +23,28 @@ AudioNote _note({
 }
 
 void main() {
-  test('returns null when there is no customer-discovery note', () {
-    final notes = [_note(id: 'pitch', createdAt: DateTime.utc(2026, 3, 1))];
+  test('returns null when there is no founder pitch', () {
+    final notes = [
+      _note(
+        id: 'discovery',
+        createdAt: DateTime.utc(2026, 3, 1),
+        templateId: RecordingTemplateIds.customerDiscovery,
+      ),
+    ];
 
     expect(selectLastDebriefNote(notes), isNull);
   });
 
-  test('returns the newest customer-discovery note', () {
-    final older = _note(
-      id: 'old',
-      createdAt: DateTime.utc(2026, 2, 1),
+  test('returns the newest founder pitch and skips customer discovery', () {
+    final older = _note(id: 'old', createdAt: DateTime.utc(2026, 2, 1));
+    final newer = _note(id: 'new', createdAt: DateTime.utc(2026, 4, 1));
+    final discovery = _note(
+      id: 'discovery',
+      createdAt: DateTime.utc(2026, 5, 1),
       templateId: RecordingTemplateIds.customerDiscovery,
     );
-    final newer = _note(
-      id: 'new',
-      createdAt: DateTime.utc(2026, 4, 1),
-      templateId: RecordingTemplateIds.customerDiscovery,
-    );
-    final pitch = _note(id: 'pitch', createdAt: DateTime.utc(2026, 5, 1));
 
-    final last = selectLastDebriefNote([older, pitch, newer]);
+    final last = selectLastDebriefNote([older, discovery, newer]);
 
     expect(last?.id, 'new');
   });

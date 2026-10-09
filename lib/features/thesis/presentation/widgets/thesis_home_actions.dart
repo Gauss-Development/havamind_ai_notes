@@ -6,17 +6,15 @@ import 'package:sample/core/widgets/app_gradient_card.dart';
 import 'package:sample/core/widgets/obsidian_gradient_button.dart';
 import 'package:sample/l10n/generated/app_localizations.dart';
 
-/// Primary debrief (or first-run pitch) CTA plus secondary Home actions.
+/// Primary pitch-debrief CTA. Cold pitch stays a secondary action.
 class ThesisHomeActions extends StatelessWidget {
   const ThesisHomeActions({
     super.key,
-    required this.isBlankThesis,
     required this.onDebrief,
     required this.onColdPitch,
     required this.onCollectWeek,
   });
 
-  final bool isBlankThesis;
   final VoidCallback onDebrief;
   final VoidCallback onColdPitch;
   final VoidCallback onCollectWeek;
@@ -27,20 +25,14 @@ class ThesisHomeActions extends StatelessWidget {
     final t = context.appTokens;
     final theme = Theme.of(context);
 
-    final primaryIsPitch = isBlankThesis;
-    final primaryOnTap = primaryIsPitch ? onColdPitch : onDebrief;
-    final headline = primaryIsPitch
-        ? l10n.thesisColdPitchCta
-        : l10n.thesisDebriefCta;
-    final body = primaryIsPitch
-        ? l10n.thesisColdPitchBody
-        : l10n.thesisDebriefBody;
+    final headline = l10n.thesisDebriefCta;
+    final body = l10n.thesisDebriefBody;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         AppGradientCard(
-          onTap: primaryOnTap,
+          onTap: onDebrief,
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
@@ -87,26 +79,15 @@ class ThesisHomeActions extends StatelessWidget {
         const SizedBox(height: AppSpacing.md),
         Row(
           children: [
-            if (!primaryIsPitch)
-              Expanded(
-                child: AppGradientButton(
-                  onPressed: onColdPitch,
-                  label: l10n.thesisColdPitchAction,
-                  icon: Icons.campaign_outlined,
-                  variant: AppButtonVariant.outlined,
-                  expand: true,
-                ),
-              )
-            else
-              Expanded(
-                child: AppGradientButton(
-                  onPressed: onDebrief,
-                  label: l10n.thesisDebriefAction,
-                  icon: Icons.record_voice_over_outlined,
-                  variant: AppButtonVariant.outlined,
-                  expand: true,
-                ),
+            Expanded(
+              child: AppGradientButton(
+                onPressed: onColdPitch,
+                label: l10n.thesisColdPitchAction,
+                icon: Icons.campaign_outlined,
+                variant: AppButtonVariant.outlined,
+                expand: true,
               ),
+            ),
             const SizedBox(width: AppSpacing.sm),
             Expanded(
               child: AppGradientButton(
