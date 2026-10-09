@@ -3,13 +3,13 @@
  *
  * Run: deno test --allow-env --allow-net supabase/functions/apply-debrief-to-thesis/index.test.ts
  *
- * Coverage mirrors refine-plan (auth, ownership, body) plus the living-thesis
- * rules: free users can apply, append does not overwrite, contradiction
- * writes a new version mark and keeps the previous wording in the diff.
+ * A debrief replaces the concept. The speech already heard stays only in the
+ * heard snapshot. Missing a hearer and missing rewrite_unheard writes nothing.
  */
 
 import {
   assertEquals,
+  assertNotEquals,
   assertStringIncludes,
 } from "https://deno.land/std@0.224.0/assert/mod.ts";
 
@@ -20,30 +20,83 @@ import {
 } from "../_shared/thesis_link.ts";
 import {
   APPLY_SYSTEM_PROMPT,
+  HEARER_REQUIRED,
+  INCOMPLETE_REWRITE,
+  PROMPT_VERSION,
   assertNoteOwnership,
   buildApplyUserPrompt,
+  countsAsDebriefReturn,
   defaultEvidenceKind,
-  ensureDiffKeepsContradiction,
-  hydrateThesisForApply,
+  executeConceptRewrite,
   isApplyBlockedForTier,
   isNoteReadyToApply,
-  markContradiction,
-  mergeAppliedThesis,
-  mergeTextField,
+  modelCallRequired,
   nextDebriefCount,
-  nextRoundNumber,
   normalizeFieldEvidence,
-  countsAsDebriefReturn,
   parseNoteId,
+  planConceptRewrite,
   readBearerToken,
+  rewriteConcept,
+  rewriteGate,
   snapshotFromAnalysis,
   thesisIsMostlyEmpty,
+  type ConceptDb,
+  type ThesisSnapshot,
+  type VersionInsert,
 } from "./apply_logic.ts";
 
 const MOCK_USER_ID = "aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee";
 const OTHER_USER_ID = "ffffffff-1111-2222-3333-444444444444";
 const MOCK_NOTE_ID = "11111111-2222-3333-4444-555555555555";
 const MOCK_THESIS_ID = "66666666-7777-8888-9999-aaaaaaaaaaaa";
+const HEARD_AT = "2026-10-09T07:00:00.000Z";
+const OLD_PHRASE = "Clinics pay monthly";
+const NEW_PHRASE = "Doctors wait 3 weeks";
+const JOINED = `${OLD_PHRASE}\n${NEW_PHRASE}`;
+
+function concept(businessModel: string): ThesisSnapshot {
+  return {
+    title: "Labs",
+    short_summary: "Faster labs",
+    problem: OLD_PHRASE,
+    solution: "Portal",
+    target_audience: "Clinics",
+    business_model: businessModel,
+    key_metrics: "Turnaround",
+    advantages: "Speed",
+    risks_gaps: "Adoption",
+    follow_up_questions: [],
+    field_evidence: {},
+  };
+}
+
+function modelSpeech(businessModel: string): Record<string, unknown> {
+  return {
+    title: "Labs",
+    short_summary: "Faster labs",
+    problem: NEW_PHRASE,
+    solution: "Portal",
+    target_audience: "Clinics",
+    business_model: businessModel,
+    key_metrics: "Turnaround",
+    advantages: "Speed",
+    risks_gaps: "Adoption",
+    follow_up_questions: ["Who signs?"],
+    rewrite_note: "The buyer changed.",
+    suggested_hearer: "Маша",
+  };
+}
+
+function throwingDb(message: string): ConceptDb {
+  return {
+    insertVersion: () => {
+      throw new Error(message);
+    },
+    updateThesis: () => {
+      throw new Error(message);
+    },
+  };
+}
 
 // ── Auth ────────────────────────────────────────────────────────────
 
@@ -124,131 +177,305 @@ Deno.test("apply-debrief: basic and pro users are allowed to apply", () => {
   assertEquals(isApplyBlockedForTier("pro"), false);
 });
 
-// ── Append, do not overwrite ────────────────────────────────────────
+// ── Replace, do not append ──────────────────────────────────────────
 
-Deno.test("apply-debrief: blank incoming keeps the current field", () => {
-  const merged = mergeTextField("Clinics pay monthly", "not specified");
-  assertEquals(merged, "Clinics pay monthly");
+Deno.test("apply-debrief: blank incoming clears the field", () => {
+  const rewritten = rewriteConcept({
+    current: concept(OLD_PHRASE),
+    incoming: modelSpeech("not specified"),
+  });
+  assertEquals(rewritten.ok, true);
+  if (rewritten.ok) {
+    assertEquals(rewritten.snapshot.business_model, null);
+    assertNotEquals(rewritten.snapshot.business_model, OLD_PHRASE);
+  }
 });
 
-Deno.test("apply-debrief: empty thesis takes the incoming field", () => {
-  const merged = mergeTextField("", "Doctors wait 3 weeks for labs");
-  assertEquals(merged, "Doctors wait 3 weeks for labs");
-});
-
-Deno.test("apply-debrief: non-contradicting add appends instead of replacing", () => {
-  const merged = mergeTextField(
-    "Clinics pay monthly",
-    "Also want on-site training",
-  );
-  assertStringIncludes(merged, "Clinics pay monthly");
-  assertStringIncludes(merged, "Also want on-site training");
-});
-
-Deno.test("apply-debrief: hydrates an empty thesis from note-level analysis", () => {
+Deno.test("apply-debrief: empty concept takes the incoming field", () => {
   const empty = snapshotFromAnalysis({});
   assertEquals(thesisIsMostlyEmpty(empty), true);
-  const hydrated = hydrateThesisForApply(empty, {
-    startup_title: "Lab wait times",
-    problem: "Doctors wait 3 weeks",
-    short_summary: "Faster lab results",
+  const rewritten = rewriteConcept({
+    current: empty,
+    incoming: { business_model: NEW_PHRASE },
   });
-  assertEquals(hydrated.title, "Lab wait times");
-  assertEquals(hydrated.problem, "Doctors wait 3 weeks");
+  assertEquals(rewritten.ok, true);
+  if (rewritten.ok) {
+    assertEquals(rewritten.snapshot.business_model, NEW_PHRASE);
+    assertEquals(rewritten.snapshot.title, null);
+  }
 });
 
-// ── Contradiction keeps a diff ──────────────────────────────────────
-
-Deno.test("apply-debrief: contradiction marks the field and keeps previous wording", () => {
-  const marked = markContradiction(
-    "Clinics, not individual doctors, pay",
-    "Doctors pay out of pocket",
+Deno.test("apply-debrief: non-contradicting field replaces instead of appending", () => {
+  const rewritten = rewriteConcept({
+    current: concept(OLD_PHRASE),
+    incoming: modelSpeech(NEW_PHRASE),
+  });
+  assertEquals(rewritten.ok, true);
+  if (!rewritten.ok) return;
+  assertEquals(rewritten.snapshot.business_model, NEW_PHRASE);
+  assertNotEquals(rewritten.snapshot.business_model, JOINED);
+  assertEquals(rewritten.snapshot.problem, NEW_PHRASE);
+  assertEquals(
+    JSON.stringify(rewritten.snapshot).includes("[contradiction: was"),
+    false,
   );
-  assertStringIncludes(marked, "Clinics, not individual doctors, pay");
-  assertStringIncludes(marked, "[contradiction: was ");
-  assertStringIncludes(marked, "Doctors pay out of pocket");
 });
 
-Deno.test("apply-debrief: contradiction merge writes a version diff that keeps the old claim", () => {
-  const current = {
-    title: "Doctor billing",
-    short_summary: "Doctors pay out of pocket",
-    problem: "Doctors pay out of pocket",
-    solution: "SMS reminders",
-    target_audience: "Individual doctors",
-    business_model: "Per-doctor fee",
-    key_metrics: "",
-    advantages: "",
-    risks_gaps: "",
-    follow_up_questions: [],
-    field_evidence: {
-      problem: { kind: "founder_claim" as const, quote: "doctors pay", note_id: "old" },
-    },
-  };
-
-  const merged = mergeAppliedThesis({
-    current,
-    incoming: {
-      title: "Clinic billing",
-      problem: "Clinics pay; doctors do not",
-      target_audience: "Outpatient clinics",
-      business_model: "Clinic subscription",
-      next_conversation_script:
-        "• Talk to a clinic ops lead\n• Do not ask doctors about personal spend",
-      field_evidence: {
-        problem: {
-          kind: "customer_signal",
-          quote: "we budget this at the clinic",
-        },
-        target_audience: { kind: "customer_signal", quote: "clinic ops" },
-      },
-      contradictions: [
-        {
-          field: "problem",
-          previous: "Doctors pay out of pocket",
-          current: "Clinics pay; doctors do not",
-        },
-        {
-          field: "target_audience",
-          previous: "Individual doctors",
-          current: "Outpatient clinics",
-        },
-      ],
-      // Deliberately omit the old wording — merge must still keep a diff.
-      diff_summary: "Buyer changed after this week's debriefs",
-    },
+Deno.test("apply-debrief: incomplete rewrite of a filled concept writes nothing", async () => {
+  const incoming = modelSpeech(NEW_PHRASE);
+  delete incoming.risks_gaps;
+  const result = await executeConceptRewrite({
+    gate: { action: "mark_heard", heardByLabel: "Маша" },
+    current: concept(OLD_PHRASE),
+    modelJson: incoming,
+    proposedRewrite: null,
+    thesisId: MOCK_THESIS_ID,
+    userId: MOCK_USER_ID,
     noteId: MOCK_NOTE_ID,
-    templateId: "customer_discovery",
+    templateId: "founder_pitch",
+    transcription: "Masha heard the pitch.",
+    priorMaxRound: 0,
+    debriefCount: 0,
+    heardAt: HEARD_AT,
+    db: throwingDb("wrote a row"),
+  });
+  assertEquals(result.written, false);
+  assertEquals(result.code, INCOMPLETE_REWRITE);
+});
+
+Deno.test("apply-debrief: heard snapshot keeps the old phrase and the live speech does not", () => {
+  const plan = planConceptRewrite({
+    thesisId: MOCK_THESIS_ID,
+    userId: MOCK_USER_ID,
+    noteId: MOCK_NOTE_ID,
+    templateId: "founder_pitch",
+    transcription: "Маша heard clinics pay monthly. Next time say doctors wait.",
+    current: concept(OLD_PHRASE),
+    next: {
+      ...concept(NEW_PHRASE),
+      problem: NEW_PHRASE,
+    },
+    rewriteNote: "The buyer changed.",
+    priorMaxRound: 2,
+    heardByLabel: "Маша",
+    debriefCount: 0,
+    heardAt: HEARD_AT,
   });
 
-  assertStringIncludes(merged.snapshot.problem ?? "", "Clinics pay");
-  assertStringIncludes(merged.snapshot.problem ?? "", "[contradiction: was ");
-  assertStringIncludes(
-    merged.snapshot.problem ?? "",
-    "Doctors pay out of pocket",
-  );
-  assertStringIncludes(merged.diff_summary, "Doctors pay out of pocket");
-  assertStringIncludes(merged.diff_summary, "Individual doctors");
-  assertEquals(merged.contradictions.length, 2);
-  assertEquals(merged.field_evidence.problem.kind, "customer_signal");
-  assertEquals(merged.field_evidence.problem.note_id, MOCK_NOTE_ID);
-  assertStringIncludes(
-    merged.next_conversation_script,
-    "Talk to a clinic ops lead",
-  );
+  assertEquals(plan.thesis.business_model, NEW_PHRASE);
+  assertEquals(plan.thesis.problem, NEW_PHRASE);
+  assertEquals(JSON.stringify(plan.thesis).includes("[contradiction: was"), false);
+  assertEquals(JSON.stringify(plan.thesis).includes(JOINED), false);
+  assertEquals(plan.heard?.thesis_snapshot.business_model, OLD_PHRASE);
+  assertEquals(plan.heard?.thesis_snapshot.problem, OLD_PHRASE);
+  assertEquals(plan.heard?.hearing_status, "heard");
+  assertEquals(plan.heard?.heard_by_label, "Маша");
+  assertEquals(plan.heard?.heard_at, HEARD_AT);
+  assertEquals(plan.heard?.user_id, MOCK_USER_ID);
+  assertNotEquals(plan.heard?.user_id, plan.heard?.heard_by_label);
+  assertEquals(plan.unheard.hearing_status, "unheard");
+  assertEquals(plan.unheard.heard_by_label, null);
+  assertEquals(plan.unheard.thesis_snapshot.business_model, NEW_PHRASE);
+  assertEquals(plan.heard?.round_number, 3);
+  assertEquals(plan.unheard.round_number, 4);
+});
 
-  // A new thesis_versions row would store this snapshot + diff (round N+1).
-  const versionRow = {
-    thesis_id: MOCK_THESIS_ID,
-    round_number: nextRoundNumber(0),
-    thesis_snapshot: merged.snapshot,
-    diff_summary: merged.diff_summary,
-    source_note_id: MOCK_NOTE_ID,
-    source_template_id: "customer_discovery",
+Deno.test("apply-debrief: empty first pitch does not create a heard row", () => {
+  const plan = planConceptRewrite({
+    thesisId: MOCK_THESIS_ID,
+    userId: MOCK_USER_ID,
+    noteId: MOCK_NOTE_ID,
+    templateId: "founder_pitch",
+    transcription: "Here is the speech.",
+    current: snapshotFromAnalysis({}),
+    next: concept(NEW_PHRASE),
+    rewriteNote: "First speech.",
+    priorMaxRound: 0,
+    heardByLabel: null,
+    debriefCount: 0,
+    heardAt: HEARD_AT,
+  });
+  assertEquals(plan.heard, null);
+  assertEquals(plan.thesis.business_model, NEW_PHRASE);
+  assertEquals(plan.unheard.hearing_status, "unheard");
+  assertEquals(plan.unheard.round_number, 1);
+
+  const labeledEmpty = planConceptRewrite({
+    thesisId: MOCK_THESIS_ID,
+    userId: MOCK_USER_ID,
+    noteId: MOCK_NOTE_ID,
+    templateId: "founder_pitch",
+    transcription: "Here is the speech.",
+    current: snapshotFromAnalysis({}),
+    next: concept(NEW_PHRASE),
+    rewriteNote: "First speech.",
+    priorMaxRound: 0,
+    heardByLabel: "Маша",
+    debriefCount: 0,
+    heardAt: HEARD_AT,
+  });
+  assertEquals(labeledEmpty.heard, null);
+});
+
+Deno.test("apply-debrief: no hearer and no rewrite_unheard writes nothing", async () => {
+  const gate = rewriteGate({ heardByLabel: null, rewriteUnheard: false });
+  assertEquals(gate.action, "require_hearer");
+  const result = await executeConceptRewrite({
+    gate,
+    current: concept(OLD_PHRASE),
+    modelJson: modelSpeech(NEW_PHRASE),
+    proposedRewrite: null,
+    thesisId: MOCK_THESIS_ID,
+    userId: MOCK_USER_ID,
+    noteId: MOCK_NOTE_ID,
+    templateId: "founder_pitch",
+    transcription: "Someone in the room.",
+    priorMaxRound: 1,
+    debriefCount: 0,
+    heardAt: HEARD_AT,
+    db: throwingDb("wrote without a hearer"),
+  });
+  assertEquals(result.written, false);
+  assertEquals(result.status, 422);
+  assertEquals(result.code, HEARER_REQUIRED);
+  assertEquals(result.suggestedHearer, "Маша");
+  assertEquals(result.proposedRewrite?.business_model, NEW_PHRASE);
+});
+
+Deno.test("apply-debrief: confirmed label can reuse a proposal without another model call", () => {
+  const proposal = modelSpeech(NEW_PHRASE);
+  assertEquals(
+    modelCallRequired({
+      gate: { action: "mark_heard", heardByLabel: "Маша, эдвайзер" },
+      proposedRewrite: proposal,
+    }),
+    false,
+  );
+  assertEquals(
+    modelCallRequired({
+      gate: { action: "mark_heard", heardByLabel: "Маша, эдвайзер" },
+      proposedRewrite: null,
+    }),
+    true,
+  );
+});
+
+Deno.test("apply-debrief: hearer label is not stored as user_id", async () => {
+  const inserted: VersionInsert[] = [];
+  const db: ConceptDb = {
+    insertVersion: (row) => {
+      inserted.push(row);
+      return Promise.resolve({ error: null });
+    },
+    updateThesis: () => Promise.resolve({ error: null }),
   };
-  assertEquals(versionRow.round_number, 1);
-  assertEquals(versionRow.source_template_id, "customer_discovery");
-  assertStringIncludes(versionRow.diff_summary, "Doctors pay out of pocket");
+  const result = await executeConceptRewrite({
+    gate: { action: "mark_heard", heardByLabel: "Маша" },
+    current: concept(OLD_PHRASE),
+    modelJson: modelSpeech(NEW_PHRASE),
+    proposedRewrite: null,
+    thesisId: MOCK_THESIS_ID,
+    userId: MOCK_USER_ID,
+    noteId: MOCK_NOTE_ID,
+    templateId: "founder_pitch",
+    transcription: "Маша heard it.",
+    priorMaxRound: 0,
+    debriefCount: 0,
+    heardAt: HEARD_AT,
+    db,
+  });
+  assertEquals(result.written, true);
+  const heard = inserted.find((row) => row.hearing_status === "heard");
+  assertEquals(heard?.user_id, MOCK_USER_ID);
+  assertEquals(heard?.heard_by_label, "Маша");
+  assertNotEquals(heard?.user_id, "Маша");
+  assertEquals(inserted.some((row) => row.user_id === "Маша"), false);
+});
+
+Deno.test("apply-debrief: failed heard insert does not update the concept", async () => {
+  let thesisUpdated = false;
+  const db: ConceptDb = {
+    insertVersion: (row) => {
+      if (row.hearing_status === "heard") {
+        return Promise.resolve({ error: "insert failed" });
+      }
+      throw new Error("unheard row inserted after a failed freeze");
+    },
+    updateThesis: () => {
+      thesisUpdated = true;
+      return Promise.resolve({ error: null });
+    },
+  };
+  const result = await executeConceptRewrite({
+    gate: { action: "mark_heard", heardByLabel: "Маша" },
+    current: concept(OLD_PHRASE),
+    modelJson: modelSpeech(NEW_PHRASE),
+    proposedRewrite: null,
+    thesisId: MOCK_THESIS_ID,
+    userId: MOCK_USER_ID,
+    noteId: MOCK_NOTE_ID,
+    templateId: "founder_pitch",
+    transcription: "Маша heard it.",
+    priorMaxRound: 4,
+    debriefCount: 1,
+    heardAt: HEARD_AT,
+    db,
+  });
+  assertEquals(result.written, false);
+  assertEquals(result.error, "insert failed");
+  assertEquals(thesisUpdated, false);
+});
+
+Deno.test("apply-debrief: repeat apply does not change a saved thesis_snapshot", async () => {
+  const saved: ThesisSnapshot = concept(OLD_PHRASE);
+  const savedBytes = JSON.stringify(saved);
+  const versions: Array<{
+    thesis_snapshot: string;
+    hearing_status: string;
+    heard_by_label: string | null;
+  }> = [{
+    thesis_snapshot: savedBytes,
+    hearing_status: "heard",
+    heard_by_label: "Маша",
+  }];
+  const db: ConceptDb = {
+    insertVersion: (row) => {
+      versions.push({
+        thesis_snapshot: JSON.stringify(row.thesis_snapshot),
+        hearing_status: row.hearing_status,
+        heard_by_label: row.heard_by_label,
+      });
+      return Promise.resolve({ error: null });
+    },
+    updateThesis: () => Promise.resolve({ error: null }),
+  };
+  const base = {
+    current: concept(NEW_PHRASE),
+    modelJson: modelSpeech("Clinics pay annually"),
+    proposedRewrite: null,
+    thesisId: MOCK_THESIS_ID,
+    userId: MOCK_USER_ID,
+    noteId: MOCK_NOTE_ID,
+    templateId: "founder_pitch" as string | null,
+    transcription: "Another meeting.",
+    debriefCount: 1,
+    heardAt: HEARD_AT,
+    db,
+  };
+  await executeConceptRewrite({
+    ...base,
+    gate: { action: "mark_heard", heardByLabel: "Маша" },
+    priorMaxRound: 1,
+  });
+  await executeConceptRewrite({
+    ...base,
+    gate: { action: "rewrite_unheard" },
+    priorMaxRound: 3,
+  });
+  assertEquals(versions[0].thesis_snapshot, savedBytes);
+  assertEquals(versions[0].hearing_status, "heard");
+  assertEquals(versions[0].heard_by_label, "Маша");
+  assertEquals(versions[0].thesis_snapshot.includes("[contradiction: was"), false);
 });
 
 Deno.test("apply-debrief: only customer_discovery increments debrief_count", () => {
@@ -264,22 +491,7 @@ Deno.test("apply-debrief: only customer_discovery increments debrief_count", () 
   assertEquals(nextDebriefCount(Number.NaN, "customer_discovery"), 1);
 });
 
-Deno.test("apply-debrief: ensureDiffKeepsContradiction backfills missing previous text", () => {
-  const diff = ensureDiffKeepsContradiction(
-    "Updated buyer",
-    [{
-      field: "problem",
-      previous: "Doctors pay out of pocket",
-      current: "Clinics pay",
-    }],
-    { problem: "Doctors pay out of pocket" },
-    { problem: "Clinics pay" },
-  );
-  assertStringIncludes(diff, "Doctors pay out of pocket");
-  assertStringIncludes(diff, "Clinics pay");
-});
-
-// ── Evidence + script ───────────────────────────────────────────────
+// ── Evidence + prompt ───────────────────────────────────────────────
 
 Deno.test("apply-debrief: field_evidence kinds normalize and default by template", () => {
   assertEquals(defaultEvidenceKind("customer_discovery", true), "customer_signal");
@@ -295,43 +507,26 @@ Deno.test("apply-debrief: field_evidence kinds normalize and default by template
   assertEquals(evidence.problem.note_id, MOCK_NOTE_ID);
 });
 
-Deno.test("apply-debrief: missing next_conversation_script falls back to unbacked stakes", () => {
-  const merged = mergeAppliedThesis({
-    current: {
-      problem: "Lab wait times",
-      field_evidence: {},
-    },
-    incoming: {
-      problem: "Lab wait times",
-      follow_up_questions: ["Who owns the budget?"],
-      field_evidence: {
-        problem: { kind: "unbacked" },
-      },
-    },
-    noteId: MOCK_NOTE_ID,
-  });
-  assertStringIncludes(merged.next_conversation_script, "unbacked");
-  assertStringIncludes(merged.next_conversation_script, "Who owns the budget?");
-});
-
-Deno.test("apply-debrief: prompt includes current thesis, analysis, and transcript", () => {
+Deno.test("apply-debrief: prompt asks for a full rewrite in the transcript language", () => {
   const prompt = buildApplyUserPrompt({
-    thesis: { problem: "Doctors wait 3 weeks", title: "Labs" },
+    thesis: { problem: OLD_PHRASE, title: "Labs" },
     transcription: "The clinic director said they pay, not the doctor.",
-    analysis: { problem: "Doctors wait 3 weeks", startup_title: "Labs" },
+    analysis: { problem: OLD_PHRASE, startup_title: "Labs" },
     weekDebriefs: [{
       note_id: "week-1",
-      template_id: "customer_discovery",
-      transcript: "First clinic interview",
+      template_id: "founder_pitch",
+      transcript: "First pitch",
     }],
-    templateId: "customer_discovery",
+    templateId: "founder_pitch",
   });
-  assertStringIncludes(prompt, "CURRENT THESIS");
+  assertStringIncludes(prompt, "CURRENT CONCEPT");
   assertStringIncludes(prompt, "NOTE-LEVEL ANALYSIS");
-  assertStringIncludes(prompt, "OTHER DEBRIEFS THIS WEEK");
   assertStringIncludes(prompt, "DEBRIEF TRANSCRIPT");
   assertStringIncludes(prompt, "clinic director");
-  assertStringIncludes(APPLY_SYSTEM_PROMPT, "contradict");
+  assertEquals(PROMPT_VERSION, "concept-rewrite-v1");
+  assertStringIncludes(APPLY_SYSTEM_PROMPT, "rewrite");
+  assertEquals(APPLY_SYSTEM_PROMPT.includes("APPEND"), false);
+  assertEquals(APPLY_SYSTEM_PROMPT.includes("[contradiction: was"), false);
 });
 
 // ── thesis_id wiring ────────────────────────────────────────────────

@@ -1,6 +1,8 @@
 /**
- * Attach a processed audio note to the account's single living thesis.
- * Used by process-audio-note (after completion) and apply-debrief-to-thesis.
+ * Attach a processed audio note to the account's single concept.
+ * process-audio-note links the note and does not rewrite the concept.
+ * apply-debrief-to-thesis links, then rewrites only after a confirmed hearer
+ * or an explicit unheard rewrite.
  */
 
 // deno-lint-ignore no-explicit-any
@@ -66,28 +68,4 @@ export async function linkNoteToUserThesis(
 
 export function applyDebriefFunctionUrl(supabaseUrl: string): string {
   return `${supabaseUrl.replace(/\/$/, "")}/functions/v1/apply-debrief-to-thesis`;
-}
-
-export async function invokeApplyDebriefToThesis(opts: {
-  supabaseUrl: string;
-  authorization: string;
-  apikey: string;
-  noteId: string;
-}): Promise<{ ok: boolean; status: number }> {
-  const res = await fetch(applyDebriefFunctionUrl(opts.supabaseUrl), {
-    method: "POST",
-    headers: {
-      Authorization: opts.authorization,
-      apikey: opts.apikey,
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ note_id: opts.noteId }),
-  });
-  if (!res.ok) {
-    const text = await res.text();
-    console.error(
-      `[process-audio-note] apply-debrief-to-thesis failed (${res.status}): ${text}`,
-    );
-  }
-  return { ok: res.ok, status: res.status };
 }

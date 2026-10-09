@@ -9,18 +9,21 @@ import {
   WEEK_DEBRIEF_LIMIT,
   assertNoteOwnership,
   buildApplyUserPrompt,
-  hydrateThesisForApply,
+  executeConceptRewrite,
   isApplyBlockedForTier,
   isNoteReadyToApply,
-  mergeAppliedThesis,
-  nextDebriefCount,
-  nextRoundNumber,
-  parseNoteId,
+  maxRoundNumber,
+  modelCallRequired,
+  parseApplyBody,
+  parseModelJson,
   readBearerToken,
+  rewriteGate,
   snapshotFromThesisRow,
   weekWindowStart,
-  type ApplyModelResponse,
+  type ConceptDb,
   type NoteAnalysis,
+  type ThesisUpdate,
+  type VersionInsert,
   type WeekDebrief,
 } from "./apply_logic.ts";
 
@@ -69,11 +72,15 @@ Deno.serve(async (req: Request) => {
   } catch {
     return jsonResponse({ error: "Invalid JSON body" }, 400);
   }
-  const parsedNote = parseNoteId(body);
-  if (!parsedNote.ok) {
-    return jsonResponse({ error: parsedNote.error }, parsedNote.status);
+  const parsedBody = parseApplyBody(body);
+  if (!parsedBody.ok) {
+    return jsonResponse({ error: parsedBody.error }, parsedBody.status);
   }
-  const { noteId } = parsedNote;
+  const request = parsedBody.value;
+  const gate = rewriteGate({
+    heardByLabel: request.heardByLabel,
+    rewriteUnheard: request.rewriteUnheard,
+  });
 
   const supabase = createClient(supabaseUrl, serviceKey, {
     auth: { persistSession: false, autoRefreshToken: false },
@@ -87,7 +94,7 @@ Deno.serve(async (req: Request) => {
     return jsonResponse({ error: "Invalid or expired session" }, 401);
   }
 
-  // Free users may apply a debrief. Do not reuse refine-plan's 403.
+  // Free users may rewrite a concept. Do not reuse refine-plan's 403.
   const { data: profile, error: profileErr } = await supabase
     .from("profiles")
     .select("subscription_tier")
@@ -100,7 +107,7 @@ Deno.serve(async (req: Request) => {
   if (isApplyBlockedForTier(tier)) {
     return jsonResponse(
       {
-        error: "Thesis apply is not available on this plan.",
+        error: "Concept rewrite is not available on this plan.",
         code: "UPGRADE_REQUIRED",
       },
       403,
@@ -110,7 +117,7 @@ Deno.serve(async (req: Request) => {
   const { data: note, error: noteErr } = await supabase
     .from("audio_notes")
     .select("id, user_id, status, thesis_id, template_id, created_at, title")
-    .eq("id", noteId)
+    .eq("id", request.noteId)
     .maybeSingle();
 
   if (noteErr || !note) {
@@ -124,7 +131,7 @@ Deno.serve(async (req: Request) => {
   const { data: transcriptRow, error: trErr } = await supabase
     .from("audio_note_transcripts")
     .select("transcript_text")
-    .eq("audio_note_id", noteId)
+    .eq("audio_note_id", request.noteId)
     .maybeSingle();
   if (trErr) {
     return jsonResponse({ error: "Failed to load transcript" }, 500);
@@ -133,10 +140,7 @@ Deno.serve(async (req: Request) => {
     "";
   const ready = isNoteReadyToApply(transcriptText);
   if (!ready.ok) {
-    return jsonResponse(
-      { error: ready.error, code: ready.code },
-      ready.status,
-    );
+    return jsonResponse({ error: ready.error, code: ready.code }, ready.status);
   }
 
   const { data: analysisRow } = await supabase
@@ -144,13 +148,13 @@ Deno.serve(async (req: Request) => {
     .select(
       "startup_title, short_summary, problem, solution, target_audience, business_model, key_metrics, advantages, risks_gaps, follow_up_questions",
     )
-    .eq("audio_note_id", noteId)
+    .eq("audio_note_id", request.noteId)
     .maybeSingle();
   const analysis = (analysisRow as NoteAnalysis | null) ?? null;
 
   let thesisId: string;
   try {
-    thesisId = await linkNoteToUserThesis(supabase, user.id, noteId);
+    thesisId = await linkNoteToUserThesis(supabase, user.id, request.noteId);
   } catch (e) {
     const msg = e instanceof Error ? e.message : String(e);
     console.error("[apply-debrief-to-thesis] thesis attach failed:", msg);
@@ -166,139 +170,102 @@ Deno.serve(async (req: Request) => {
     return jsonResponse({ error: "Thesis not found" }, 500);
   }
 
-  const currentThesis = hydrateThesisForApply(
-    snapshotFromThesisRow(thesisRow as Record<string, unknown>),
-    analysis,
+  const currentThesis = snapshotFromThesisRow(
+    thesisRow as Record<string, unknown>,
   );
 
   const { data: priorVersions, error: pvErr } = await supabase
     .from("thesis_versions")
     .select("round_number")
-    .eq("thesis_id", thesisId)
-    .order("round_number", { ascending: true });
+    .eq("thesis_id", thesisId);
   if (pvErr) {
     console.error("Failed to load thesis versions:", pvErr.message);
     return jsonResponse({ error: "Failed to load thesis history" }, 500);
   }
-  const currentRound = nextRoundNumber(priorVersions?.length ?? 0);
 
-  const weekDebriefs = await loadWeekDebriefs(
-    supabase,
-    user.id,
-    noteId,
-  );
-
-  const userPrompt = buildApplyUserPrompt({
-    thesis: currentThesis,
-    transcription: transcriptText,
-    analysis,
-    weekDebriefs,
-    templateId: (note.template_id as string | null) ?? null,
+  const needsModel = modelCallRequired({
+    gate,
+    proposedRewrite: request.proposedRewrite,
   });
+  let modelJson: Record<string, unknown> | null = null;
+  if (needsModel) {
+    try {
+      const weekDebriefs = await loadWeekDebriefs(
+        supabase,
+        user.id,
+        request.noteId,
+      );
+      modelJson = await requestConceptRewrite({
+        openaiKey,
+        thesis: currentThesis,
+        transcription: transcriptText,
+        analysis,
+        weekDebriefs,
+        templateId: (note.template_id as string | null) ?? null,
+      });
+    } catch (e) {
+      const msg = e instanceof Error ? e.message : String(e);
+      console.error("apply-debrief-to-thesis model error:", msg);
+      return jsonResponse({ error: msg }, 500);
+    }
+  }
+
+  const db: ConceptDb = {
+    insertVersion: (row) => insertVersion(supabase, row),
+    updateThesis: (id, patch) => updateThesis(supabase, id, patch),
+  };
 
   try {
-    const chatRes = await fetch("https://api.openai.com/v1/chat/completions", {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${openaiKey}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        model: CHAT_MODEL,
-        messages: [
-          { role: "system", content: APPLY_SYSTEM_PROMPT },
-          { role: "user", content: userPrompt },
-        ],
-        response_format: { type: "json_object" },
-        temperature: 0.3,
-      }),
+    const result = await executeConceptRewrite({
+      gate,
+      current: currentThesis,
+      modelJson,
+      proposedRewrite: request.proposedRewrite,
+      thesisId,
+      userId: user.id,
+      noteId: request.noteId,
+      templateId: (note.template_id as string | null) ?? null,
+      transcription: transcriptText,
+      priorMaxRound: maxRoundNumber(priorVersions),
+      debriefCount: Number(
+        (thesisRow as { debrief_count?: number }).debrief_count ?? 0,
+      ),
+      heardAt: new Date().toISOString(),
+      db,
     });
 
-    const chatJson = (await chatRes.json()) as {
-      choices?: { message?: { content?: string } }[];
-      usage?: { prompt_tokens?: number; completion_tokens?: number };
-      error?: { message?: string };
-    };
-
-    if (!chatRes.ok) {
-      throw new Error(
-        chatJson.error?.message ?? `Chat completion failed (${chatRes.status})`,
+    if (!result.written) {
+      return jsonResponse(
+        {
+          error: result.error ?? "Concept was not rewritten",
+          ...(result.code ? { code: result.code } : {}),
+          ...(result.suggestedHearer
+            ? { suggested_hearer: result.suggestedHearer }
+            : {}),
+          ...(result.proposedRewrite
+            ? { proposed_rewrite: result.proposedRewrite }
+            : {}),
+        },
+        result.status,
       );
     }
 
-    const rawContent = chatJson.choices?.[0]?.message?.content ?? "{}";
-    let incoming: Record<string, unknown>;
-    try {
-      incoming = JSON.parse(rawContent) as Record<string, unknown>;
-    } catch {
-      throw new Error("AI returned invalid JSON");
-    }
-
-    const merged = mergeAppliedThesis({
-      current: currentThesis,
-      incoming: incoming as ApplyModelResponse,
-      noteId,
-      templateId: (note.template_id as string | null) ?? null,
-    });
-
-    const promptTokens = chatJson.usage?.prompt_tokens ?? 0;
-    const completionTokens = chatJson.usage?.completion_tokens ?? 0;
     console.log(
-      `[apply-debrief-to-thesis] round=${currentRound} thesis=${thesisId} ` +
-        `note=${noteId} prompt_tokens=${promptTokens} ` +
-        `completion_tokens=${completionTokens} prompt_version=${PROMPT_VERSION}`,
+      `[apply-debrief-to-thesis] thesis=${thesisId} note=${request.noteId} ` +
+        `heard_round=${result.heardRound ?? "-"} unheard_round=${result.unheardRound} ` +
+        `prompt_version=${PROMPT_VERSION}`,
     );
-
-    const { error: pvInsertErr } = await supabase.from("thesis_versions").insert({
-      thesis_id: thesisId,
-      user_id: user.id,
-      round_number: currentRound,
-      thesis_snapshot: merged.snapshot,
-      transcription: transcriptText,
-      follow_up_questions: merged.follow_up_questions,
-      diff_summary: merged.diff_summary,
-      source_note_id: noteId,
-      source_template_id: (note.template_id as string | null) ?? null,
-    });
-    if (pvInsertErr) throw new Error(pvInsertErr.message);
-
-    const nextDebriefs = nextDebriefCount(
-      Number((thesisRow as { debrief_count?: number }).debrief_count ?? 0),
-      (note.template_id as string | null) ?? null,
-    );
-
-    const { error: updateErr } = await supabase
-      .from("theses")
-      .update({
-        title: merged.snapshot.title,
-        short_summary: merged.snapshot.short_summary,
-        problem: merged.snapshot.problem,
-        solution: merged.snapshot.solution,
-        target_audience: merged.snapshot.target_audience,
-        business_model: merged.snapshot.business_model,
-        key_metrics: merged.snapshot.key_metrics,
-        advantages: merged.snapshot.advantages,
-        risks_gaps: merged.snapshot.risks_gaps,
-        follow_up_questions: merged.follow_up_questions,
-        next_conversation_script: merged.next_conversation_script,
-        field_evidence: merged.field_evidence,
-        debrief_count: nextDebriefs,
-      })
-      .eq("id", thesisId);
-    if (updateErr) throw new Error(updateErr.message);
 
     return jsonResponse(
       {
         ok: true,
         thesis_id: thesisId,
-        note_id: noteId,
-        round: currentRound,
-        debrief_count: nextDebriefs,
-        updatedThesis: merged.snapshot,
-        fieldEvidence: merged.field_evidence,
-        nextConversationScript: merged.next_conversation_script,
-        contradictions: merged.contradictions,
-        diffSummary: merged.diff_summary,
+        note_id: request.noteId,
+        round: result.unheardRound,
+        heard_round: result.heardRound,
+        debrief_count: result.debriefCount,
+        updatedThesis: result.updatedThesis,
+        rewriteNote: result.rewriteNote,
       },
       200,
     );
@@ -308,6 +275,87 @@ Deno.serve(async (req: Request) => {
     return jsonResponse({ error: msg }, 500);
   }
 });
+
+async function requestConceptRewrite(opts: {
+  openaiKey: string;
+  thesis: ReturnType<typeof snapshotFromThesisRow>;
+  transcription: string;
+  analysis: NoteAnalysis | null;
+  weekDebriefs: WeekDebrief[];
+  templateId: string | null;
+}): Promise<Record<string, unknown>> {
+  const userPrompt = buildApplyUserPrompt({
+    thesis: opts.thesis,
+    transcription: opts.transcription,
+    analysis: opts.analysis,
+    weekDebriefs: opts.weekDebriefs,
+    templateId: opts.templateId,
+  });
+  const chatRes = await fetch("https://api.openai.com/v1/chat/completions", {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${opts.openaiKey}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      model: CHAT_MODEL,
+      messages: [
+        { role: "system", content: APPLY_SYSTEM_PROMPT },
+        { role: "user", content: userPrompt },
+      ],
+      response_format: { type: "json_object" },
+      temperature: 0.3,
+    }),
+  });
+
+  const chatJson = (await chatRes.json()) as {
+    choices?: { message?: { content?: string } }[];
+    usage?: { prompt_tokens?: number; completion_tokens?: number };
+    error?: { message?: string };
+  };
+  if (!chatRes.ok) {
+    throw new Error(
+      chatJson.error?.message ?? `Chat completion failed (${chatRes.status})`,
+    );
+  }
+  const parsed = parseModelJson(chatJson.choices?.[0]?.message?.content ?? "{}");
+  if (!parsed.ok) throw new Error(parsed.error);
+  const promptTokens = chatJson.usage?.prompt_tokens ?? 0;
+  const completionTokens = chatJson.usage?.completion_tokens ?? 0;
+  console.log(
+    `[apply-debrief-to-thesis] model prompt_tokens=${promptTokens} ` +
+      `completion_tokens=${completionTokens} prompt_version=${PROMPT_VERSION}`,
+  );
+  return parsed.value;
+}
+
+// deno-lint-ignore no-explicit-any
+async function insertVersion(supabase: any, row: VersionInsert) {
+  const { error } = await supabase.from("thesis_versions").insert({
+    thesis_id: row.thesis_id,
+    user_id: row.user_id,
+    round_number: row.round_number,
+    thesis_snapshot: row.thesis_snapshot,
+    transcription: row.transcription,
+    diff_summary: row.diff_summary,
+    follow_up_questions: row.follow_up_questions,
+    source_note_id: row.source_note_id,
+    source_template_id: row.source_template_id,
+    hearing_status: row.hearing_status,
+    heard_by_label: row.heard_by_label,
+    heard_at: row.heard_at,
+  });
+  return { error: error?.message ?? null };
+}
+
+// deno-lint-ignore no-explicit-any
+async function updateThesis(supabase: any, thesisId: string, patch: ThesisUpdate) {
+  const { error } = await supabase
+    .from("theses")
+    .update(patch)
+    .eq("id", thesisId);
+  return { error: error?.message ?? null };
+}
 
 // deno-lint-ignore no-explicit-any
 async function loadWeekDebriefs(
