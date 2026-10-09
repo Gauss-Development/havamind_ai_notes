@@ -991,7 +991,11 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get thesisCollectWeekSubtitle =>
-      'Главное, метрики и запрос из дебрифов этой недели — плюс живой тезис. Скопируйте или отправьте.';
+      'Речь, которую скажете следующей, и кто на этой неделе уже слышал версию. Скопируйте или отправьте.';
+
+  @override
+  String get thesisCollectWeekNoHeard =>
+      'На этой неделе эту речь никто не слышал.';
 
   @override
   String get thesisCollectWeekEmpty => 'На этой неделе дебрифов нет';

@@ -1877,8 +1877,14 @@ abstract class AppLocalizations {
   /// No description provided for @thesisCollectWeekSubtitle.
   ///
   /// In en, this message translates to:
-  /// **'Highlights, metrics, and the ask from this week’s debriefs — plus the living thesis. Copy or send.'**
+  /// **'The speech you\'ll say next, and who already heard a version this week. Copy or send.'**
   String get thesisCollectWeekSubtitle;
+
+  /// No description provided for @thesisCollectWeekNoHeard.
+  ///
+  /// In en, this message translates to:
+  /// **'No one heard a version this week.'**
+  String get thesisCollectWeekNoHeard;
 
   /// No description provided for @thesisCollectWeekEmpty.
   ///

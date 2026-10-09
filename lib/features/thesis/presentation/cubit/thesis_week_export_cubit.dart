@@ -62,10 +62,6 @@ class ThesisWeekExportCubit extends Cubit<ThesisWeekExportState> {
     final result = await _collectWeek(const NoParams());
     if (isClosed) return;
     result.fold((failure) => emit(ThesisWeekExportError(failure)), (export) {
-      if (!export.hasDebriefs) {
-        emit(const ThesisWeekExportEmpty());
-        return;
-      }
       emit(ThesisWeekExportReady(export));
     });
   }

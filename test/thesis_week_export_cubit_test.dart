@@ -78,15 +78,21 @@ void main() {
     expect(ready.export.weekDebriefs, hasLength(1));
   });
 
-  test('load emits empty when there are no debriefs this week', () async {
-    when(
-      () => collectWeek(any()),
-    ).thenAnswer((_) async => Right(_export(withDebrief: false)));
+  test(
+    'load still shows the current concept when nobody was marked heard',
+    () async {
+      when(
+        () => collectWeek(any()),
+      ).thenAnswer((_) async => Right(_export(withDebrief: false)));
 
-    await cubit.load();
+      await cubit.load();
 
-    expect(cubit.state, const ThesisWeekExportEmpty());
-  });
+      expect(cubit.state, isA<ThesisWeekExportReady>());
+      final ready = cubit.state as ThesisWeekExportReady;
+      expect(ready.export.thesis.title, 'Havamind');
+      expect(ready.export.heardVersions, isEmpty);
+    },
+  );
 
   test('load emits error when collect week fails', () async {
     const failure = ServerFailure('down');

@@ -1,5 +1,6 @@
 import 'package:sample/features/audio_notes/domain/entities/audio_note.dart';
 import 'package:sample/features/audio_notes/domain/entities/recording_template.dart';
+import 'package:sample/features/thesis/domain/entities/thesis_version.dart';
 
 /// Rolling window for the Sunday / “collect the week” letter.
 const weekExportLookback = Duration(days: 7);
@@ -24,4 +25,28 @@ List<AudioNote> selectWeekDebriefs(List<AudioNote> weekNotes) {
     for (final note in weekNotes)
       if (note.templateId == RecordingTemplateIds.customerDiscovery) note,
   ];
+}
+
+/// Speeches marked heard inside [since, now], newest first.
+/// Unheard archive rows are not included. The label is not a user id.
+List<ThesisVersion> selectHeardInWindow(
+  List<ThesisVersion> versions,
+  DateTime since,
+  DateTime now,
+) {
+  final selected = [
+    for (final version in versions)
+      if (version.wasHeard && _heardInWindow(version, since, now)) version,
+  ];
+  selected.sort((a, b) {
+    final aAt = a.heardAt ?? a.createdAt;
+    final bAt = b.heardAt ?? b.createdAt;
+    return bAt.compareTo(aAt);
+  });
+  return selected;
+}
+
+bool _heardInWindow(ThesisVersion version, DateTime since, DateTime now) {
+  final at = version.heardAt ?? version.createdAt;
+  return !at.isBefore(since) && !at.isAfter(now);
 }

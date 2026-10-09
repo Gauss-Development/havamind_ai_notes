@@ -31,15 +31,13 @@ class ThesisWeekExportSheet extends StatelessWidget {
   WeeklyExportLabels _labels(AppLocalizations l10n, Locale locale) {
     final dateFmt = DateFormat.MMMd(locale.toString());
     return WeeklyExportLabels(
-      highlightsTitle: l10n.investorUpdatePromptHighlightsTitle,
-      metricsTitle: l10n.investorUpdatePromptMetricsTitle,
-      askTitle: l10n.investorUpdatePromptAskTitle,
+      currentSpeechTitle: l10n.thesisCurrentSpeechTitle,
+      heardTitle: l10n.thesisHeardVersionsTitle,
+      noHeard: l10n.thesisCollectWeekNoHeard,
       untitledNote: l10n.planReadinessUntitledNote,
-      noMetrics: l10n.thesisCollectWeekNoMetrics,
-      noAsk: l10n.thesisCollectWeekNoAsk,
-      debriefsThisWeek: l10n.thesisCollectWeekDebriefCount,
       weekOf: l10n.thesisCollectWeekRange,
       formatDate: (date) => dateFmt.format(date.toLocal()),
+      heardLine: (label, date) => '${l10n.thesisHeardBy(label)} ($date)',
     );
   }
 

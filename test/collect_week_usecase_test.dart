@@ -8,6 +8,7 @@ import 'package:sample/features/audio_notes/domain/entities/audio_note_status.da
 import 'package:sample/features/audio_notes/domain/entities/recording_template.dart';
 import 'package:sample/features/audio_notes/domain/repositories/audio_notes_repository.dart';
 import 'package:sample/features/thesis/domain/entities/thesis.dart';
+import 'package:sample/features/thesis/domain/entities/thesis_version.dart';
 import 'package:sample/features/thesis/domain/repositories/thesis_repository.dart';
 import 'package:sample/features/thesis/domain/usecases/collect_week_usecase.dart';
 
@@ -65,10 +66,15 @@ void main() {
       templateId: RecordingTemplateIds.founderPitch,
     );
     final old = _note(id: 'old', createdAt: DateTime.utc(2026, 9, 1));
-    when(() => thesisRepo.getCurrentThesis())
-        .thenAnswer((_) async => Right(thesis));
-    when(() => notesRepo.listNotes(limit: 100))
-        .thenAnswer((_) async => Right([inWeek, pitch, old]));
+    when(
+      () => thesisRepo.getCurrentThesis(),
+    ).thenAnswer((_) async => Right(thesis));
+    when(
+      () => thesisRepo.listRecentVersions(limit: 50),
+    ).thenAnswer((_) async => const Right([]));
+    when(
+      () => notesRepo.listNotes(limit: 100),
+    ).thenAnswer((_) async => Right([inWeek, pitch, old]));
 
     final result = await useCase(const NoParams());
 
@@ -82,8 +88,12 @@ void main() {
   test(
     'hasDebriefs is false when the week has no customer-discovery notes',
     () async {
-      when(() => thesisRepo.getCurrentThesis())
-          .thenAnswer((_) async => Right(thesis));
+      when(
+        () => thesisRepo.getCurrentThesis(),
+      ).thenAnswer((_) async => Right(thesis));
+      when(
+        () => thesisRepo.listRecentVersions(limit: 50),
+      ).thenAnswer((_) async => const Right([]));
       when(() => notesRepo.listNotes(limit: 100)).thenAnswer(
         (_) async => Right([
           _note(
@@ -102,9 +112,66 @@ void main() {
     },
   );
 
+  test(
+    'keeps heard versions inside the window and drops unheard rows',
+    () async {
+      when(
+        () => thesisRepo.getCurrentThesis(),
+      ).thenAnswer((_) async => Right(thesis));
+      when(
+        () => notesRepo.listNotes(limit: 100),
+      ).thenAnswer((_) async => const Right([]));
+      when(() => thesisRepo.listRecentVersions(limit: 50)).thenAnswer(
+        (_) async => Right([
+          ThesisVersion(
+            id: 'heard-now',
+            thesisId: 'thesis-1',
+            userId: 'user-1',
+            roundNumber: 2,
+            thesisSnapshot: const {'business_model': 'Clinics pay monthly'},
+            transcription: 'pitch',
+            hearingStatus: HearingStatus.heard,
+            heardByLabel: 'Маша',
+            heardAt: DateTime.utc(2026, 9, 14),
+            createdAt: DateTime.utc(2026, 9, 14),
+          ),
+          ThesisVersion(
+            id: 'heard-old',
+            thesisId: 'thesis-1',
+            userId: 'user-1',
+            roundNumber: 1,
+            thesisSnapshot: const {'business_model': 'Old'},
+            transcription: 'old',
+            hearingStatus: HearingStatus.heard,
+            heardByLabel: 'инвестор',
+            heardAt: DateTime.utc(2026, 8, 1),
+            createdAt: DateTime.utc(2026, 8, 1),
+          ),
+          ThesisVersion(
+            id: 'unheard',
+            thesisId: 'thesis-1',
+            userId: 'user-1',
+            roundNumber: 3,
+            thesisSnapshot: const {'business_model': 'Doctors wait 3 weeks'},
+            transcription: 'next',
+            createdAt: DateTime.utc(2026, 9, 15),
+          ),
+        ]),
+      );
+
+      final result = await useCase(const NoParams());
+
+      final export = result.getOrElse(() => throw StateError('expected right'));
+      expect(export.heardVersions.map((v) => v.id), ['heard-now']);
+      expect(export.heardVersions.single.heardByLabel, 'Маша');
+      expect(export.heardVersions.single.userId, 'user-1');
+    },
+  );
+
   test('returns NotFoundFailure when the account has no thesis', () async {
-    when(() => thesisRepo.getCurrentThesis())
-        .thenAnswer((_) async => const Right(null));
+    when(
+      () => thesisRepo.getCurrentThesis(),
+    ).thenAnswer((_) async => const Right(null));
 
     final result = await useCase(const NoParams());
 
@@ -114,8 +181,9 @@ void main() {
 
   test('forwards a thesis read failure', () async {
     const failure = ServerFailure('down');
-    when(() => thesisRepo.getCurrentThesis())
-        .thenAnswer((_) async => const Left(failure));
+    when(
+      () => thesisRepo.getCurrentThesis(),
+    ).thenAnswer((_) async => const Left(failure));
 
     final result = await useCase(const NoParams());
 
